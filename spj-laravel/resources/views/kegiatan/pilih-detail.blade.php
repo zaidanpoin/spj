@@ -26,7 +26,7 @@
         <div class="bg-white rounded border border-gray-200 p-3">
             <h3 class="text-xs font-semibold text-gray-500 uppercase mb-2">Tambah Detail</h3>
             <div class="grid grid-cols-2 gap-2">
-                <a href="{{ route('konsumsi.create', $kegiatan->id) }}" 
+                <a href="{{ route('konsumsi.create', $kegiatan->id) }}"
                    class="flex items-center gap-2 px-3 py-2 bg-gray-50 border border-gray-200 rounded hover:border-primary hover:bg-gray-100 transition group">
                     <div class="w-8 h-8 bg-primary bg-opacity-10 rounded flex items-center justify-center text-primary text-sm font-semibold">
                         K
@@ -36,7 +36,7 @@
                         <div class="text-xs text-gray-500">Snack, Makanan, Barang</div>
                     </div>
                 </a>
-                <a href="{{ route('narasumber.create', $kegiatan->id) }}" 
+                <a href="{{ route('narasumber.create', $kegiatan->id) }}"
                    class="flex items-center gap-2 px-3 py-2 bg-gray-50 border border-gray-200 rounded hover:border-purple-400 hover:bg-purple-50 transition group">
                     <div class="w-8 h-8 bg-purple-100 rounded flex items-center justify-center text-purple-600 text-sm font-semibold">
                         JP
@@ -86,17 +86,23 @@
                             <table class="w-full text-xs">
                                 <thead class="bg-gray-50">
                                     <tr>
+
                                         <th class="px-2 py-1.5 text-left font-medium text-gray-600">Nama</th>
+                                        <th class="px-2 py-1.5 text-left font-medium text-gray-600 w-24">No Kwitansi Per Item</th>
                                         <th class="px-2 py-1.5 text-left font-medium text-gray-600 w-24">Waktu</th>
                                         <th class="px-2 py-1.5 text-center font-medium text-gray-600 w-12">Qty</th>
                                         <th class="px-2 py-1.5 text-right font-medium text-gray-600 w-20">Harga</th>
                                         <th class="px-2 py-1.5 text-right font-medium text-gray-600 w-24">Subtotal</th>
                                     </tr>
+
                                 </thead>
                                 <tbody class="divide-y divide-gray-50">
                                     @foreach($snacks as $item)
+
                                         <tr>
+
                                             <td class="px-2 py-1.5">{{ $item->nama_konsumsi }}</td>
+                                             <td class="px-2 py-1.5 text-xs text-gray-600">{{ $item->no_kwitansi ?? '-' }}</td>
                                             <td class="px-2 py-1.5 text-xs text-gray-600">{{ $item->waktuKonsumsi->nama_waktu ?? '-' }}</td>
                                             <td class="px-2 py-1.5 text-center">{{ $item->jumlah }}</td>
                                             <td class="px-2 py-1.5 text-right">Rp {{ number_format($item->harga, 0, ',', '.') }}</td>
@@ -107,7 +113,7 @@
                                 </tbody>
                                 <tfoot class="bg-gray-50 border-t border-gray-200">
                                     <tr>
-                                        <td colspan="4" class="px-2 py-1.5 text-right font-semibold">Total:</td>
+                                        <td colspan="5" class="px-2 py-1.5 text-right font-semibold">Total:</td>
                                         <td class="px-2 py-1.5 text-right font-bold text-primary">Rp
                                             {{ number_format($totalSnack, 0, ',', '.') }}</td>
                                     </tr>
@@ -124,7 +130,9 @@
                             <table class="w-full text-xs">
                                 <thead class="bg-gray-50">
                                     <tr>
+
                                         <th class="px-2 py-1.5 text-left font-medium text-gray-600">Nama</th>
+                                        <th class="px-2 py-1.5 text-left font-medium text-gray-600 w-24">No Kwitansi Per Item</th>
                                         <th class="px-2 py-1.5 text-left font-medium text-gray-600 w-24">Waktu</th>
                                         <th class="px-2 py-1.5 text-center font-medium text-gray-600 w-12">Qty</th>
                                         <th class="px-2 py-1.5 text-right font-medium text-gray-600 w-20">Harga</th>
@@ -134,7 +142,9 @@
                                 <tbody class="divide-y divide-gray-50">
                                     @foreach($makanans as $item)
                                         <tr>
+
                                             <td class="px-2 py-1.5">{{ $item->nama_konsumsi }}</td>
+                                            <td class="px-2 py-1.5 text-xs text-gray-600">{{ $item->no_kwitansi ?? '-' }}</td>
                                             <td class="px-2 py-1.5 text-xs text-gray-600">{{ $item->waktuKonsumsi->nama_waktu ?? '-' }}</td>
                                             <td class="px-2 py-1.5 text-center">{{ $item->jumlah }}</td>
                                             <td class="px-2 py-1.5 text-right">Rp {{ number_format($item->harga, 0, ',', '.') }}</td>
@@ -145,7 +155,7 @@
                                 </tbody>
                                 <tfoot class="bg-gray-50 border-t border-gray-200">
                                     <tr>
-                                        <td colspan="4" class="px-2 py-1.5 text-right font-semibold">Total:</td>
+                                        <td colspan="5" class="px-2 py-1.5 text-right font-semibold">Total:</td>
                                         <td class="px-2 py-1.5 text-right font-bold text-primary">Rp
                                             {{ number_format($totalMakanan, 0, ',', '.') }}</td>
                                     </tr>
