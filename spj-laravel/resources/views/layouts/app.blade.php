@@ -35,12 +35,86 @@
         body {
             font-family: 'Open Sans', sans-serif;
         }
+
+        /* Loading Spinner */
+        .page-loader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 255, 255, 0.95);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+        }
+
+        .page-loader.active {
+            display: flex;
+            animation: fadeIn 0.3s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        .spinner {
+            position: relative;
+            width: 60px;
+            height: 60px;
+        }
+
+        .spinner::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: 4px solid #f3f4f6;
+            border-top-color: #14b8a6;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .spinner-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, 50%);
+            margin-top: 20px;
+            color: #14b8a6;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+
     </style>
 
     @stack('styles')
 </head>
 
 <body class="bg-white flex flex-col min-h-screen">
+    <!-- Page Loading Spinner -->
+    <div id="pageLoader" class="page-loader">
+        <div class="text-center">
+            <div class="spinner"></div>
+            <p class="spinner-text">Loading...</p>
+        </div>
+    </div>
+
     <!-- Navbar -->
     <nav class="fixed top-0 left-0 right-0 bg-primary z-50">
         <!-- Top Bar: Brand + User -->
@@ -65,7 +139,7 @@
                             <div class="w-9 h-9 rounded-full bg-white flex items-center justify-center">
                                 <span class="text-primary font-bold text-sm">{{ substr(Auth::user()->name, 0, 1) }}</span>
                             </div>
-                            <form action="{{ route('logout') }}" method="POST" class="inline">
+                            <form action="{{ route('logout') }}" method="POST" class="inline" data-no-loader>
                                 @csrf
                                 <button type="submit" class="text-white hover:text-teal-200 transition text-sm">
                                     Logout
@@ -166,6 +240,11 @@
     <!-- Main Content -->
     <div class="pt-28 px-6 lg:px-12 pb-8">
         <div class="container max-w-6xl mx-auto">
+            <!-- Breadcrumbs -->
+            @if(isset($breadcrumbs) && count($breadcrumbs) > 0)
+                <x-breadcrumbs :items="$breadcrumbs" />
+            @endif
+
             <!-- Page Header -->
             <div class="mb-6">
                 <h1 class="text-3xl font-bold text-primary">
@@ -199,7 +278,7 @@
         <div class="container max-w-6xl mx-auto px-6 lg:px-12 py-6">
             <div class="text-center">
                 <p class="text-sm text-gray-600">
-                    &copy; {{ date('Y') }} Kementerian Pekerjaan Umum dan Perumahan Rakyat
+                    &copy; {{ date('Y') }} Kementerian Pekerjaan Umum
                 </p>
                 <p class="text-xs text-gray-500 mt-1">
                     Sistem Pengelolaan Keuangan & Belanja
@@ -207,6 +286,69 @@
             </div>
         </div>
     </footer>
+
+    @stack('scripts')
+
+    <script>
+        // Show loading spinner when navigating to a new page
+        const pageLoader = document.getElementById('pageLoader');
+
+        // Show loader on initial page load (quickly) to indicate loading
+        document.addEventListener('DOMContentLoaded', function() {
+            pageLoader.classList.add('active');
+        });
+
+        // Also show loader when the browser is about to unload the page
+        // This catches navigations that don't always trigger click handlers (e.g., programmatic or anchor navigation)
+        window.addEventListener('beforeunload', function() {
+            try {
+                pageLoader.classList.add('active');
+            } catch (e) {}
+        });
+
+        // Show loader on link clicks (internal links only)
+        document.addEventListener('click', function(event) {
+            const target = event.target.closest('a');
+            if (!target) return;
+
+            // Skip if developer marked link to skip loader
+            if (target.hasAttribute('data-no-loader')) return;
+
+            // skip javascript: links and anchors
+            const href = target.getAttribute('href') || '';
+            if (href.startsWith('javascript:') || href.startsWith('#')) return;
+
+            // Only show for same-origin navigations without target (open in same tab)
+            try {
+                const url = new URL(href, window.location.href);
+                if (url.origin === window.location.origin && !target.target) {
+                    pageLoader.classList.add('active');
+                }
+            } catch (e) {
+                // ignore malformed URLs
+            }
+        });
+
+        // Show loader on form submissions (unless marked to skip)
+        document.addEventListener('submit', function(event) {
+            const form = event.target;
+            if (!form.hasAttribute('data-no-loader')) {
+                pageLoader.classList.add('active');
+            }
+        });
+
+        // Hide loader when page fully loads; keep a short delay for smoother UX
+        window.addEventListener('load', function() {
+            setTimeout(function() {
+                pageLoader.classList.remove('active');
+            }, 500);
+        });
+
+        // Also hide loader on pageshow (back/forward cache)
+        window.addEventListener('pageshow', function() {
+            pageLoader.classList.remove('active');
+        });
+    </script>
 
     @stack('scripts')
 </body>

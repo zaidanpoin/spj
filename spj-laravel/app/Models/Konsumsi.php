@@ -16,6 +16,7 @@ class Konsumsi extends Model
         'kategori',
         'waktu_konsumsi_id',
         'nama_konsumsi',
+        'no_kwitansi',
         'jumlah',
         'harga',
         'tanggal_pembelian',

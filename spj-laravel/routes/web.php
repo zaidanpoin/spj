@@ -23,7 +23,8 @@ Route::get('/', function () {
     $totalKegiatan = \App\Models\Kegiatan::count();
     $totalAnggaran = 0; // TODO: hitung dari kwitansi
     $totalKwitansi = 0; // TODO: \App\Models\KwitansiBelanja::count();
-    $recentActivities = \App\Models\Kegiatan::latest()->take(5)->get();
+    // Paginate recent activities (5 per page)
+    $recentActivities = \App\Models\Kegiatan::latest()->paginate(5);
 
     return view('dashboard', compact('totalKegiatan', 'totalAnggaran', 'totalKwitansi', 'recentActivities'));
 })->middleware('auth')->name('home');

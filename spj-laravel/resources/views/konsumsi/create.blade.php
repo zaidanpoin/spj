@@ -89,12 +89,17 @@
                                         @endforeach
                                     </select>
                                 </div>
-                                <div class="col-span-3">
+                                <div class="col-span-2">
                                     <label class="form-label">Nama Snack</label>
                                     <input type="text" name="snack[0][nama]" class="form-input"
                                         placeholder="Contoh: Kue Basah, dll">
                                 </div>
                                 <div class="col-span-2">
+                                    <label class="form-label">No. Kwitansi</label>
+                                    <input type="text" name="snack[0][no_kwitansi]" class="form-input"
+                                        placeholder="No. Kwitansi">
+                                </div>
+                                <div class="col-span-1">
                                     <label class="form-label">Jumlah</label>
                                     <input type="number" name="snack[0][jumlah]" class="form-input snack-qty" data-index="0"
                                         value="{{ $kegiatan->jumlah_peserta ?? 1 }}" min="1">
@@ -147,12 +152,17 @@
                                         @endforeach
                                     </select>
                                 </div>
-                                <div class="col-span-3">
+                                <div class="col-span-2">
                                     <label class="form-label">Nama Makanan</label>
                                     <input type="text" name="makanan[0][nama]" class="form-input"
                                         placeholder="Contoh: Nasi Box, dll">
                                 </div>
                                 <div class="col-span-2">
+                                    <label class="form-label">No. Kwitansi</label>
+                                    <input type="text" name="makanan[0][no_kwitansi]" class="form-input"
+                                        placeholder="No. Kwitansi">
+                                </div>
+                                <div class="col-span-1">
                                     <label class="form-label">Jumlah</label>
                                     <input type="number" name="makanan[0][jumlah]" class="form-input makanan-qty"
                                         data-index="0" value="{{ $kegiatan->jumlah_peserta ?? 1 }}" min="1">
@@ -196,10 +206,15 @@
                     <div id="barang-container" class="space-y-3">
                         <div class="barang-item border border-gray-200 rounded-lg p-4 bg-gray-50">
                             <div class="grid grid-cols-12 gap-3 items-end">
-                                <div class="col-span-5">
+                                <div class="col-span-3">
                                     <label class="form-label">Nama Barang</label>
                                     <input type="text" name="barang[0][nama]" class="form-input"
                                         placeholder="Contoh: Kertas HVS, Spidol, dll">
+                                </div>
+                                <div class="col-span-2">
+                                    <label class="form-label">No. Kwitansi</label>
+                                    <input type="text" name="barang[0][no_kwitansi]" class="form-input"
+                                        placeholder="No. Kwitansi">
                                 </div>
                                 <div class="col-span-2">
                                     <label class="form-label">Jumlah</label>
@@ -302,7 +317,7 @@
                 const container = document.getElementById('snack-container');
                 const template = `
                                                     <div class="snack-item border border-gray-200 rounded-lg p-4 bg-gray-50 relative">
-                                                        <button type="button" onclick="this.parentElement.remove(); calculateTotals();" 
+                                                        <button type="button" onclick="this.parentElement.remove(); calculateTotals();"
                                                                 class="absolute top-2 right-2 text-red-600 hover:text-red-800 text-sm font-medium">
                                                             ✕ Hapus
                                                         </button>
@@ -315,23 +330,29 @@
                                                                     @endforeach
                                                                 </select>
                                                             </div>
-                                                            <div class="col-span-3">
+                                                            <div class="col-span-2">
                                                                 <label class="form-label">Nama Snack</label>
-                                                                <input type="text" name="snack[${snackIndex}][nama]" 
-                                                                       class="form-input" 
+                                                                <input type="text" name="snack[${snackIndex}][nama]"
+                                                                       class="form-input"
                                                                        placeholder="Contoh: Kue Basah, dll">
                                                             </div>
                                                             <div class="col-span-2">
+                                                                <label class="form-label">No. Kwitansi</label>
+                                                                <input type="text" name="snack[${snackIndex}][no_kwitansi]"
+                                                                       class="form-input"
+                                                                       placeholder="No. Kwitansi">
+                                                            </div>
+                                                            <div class="col-span-1">
                                                                 <label class="form-label">Jumlah</label>
-                                                                <input type="number" name="snack[${snackIndex}][jumlah]" 
-                                                                       class="form-input snack-qty" 
+                                                                <input type="number" name="snack[${snackIndex}][jumlah]"
+                                                                       class="form-input snack-qty"
                                                                        data-index="${snackIndex}"
                                                                        value="${jumlahPeserta}" min="1">
                                                             </div>
                                                             <div class="col-span-3">
                                                                 <label class="form-label">Harga Satuan (Rp)</label>
-                                                                <input type="number" name="snack[${snackIndex}][harga]" 
-                                                                       class="form-input snack-price" 
+                                                                <input type="number" name="snack[${snackIndex}][harga]"
+                                                                       class="form-input snack-price"
                                                                        data-index="${snackIndex}"
                                                                        value="0" min="0">
                                                             </div>
@@ -354,7 +375,7 @@
                 const container = document.getElementById('makanan-container');
                 const template = `
                                                     <div class="makanan-item border border-gray-200 rounded-lg p-4 bg-gray-50 relative">
-                                                        <button type="button" onclick="this.parentElement.remove(); calculateTotals();" 
+                                                        <button type="button" onclick="this.parentElement.remove(); calculateTotals();"
                                                                 class="absolute top-2 right-2 text-red-600 hover:text-red-800 text-sm font-medium">
                                                             ✕ Hapus
                                                         </button>
@@ -367,23 +388,29 @@
                                                                     @endforeach
                                                                 </select>
                                                             </div>
-                                                            <div class="col-span-3">
+                                                            <div class="col-span-2">
                                                                 <label class="form-label">Nama Makanan</label>
-                                                                <input type="text" name="makanan[${makananIndex}][nama]" 
-                                                                       class="form-input" 
+                                                                <input type="text" name="makanan[${makananIndex}][nama]"
+                                                                       class="form-input"
                                                                        placeholder="Contoh: Nasi Box, dll">
                                                             </div>
                                                             <div class="col-span-2">
+                                                                <label class="form-label">No. Kwitansi</label>
+                                                                <input type="text" name="makanan[${makananIndex}][no_kwitansi]"
+                                                                       class="form-input"
+                                                                       placeholder="No. Kwitansi">
+                                                            </div>
+                                                            <div class="col-span-1">
                                                                 <label class="form-label">Jumlah</label>
-                                                                <input type="number" name="makanan[${makananIndex}][jumlah]" 
-                                                                       class="form-input makanan-qty" 
+                                                                <input type="number" name="makanan[${makananIndex}][jumlah]"
+                                                                       class="form-input makanan-qty"
                                                                        data-index="${makananIndex}"
                                                                        value="${jumlahPeserta}" min="1">
                                                             </div>
                                                             <div class="col-span-3">
                                                                 <label class="form-label">Harga Satuan (Rp)</label>
-                                                                <input type="number" name="makanan[${makananIndex}][harga]" 
-                                                                       class="form-input makanan-price" 
+                                                                <input type="number" name="makanan[${makananIndex}][harga]"
+                                                                       class="form-input makanan-price"
                                                                        data-index="${makananIndex}"
                                                                        value="0" min="0">
                                                             </div>
@@ -406,28 +433,34 @@
                 const container = document.getElementById('barang-container');
                 const template = `
                                                                             <div class="barang-item border border-gray-200 rounded-lg p-4 bg-gray-50 relative">
-                                                                                <button type="button" onclick="this.parentElement.remove(); calculateTotals();" 
+                                                                                <button type="button" onclick="this.parentElement.remove(); calculateTotals();"
                                                                                         class="absolute top-2 right-2 text-red-600 hover:text-red-800 text-sm font-medium">
                                                                                     ✕ Hapus
                                                                                 </button>
                                                                                 <div class="grid grid-cols-12 gap-3 items-end">
-                                                                                    <div class="col-span-5">
+                                                                                    <div class="col-span-3">
                                                                                         <label class="form-label">Nama Barang</label>
-                                                                                        <input type="text" name="barang[${barangIndex}][nama]" 
-                                                                                               class="form-input" 
+                                                                                        <input type="text" name="barang[${barangIndex}][nama]"
+                                                                                               class="form-input"
                                                                                                placeholder="Contoh: Kertas HVS, Spidol, dll">
                                                                                     </div>
                                                                                     <div class="col-span-2">
+                                                                                        <label class="form-label">No. Kwitansi</label>
+                                                                                        <input type="text" name="barang[${barangIndex}][no_kwitansi]"
+                                                                                               class="form-input"
+                                                                                               placeholder="No. Kwitansi">
+                                                                                    </div>
+                                                                                    <div class="col-span-2">
                                                                                         <label class="form-label">Jumlah</label>
-                                                                                        <input type="number" name="barang[${barangIndex}][jumlah]" 
-                                                                                               class="form-input barang-qty" 
+                                                                                        <input type="number" name="barang[${barangIndex}][jumlah]"
+                                                                                               class="form-input barang-qty"
                                                                                                data-index="${barangIndex}"
                                                                                                value="1" min="1">
                                                                                     </div>
                                                                                     <div class="col-span-3">
                                                                                         <label class="form-label">Harga Satuan (Rp)</label>
-                                                                                        <input type="number" name="barang[${barangIndex}][harga]" 
-                                                                                               class="form-input barang-price" 
+                                                                                        <input type="number" name="barang[${barangIndex}][harga]"
+                                                                                               class="form-input barang-price"
                                                                                                data-index="${barangIndex}"
                                                                                                value="0" min="0">
                                                                                     </div>
@@ -533,7 +566,7 @@
                     }
                 });
 
-                // Check makanan items  
+                // Check makanan items
                 document.querySelectorAll('input[name^="makanan"][name$="[nama]"]').forEach(input => {
                     if (input.value.trim() !== '') {
                         hasData = true;

@@ -104,10 +104,10 @@
     <div class="bg-white rounded-xl shadow-sm overflow-hidden">
         <div class="px-6 py-5 border-b border-gray-200">
             <h2 class="text-lg font-semibold text-gray-900">Aktivitas Terbaru</h2>
-            <p class="text-sm text-gray-500 mt-0.5">5 kegiatan terakhir</p>
+            <p class="text-sm text-gray-500 mt-0.5" id="activity-count">{{ $recentActivities->total() ?? 0 }} kegiatan</p>
         </div>
-        <div class="divide-y divide-gray-200">
-            @forelse($recentActivities ?? [] as $activity)
+        <div class="divide-y divide-gray-200" id="activities-list">
+            @forelse($recentActivities as $activity)
                 <div class="px-6 py-4 hover:bg-gray-50 transition-colors">
                     <div class="flex items-center justify-between">
                         <div>
@@ -128,5 +128,83 @@
                 </div>
             @endforelse
         </div>
+
+        {{-- Pagination --}}
+        <div class="px-6 py-4 border-t border-gray-100 bg-white" id="pagination-links">
+            {{ $recentActivities->links() }}
+        </div>
     </div>
 @endsection
+
+@push('scripts')
+<script>
+    // AJAX Pagination for Recent Activities
+    document.addEventListener('click', function(e) {
+        // Check if clicked element is a pagination link
+        const paginationLink = e.target.closest('#pagination-links a');
+        if (!paginationLink) return;
+
+        e.preventDefault();
+
+        // Hide global page loader (prevent showing on AJAX)
+        const pageLoader = document.getElementById('pageLoader');
+        if (pageLoader) {
+            pageLoader.classList.remove('active');
+        }
+
+        const url = paginationLink.href;
+        const activitiesList = document.getElementById('activities-list');
+        const paginationContainer = document.getElementById('pagination-links');
+        const activityCount = document.getElementById('activity-count');
+
+        // Show loading state
+        activitiesList.style.opacity = '0.5';
+
+        // Fetch data via AJAX
+        fetch(url, {
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest',
+            }
+        })
+        .then(response => response.text())
+        .then(html => {
+            // Parse HTML response
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(html, 'text/html');
+
+            // Extract activities list
+            const newActivitiesList = doc.getElementById('activities-list');
+            const newPaginationLinks = doc.getElementById('pagination-links');
+            const newActivityCount = doc.getElementById('activity-count');
+
+            // Update DOM
+            if (newActivitiesList) {
+                activitiesList.innerHTML = newActivitiesList.innerHTML;
+            }
+            if (newPaginationLinks) {
+                paginationContainer.innerHTML = newPaginationLinks.innerHTML;
+            }
+            if (newActivityCount) {
+                activityCount.textContent = newActivityCount.textContent;
+            }
+
+            // Restore opacity
+            activitiesList.style.opacity = '1';
+
+            // Smooth scroll to top of activities
+            const activitiesSection = document.querySelector('.bg-white.rounded-xl.shadow-sm.overflow-hidden:last-of-type');
+            if (activitiesSection) {
+                activitiesSection.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            }
+        })
+        .catch(error => {
+            console.error('Error loading activities:', error);
+            activitiesList.style.opacity = '1';
+            alert('Gagal memuat data. Silakan coba lagi.');
+        });
+    });
+</script>
+@endpush
