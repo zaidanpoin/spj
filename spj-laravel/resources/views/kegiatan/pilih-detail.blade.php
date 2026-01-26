@@ -93,6 +93,7 @@
                                         <th class="px-2 py-1.5 text-center font-medium text-gray-600 w-12">Qty</th>
                                         <th class="px-2 py-1.5 text-right font-medium text-gray-600 w-20">Harga</th>
                                         <th class="px-2 py-1.5 text-right font-medium text-gray-600 w-24">Subtotal</th>
+                                        <th class="px-2 py-1.5 text-center font-medium text-gray-600 w-16">Aksi</th>
                                     </tr>
 
                                 </thead>
@@ -108,6 +109,13 @@
                                             <td class="px-2 py-1.5 text-right">Rp {{ number_format($item->harga, 0, ',', '.') }}</td>
                                             <td class="px-2 py-1.5 text-right font-medium">Rp
                                                 {{ number_format($item->subtotal, 0, ',', '.') }}</td>
+                                            <td class="px-2 py-1.5 text-center">
+                                                <form action="{{ route('konsumsi.destroy', $item->id) }}" method="POST" class="inline" onsubmit="return confirm('Yakin ingin menghapus item ini?');">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="submit" class="text-red-600 hover:text-red-800 text-xs font-medium">✕</button>
+                                                </form>
+                                            </td>
                                         </tr>
                                     @endforeach
                                 </tbody>
@@ -116,6 +124,7 @@
                                         <td colspan="5" class="px-2 py-1.5 text-right font-semibold">Total:</td>
                                         <td class="px-2 py-1.5 text-right font-bold text-primary">Rp
                                             {{ number_format($totalSnack, 0, ',', '.') }}</td>
+                                        <td></td>
                                     </tr>
                                 </tfoot>
                             </table>
@@ -137,6 +146,7 @@
                                         <th class="px-2 py-1.5 text-center font-medium text-gray-600 w-12">Qty</th>
                                         <th class="px-2 py-1.5 text-right font-medium text-gray-600 w-20">Harga</th>
                                         <th class="px-2 py-1.5 text-right font-medium text-gray-600 w-24">Subtotal</th>
+                                        <th class="px-2 py-1.5 text-center font-medium text-gray-600 w-16">Aksi</th>
                                     </tr>
                                 </thead>
                                 <tbody class="divide-y divide-gray-50">
@@ -150,6 +160,13 @@
                                             <td class="px-2 py-1.5 text-right">Rp {{ number_format($item->harga, 0, ',', '.') }}</td>
                                             <td class="px-2 py-1.5 text-right font-medium">Rp
                                                 {{ number_format($item->subtotal, 0, ',', '.') }}</td>
+                                            <td class="px-2 py-1.5 text-center">
+                                                <form action="{{ route('konsumsi.destroy', $item->id) }}" method="POST" class="inline" onsubmit="return confirm('Yakin ingin menghapus item ini?');">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="submit" class="text-red-600 hover:text-red-800 text-xs font-medium">✕</button>
+                                                </form>
+                                            </td>
                                         </tr>
                                     @endforeach
                                 </tbody>
@@ -158,6 +175,7 @@
                                         <td colspan="5" class="px-2 py-1.5 text-right font-semibold">Total:</td>
                                         <td class="px-2 py-1.5 text-right font-bold text-primary">Rp
                                             {{ number_format($totalMakanan, 0, ',', '.') }}</td>
+                                        <td></td>
                                     </tr>
                                 </tfoot>
                             </table>
@@ -221,6 +239,7 @@
                                 <th class="px-2 py-1.5 text-right font-medium text-gray-600 w-24">Bruto</th>
                                 <th class="px-2 py-1.5 text-right font-medium text-gray-600 w-24">Pajak</th>
                                 <th class="px-2 py-1.5 text-right font-medium text-gray-600 w-24">Netto</th>
+                                <th class="px-2 py-1.5 text-center font-medium text-gray-600 w-16">Aksi</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-gray-50">
@@ -241,6 +260,13 @@
                                     <td class="px-2 py-1.5 text-right text-gray-600">Rp {{ number_format($narasumber->honorarium_bruto, 0, ',', '.') }}</td>
                                     <td class="px-2 py-1.5 text-right text-red-600">Rp {{ number_format($narasumber->pph21, 0, ',', '.') }}</td>
                                     <td class="px-2 py-1.5 text-right font-medium text-primary">Rp {{ number_format($narasumber->honorarium_netto, 0, ',', '.') }}</td>
+                                    <td class="px-2 py-1.5 text-center">
+                                        <form action="{{ route('narasumber.destroy', $narasumber->id) }}" method="POST" class="inline" onsubmit="return confirm('Yakin ingin menghapus narasumber ini?');">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="text-red-600 hover:text-red-800 text-xs font-medium">✕</button>
+                                        </form>
+                                    </td>
                                 </tr>
                             @endforeach
                         </tbody>
@@ -248,6 +274,7 @@
                             <tr>
                                 <td colspan="6" class="px-2 py-1.5 text-right font-semibold text-gray-700">Total Honorarium:</td>
                                 <td class="px-2 py-1.5 text-right font-bold text-primary">Rp {{ number_format($totalHonorarium, 0, ',', '.') }}</td>
+                                <td></td>
                             </tr>
                         </tfoot>
                     </table>

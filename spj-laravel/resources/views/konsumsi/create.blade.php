@@ -11,6 +11,34 @@
                 <h2 class="card-title">Input Konsumsi Kegiatan</h2>
             </div>
 
+            <!-- Draft Info Box -->
+            @php
+                $hasDraft = \App\Models\Konsumsi::where('kegiatan_id', $kegiatan->id)
+                    ->where('status', 'draft')
+                    ->exists();
+            @endphp
+
+            @if($hasDraft)
+                <div class="bg-yellow-50 border-l-4 border-yellow-500 p-4 mb-4">
+                    <div class="flex items-start">
+                        <div class="flex-shrink-0">
+                            <svg class="h-5 w-5 text-yellow-500" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd"
+                                    d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z"
+                                    clip-rule="evenodd"></path>
+                            </svg>
+                        </div>
+                        <div class="ml-3">
+                            <p class="text-sm font-medium text-yellow-800">
+                                ⚠️ Ada data draft yang belum difinalisasi untuk kegiatan ini
+                            </p>
+                            <p class="mt-1 text-xs text-yellow-700">
+                                Data yang Anda simpan akan menambah/menimpa data draft yang ada
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            @endif
 
             <!-- SBM Info Box -->
             @if($tarifSBM)
@@ -78,8 +106,61 @@
                     </div>
 
                     <div id="snack-container" class="space-y-3">
-                        <!-- Snack Item Template -->
-                        <div class="snack-item border border-gray-200 rounded-lg p-4 bg-gray-50">
+                        @if($draftData['snack']->count() > 0)
+                            <!-- Load Draft Snack Items -->
+                            @foreach($draftData['snack'] as $index => $item)
+                                <div class="snack-item border border-gray-200 rounded-lg p-4 bg-yellow-50 relative">
+                                    @if($index > 0)
+                                        <button type="button" onclick="this.parentElement.remove(); calculateTotals();"
+                                            class="absolute top-2 right-2 text-red-600 hover:text-red-800 text-sm font-medium">
+                                            ✕ Hapus
+                                        </button>
+                                    @endif
+                                    <div class="grid grid-cols-12 gap-3 items-end">
+                                        <div class="col-span-2">
+                                            <label class="form-label">Waktu</label>
+                                            <select name="snack[{{ $index }}][waktu_konsumsi_id]" class="form-input">
+                                                @foreach($waktuKonsumsi->filter(fn($w) => str_contains($w->kode_waktu, 'snack')) as $wk)
+                                                    <option value="{{ $wk->id }}" {{ $item->waktu_konsumsi_id == $wk->id ? 'selected' : '' }}>
+                                                        {{ $wk->nama_waktu }}
+                                                    </option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                        <div class="col-span-2">
+                                            <label class="form-label">Nama Snack</label>
+                                            <input type="text" name="snack[{{ $index }}][nama]" class="form-input"
+                                                placeholder="Contoh: Kue Basah, dll" value="{{ $item->nama_konsumsi }}">
+                                        </div>
+                                        <div class="col-span-2">
+                                            <label class="form-label">No. Kwitansi</label>
+                                            <input type="text" name="snack[{{ $index }}][no_kwitansi]" class="form-input"
+                                                placeholder="No. Kwitansi" value="{{ $item->no_kwitansi }}">
+                                        </div>
+                                        <div class="col-span-1">
+                                            <label class="form-label">Jumlah</label>
+                                            <input type="number" name="snack[{{ $index }}][jumlah]" class="form-input snack-qty"
+                                                data-index="{{ $index }}" value="{{ $item->jumlah }}" min="1">
+                                        </div>
+                                        <div class="col-span-3">
+                                            <label class="form-label">Harga Satuan (Rp)</label>
+                                            <input type="number" name="snack[{{ $index }}][harga]" class="form-input snack-price"
+                                                data-index="{{ $index }}" value="{{ $item->harga }}" min="0"
+                                                onchange="validateSBM('snack', {{ $index }}); calculateTotals();">
+                                        </div>
+                                        <div class="col-span-2">
+                                            <label class="form-label text-xs">Subtotal</label>
+                                            <div class="px-3 py-2 bg-gray-100 rounded text-sm font-medium snack-subtotal"
+                                                data-index="{{ $index }}">
+                                                Rp {{ number_format($item->jumlah * $item->harga, 0, ',', '.') }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            @endforeach
+                        @else
+                            <!-- Default Snack Item Template -->
+                            <div class="snack-item border border-gray-200 rounded-lg p-4 bg-gray-50">
                             <div class="grid grid-cols-12 gap-3 items-end">
                                 <div class="col-span-2">
                                     <label class="form-label">Waktu</label>
@@ -119,6 +200,7 @@
                                 </div>
                             </div>
                         </div>
+                        @endif
                     </div>
 
                     <div class="flex justify-between items-center pt-3 border-t border-gray-200">
@@ -141,8 +223,61 @@
                     </div>
 
                     <div id="makanan-container" class="space-y-3">
-                        <!-- Makanan Item Template -->
-                        <div class="makanan-item border border-gray-200 rounded-lg p-4 bg-gray-50">
+                        @if($draftData['makanan']->count() > 0)
+                            <!-- Load Draft Makanan Items -->
+                            @foreach($draftData['makanan'] as $index => $item)
+                                <div class="makanan-item border border-gray-200 rounded-lg p-4 bg-yellow-50 relative">
+                                    @if($index > 0)
+                                        <button type="button" onclick="this.parentElement.remove(); calculateTotals();"
+                                            class="absolute top-2 right-2 text-red-600 hover:text-red-800 text-sm font-medium">
+                                            ✕ Hapus
+                                        </button>
+                                    @endif
+                                    <div class="grid grid-cols-12 gap-3 items-end">
+                                        <div class="col-span-2">
+                                            <label class="form-label">Waktu</label>
+                                            <select name="makanan[{{ $index }}][waktu_konsumsi_id]" class="form-input">
+                                                @foreach($waktuKonsumsi->filter(fn($w) => str_contains($w->kode_waktu, 'makan')) as $wk)
+                                                    <option value="{{ $wk->id }}" {{ $item->waktu_konsumsi_id == $wk->id ? 'selected' : '' }}>
+                                                        {{ $wk->nama_waktu }}
+                                                    </option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                        <div class="col-span-2">
+                                            <label class="form-label">Nama Makanan</label>
+                                            <input type="text" name="makanan[{{ $index }}][nama]" class="form-input"
+                                                placeholder="Contoh: Nasi Box, dll" value="{{ $item->nama_konsumsi }}">
+                                        </div>
+                                        <div class="col-span-2">
+                                            <label class="form-label">No. Kwitansi</label>
+                                            <input type="text" name="makanan[{{ $index }}][no_kwitansi]" class="form-input"
+                                                placeholder="No. Kwitansi" value="{{ $item->no_kwitansi }}">
+                                        </div>
+                                        <div class="col-span-1">
+                                            <label class="form-label">Jumlah</label>
+                                            <input type="number" name="makanan[{{ $index }}][jumlah]" class="form-input makanan-qty"
+                                                data-index="{{ $index }}" value="{{ $item->jumlah }}" min="1">
+                                        </div>
+                                        <div class="col-span-3">
+                                            <label class="form-label">Harga Satuan (Rp)</label>
+                                            <input type="number" name="makanan[{{ $index }}][harga]" class="form-input makanan-price"
+                                                data-index="{{ $index }}" value="{{ $item->harga }}" min="0"
+                                                onchange="validateSBM('makanan', {{ $index }}); calculateTotals();">
+                                        </div>
+                                        <div class="col-span-2">
+                                            <label class="form-label text-xs">Subtotal</label>
+                                            <div class="px-3 py-2 bg-gray-100 rounded text-sm font-medium makanan-subtotal"
+                                                data-index="{{ $index }}">
+                                                Rp {{ number_format($item->jumlah * $item->harga, 0, ',', '.') }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            @endforeach
+                        @else
+                            <!-- Default Makanan Item Template -->
+                            <div class="makanan-item border border-gray-200 rounded-lg p-4 bg-gray-50">
                             <div class="grid grid-cols-12 gap-3 items-end">
                                 <div class="col-span-2">
                                     <label class="form-label">Waktu</label>
@@ -182,6 +317,7 @@
                                 </div>
                             </div>
                         </div>
+                        @endif
                     </div>
 
                     <div class="flex justify-between items-center pt-3 border-t border-gray-200">
@@ -204,7 +340,50 @@
                     </div>
 
                     <div id="barang-container" class="space-y-3">
-                        <div class="barang-item border border-gray-200 rounded-lg p-4 bg-gray-50">
+                        @if($draftData['barang']->count() > 0)
+                            <!-- Load Draft Barang Items -->
+                            @foreach($draftData['barang'] as $index => $item)
+                                <div class="barang-item border border-gray-200 rounded-lg p-4 bg-yellow-50 relative">
+                                    @if($index > 0)
+                                        <button type="button" onclick="this.parentElement.remove(); calculateTotals();"
+                                            class="absolute top-2 right-2 text-red-600 hover:text-red-800 text-sm font-medium">
+                                            ✕ Hapus
+                                        </button>
+                                    @endif
+                                    <div class="grid grid-cols-12 gap-3 items-end">
+                                        <div class="col-span-3">
+                                            <label class="form-label">Nama Barang</label>
+                                            <input type="text" name="barang[{{ $index }}][nama]" class="form-input"
+                                                placeholder="Contoh: Kertas HVS, Spidol, dll" value="{{ $item->nama_konsumsi }}">
+                                        </div>
+                                        <div class="col-span-2">
+                                            <label class="form-label">No. Kwitansi</label>
+                                            <input type="text" name="barang[{{ $index }}][no_kwitansi]" class="form-input"
+                                                placeholder="No. Kwitansi" value="{{ $item->no_kwitansi }}">
+                                        </div>
+                                        <div class="col-span-2">
+                                            <label class="form-label">Jumlah</label>
+                                            <input type="number" name="barang[{{ $index }}][jumlah]" class="form-input barang-qty"
+                                                data-index="{{ $index }}" value="{{ $item->jumlah }}" min="1">
+                                        </div>
+                                        <div class="col-span-3">
+                                            <label class="form-label">Harga Satuan (Rp)</label>
+                                            <input type="number" name="barang[{{ $index }}][harga]" class="form-input barang-price"
+                                                data-index="{{ $index }}" value="{{ $item->harga }}" min="0">
+                                        </div>
+                                        <div class="col-span-2">
+                                            <label class="form-label text-xs">Subtotal</label>
+                                            <div class="px-3 py-2 bg-gray-100 rounded text-sm font-medium barang-subtotal"
+                                                data-index="{{ $index }}">
+                                                Rp {{ number_format($item->jumlah * $item->harga, 0, ',', '.') }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            @endforeach
+                        @else
+                            <!-- Default Barang Item Template -->
+                            <div class="barang-item border border-gray-200 rounded-lg p-4 bg-gray-50">
                             <div class="grid grid-cols-12 gap-3 items-end">
                                 <div class="col-span-3">
                                     <label class="form-label">Nama Barang</label>
@@ -235,6 +414,7 @@
                                 </div>
                             </div>
                         </div>
+                        @endif
                     </div>
 
                     <div class="flex justify-between items-center pt-3 border-t border-gray-200">
@@ -270,8 +450,11 @@
                     </div>
 
                     <div class="flex gap-2">
-                        <button type="submit" class="btn-primary" onclick="return validateForm()">
+                        <button type="submit" name="save_as_draft" value="0" class="btn-primary" onclick="return validateForm()">
                             💾 Simpan & Validasi
+                        </button>
+                        <button type="submit" name="save_as_draft" value="1" class="btn-secondary" onclick="return confirmDraft()">
+                            📝 Simpan sebagai Draft
                         </button>
                         <a href="{{ route('kegiatan.pilih-detail', $kegiatan->id) }}" class="btn-secondary">
                             Batal
@@ -284,9 +467,9 @@
 
     @push('scripts')
         <script>
-            let snackIndex = 1;
-            let makananIndex = 1;
-            let barangIndex = 1;
+            let snackIndex = {{ $draftData['snack']->count() > 0 ? $draftData['snack']->count() : 1 }};
+            let makananIndex = {{ $draftData['makanan']->count() > 0 ? $draftData['makanan']->count() : 1 }};
+            let barangIndex = {{ $draftData['barang']->count() > 0 ? $draftData['barang']->count() : 1 }};
             const jumlahPeserta = {{ $kegiatan->jumlah_peserta ?? 1 }};
 
             // SBM Tarif
@@ -588,6 +771,39 @@
                 return true;
             }
 
+            // Confirm Draft
+            function confirmDraft() {
+                let hasData = false;
+
+                // Check snack items
+                document.querySelectorAll('input[name^="snack"][name$="[nama]"]').forEach(input => {
+                    if (input.value.trim() !== '') {
+                        hasData = true;
+                    }
+                });
+
+                // Check makanan items
+                document.querySelectorAll('input[name^="makanan"][name$="[nama]"]').forEach(input => {
+                    if (input.value.trim() !== '') {
+                        hasData = true;
+                    }
+                });
+
+                // Check barang items
+                document.querySelectorAll('input[name^="barang"][name$="[nama]"]').forEach(input => {
+                    if (input.value.trim() !== '') {
+                        hasData = true;
+                    }
+                });
+
+                if (!hasData) {
+                    alert('⚠️ Minimal isi 1 item (Snack, Makanan, atau Barang) dengan nama yang lengkap!');
+                    return false;
+                }
+
+                return confirm('💾 Data akan disimpan sebagai DRAFT dan dapat diedit kembali. Lanjutkan?');
+            }
+
             // Attach events
             function attachCalculationEvents() {
                 document.querySelectorAll('.snack-qty, .snack-price, .makanan-qty, .makanan-price, .barang-qty, .barang-price').forEach(input => {
@@ -599,6 +815,7 @@
             // Initialize
             document.addEventListener('DOMContentLoaded', function () {
                 attachCalculationEvents();
+                calculateTotals(); // Calculate totals for loaded draft data
             });
         </script>
     @endpush

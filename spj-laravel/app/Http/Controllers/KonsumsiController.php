@@ -27,7 +27,23 @@ class KonsumsiController extends Controller
             ];
         }
 
-        return view('konsumsi.create', compact('kegiatan', 'waktuKonsumsi', 'tarifSBM'));
+        // Load draft data if exists
+        $draftData = [
+            'snack' => Konsumsi::where('kegiatan_id', $kegiatan_id)
+                ->where('kategori', 'snack')
+                ->where('status', 'draft')
+                ->get(),
+            'makanan' => Konsumsi::where('kegiatan_id', $kegiatan_id)
+                ->where('kategori', 'makanan')
+                ->where('status', 'draft')
+                ->get(),
+            'barang' => Konsumsi::where('kegiatan_id', $kegiatan_id)
+                ->where('kategori', 'barang')
+                ->where('status', 'draft')
+                ->get(),
+        ];
+
+        return view('konsumsi.create', compact('kegiatan', 'waktuKonsumsi', 'tarifSBM', 'draftData'));
     }
 
     /**
@@ -38,6 +54,15 @@ class KonsumsiController extends Controller
         // DEBUG: Log incoming request
         \Log::info('Konsumsi Store Request:', $request->all());
 
+        // Determine status (draft or final)
+        $status = $request->input('save_as_draft') ? 'draft' : 'final';
+
+        // Delete existing draft data
+        // - If saving as draft: replace old draft with new one
+        // - If saving as final: remove draft since it's being finalized
+        Konsumsi::where('kegiatan_id', $request->kegiatan_id)
+            ->where('status', 'draft')
+            ->delete();
 
         $validated = $request->validate([
             'kegiatan_id' => 'required|exists:kegiatans,id',
@@ -72,6 +97,7 @@ class KonsumsiController extends Controller
                         Konsumsi::create([
                             'kegiatan_id' => $request->kegiatan_id,
                             'kategori' => 'snack',
+                            'status' => $status,
                             'nama_konsumsi' => $item['nama'],
                             'no_kwitansi' => $item['no_kwitansi'] ?? null,
                             'waktu_konsumsi_id' => $item['waktu_konsumsi_id'] ?? null,
@@ -97,6 +123,7 @@ class KonsumsiController extends Controller
                         Konsumsi::create([
                             'kegiatan_id' => $request->kegiatan_id,
                             'kategori' => 'makanan',
+                            'status' => $status,
                             'nama_konsumsi' => $item['nama'],
                             'no_kwitansi' => $item['no_kwitansi'] ?? null,
                             'waktu_konsumsi_id' => $item['waktu_konsumsi_id'] ?? null,
@@ -122,6 +149,7 @@ class KonsumsiController extends Controller
                         Konsumsi::create([
                             'kegiatan_id' => $request->kegiatan_id,
                             'kategori' => 'barang',
+                            'status' => $status,
                             'nama_konsumsi' => $item['nama'],
                             'no_kwitansi' => $item['no_kwitansi'] ?? null,
                             'waktu_konsumsi_id' => null, // Barang tidak punya waktu konsumsi
@@ -144,8 +172,9 @@ class KonsumsiController extends Controller
             return back()->with('error', 'Tidak ada item yang disimpan. Pastikan nama item sudah diisi!');
         }
 
+        $statusMessage = $status === 'draft' ? 'draft' : 'final dan siap divalidasi';
         return redirect()->route('kegiatan.pilih-detail', $request->kegiatan_id)
-            ->with('success', "Berhasil menyimpan {$totalSaved} item konsumsi!");
+            ->with('success', "Berhasil menyimpan {$totalSaved} item konsumsi sebagai {$statusMessage}!");
     }
 
     /**
@@ -207,5 +236,19 @@ class KonsumsiController extends Controller
 
         return redirect()->route('konsumsi.validasi', $konsumsi->id)
             ->with('success', 'Data konsumsi berhasil dikoreksi! Silakan validasi ulang.');
+    }
+
+    /**
+     * Remove the specified konsumsi from storage.
+     */
+    public function destroy($id)
+    {
+        $konsumsi = Konsumsi::findOrFail($id);
+        $kegiatan_id = $konsumsi->kegiatan_id;
+
+        $konsumsi->delete();
+
+        return redirect()->route('kegiatan.pilih-detail', $kegiatan_id)
+            ->with('success', 'Item konsumsi berhasil dihapus!');
     }
 }

@@ -122,6 +122,8 @@ Route::get('kegiatan/{id}/konsumsi/create', [KonsumsiController::class, 'create'
     ->name('konsumsi.create');
 Route::post('konsumsi', [KonsumsiController::class, 'store'])
     ->name('konsumsi.store');
+Route::delete('konsumsi/{id}', [KonsumsiController::class, 'destroy'])
+    ->name('konsumsi.destroy');
 Route::get('konsumsi/{id}/validasi', [KonsumsiController::class, 'validasiSBM'])
     ->name('konsumsi.validasi');
 Route::get('konsumsi/{id}/koreksi', [KonsumsiController::class, 'koreksi'])
