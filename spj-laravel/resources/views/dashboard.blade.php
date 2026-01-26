@@ -103,7 +103,7 @@
     <!-- Recent Activity -->
     <div class="bg-white rounded-xl shadow-sm overflow-hidden">
         <div class="px-6 py-5 border-b border-gray-200">
-            <h2 class="text-lg font-semibold text-gray-900">Aktivitas Terbaru</h2>
+            <h2 class="text-lg font-semibold text-gray-900">Kegiatan Terbaru</h2>
             <p class="text-sm text-gray-500 mt-0.5" id="activity-count">{{ $recentActivities->total() ?? 0 }} kegiatan</p>
         </div>
         <div class="divide-y divide-gray-200" id="activities-list">

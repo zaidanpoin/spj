@@ -14,6 +14,7 @@ class Konsumsi extends Model
     protected $fillable = [
         'kegiatan_id',
         'kategori',
+        'status',
         'waktu_konsumsi_id',
         'nama_konsumsi',
         'no_kwitansi',
@@ -40,5 +41,16 @@ class Konsumsi extends Model
     public function getSubtotalAttribute()
     {
         return $this->jumlah * $this->harga;
+    }
+
+    // Scope untuk filter status
+    public function scopeDraft($query)
+    {
+        return $query->where('status', 'draft');
+    }
+
+    public function scopeFinal($query)
+    {
+        return $query->where('status', 'final');
     }
 }
