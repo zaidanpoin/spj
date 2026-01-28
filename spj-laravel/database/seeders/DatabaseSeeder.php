@@ -20,6 +20,8 @@ class DatabaseSeeder extends Seeder
             MAKSeeder::class,
             PPKSeeder::class,
             SBMHonorariumSeeder::class,
+            // Ensure roles & permissions exist before creating users
+            \Database\Seeders\RolePermissionSeeder::class,
             UserSeeder::class,
         ]);
 

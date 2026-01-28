@@ -41,11 +41,34 @@ class UserSeeder extends Seeder
             ],
         ];
 
-        foreach ($users as $user) {
-            User::updateOrCreate(
-                ['email' => $user['email']],
-                $user
+        foreach ($users as $userData) {
+            $user = User::updateOrCreate(
+                ['email' => $userData['email']],
+                [
+                    'name' => $userData['name'],
+                    'password' => $userData['password'],
+                    'role' => $userData['role'],
+                    'status' => $userData['status'],
+                ]
             );
+
+            // Map legacy role field to Spatie role names
+            $roleMap = [
+                'super_admin' => 'super-admin',
+                'admin' => 'admin',
+                'user' => 'staff',
+                'viewer' => 'viewer',
+            ];
+
+            $spatieRole = $roleMap[$userData['role']] ?? null;
+            if ($spatieRole) {
+                // assignRole is idempotent
+                try {
+                    $user->assignRole($spatieRole);
+                } catch (\Exception $e) {
+                    // If role doesn't exist yet, skip silently (RolePermissionSeeder should create roles)
+                }
+            }
         }
 
         $this->command->info('User seeder completed! ' . count($users) . ' users created/updated.');
