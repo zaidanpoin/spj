@@ -29,153 +29,314 @@ Route::get('/', function () {
     return view('dashboard', compact('totalKegiatan', 'totalAnggaran', 'totalKwitansi', 'recentActivities'));
 })->middleware('auth')->name('home');
 
-// Master Routes (Admin only)
-Route::prefix('master')->middleware(['auth', 'admin'])->group(function () {
-    // Unor CRUD
-    Route::resource('unor', UnorController::class)->names([
-        'index' => 'master.unor.index',
-        'create' => 'master.unor.create',
-        'store' => 'master.unor.store',
-        'edit' => 'master.unor.edit',
-        'update' => 'master.unor.update',
-        'destroy' => 'master.unor.destroy',
-    ]);
+// Master Routes - Unor
+Route::prefix('master')->middleware(['auth'])->group(function () {
+    Route::get('unor', [UnorController::class, 'index'])
+        ->middleware('permission:view-unor')
+        ->name('master.unor.index');
+    Route::get('unor/create', [UnorController::class, 'create'])
+        ->middleware('permission:create-unor')
+        ->name('master.unor.create');
+    Route::post('unor', [UnorController::class, 'store'])
+        ->middleware('permission:create-unor')
+        ->name('master.unor.store');
+    Route::get('unor/{unor}/edit', [UnorController::class, 'edit'])
+        ->middleware('permission:edit-unor')
+        ->name('master.unor.edit');
+    Route::put('unor/{unor}', [UnorController::class, 'update'])
+        ->middleware('permission:edit-unor')
+        ->name('master.unor.update');
+    Route::delete('unor/{unor}', [UnorController::class, 'destroy'])
+        ->middleware('permission:delete-unor')
+        ->name('master.unor.destroy');
 
     // Unit Kerja CRUD
-    Route::resource('unit-kerja', UnitKerjaController::class)->names([
-        'index' => 'master.unit-kerja.index',
-        'create' => 'master.unit-kerja.create',
-        'store' => 'master.unit-kerja.store',
-        'edit' => 'master.unit-kerja.edit',
-        'update' => 'master.unit-kerja.update',
-        'destroy' => 'master.unit-kerja.destroy',
-    ]);
+    Route::get('unit-kerja', [UnitKerjaController::class, 'index'])
+        ->middleware('permission:view-unit-kerja')
+        ->name('master.unit-kerja.index');
+    Route::get('unit-kerja/create', [UnitKerjaController::class, 'create'])
+        ->middleware('permission:create-unit-kerja')
+        ->name('master.unit-kerja.create');
+    Route::post('unit-kerja', [UnitKerjaController::class, 'store'])
+        ->middleware('permission:create-unit-kerja')
+        ->name('master.unit-kerja.store');
+    Route::get('unit-kerja/{unit_kerja}/edit', [UnitKerjaController::class, 'edit'])
+        ->middleware('permission:edit-unit-kerja')
+        ->name('master.unit-kerja.edit');
+    Route::put('unit-kerja/{unit_kerja}', [UnitKerjaController::class, 'update'])
+        ->middleware('permission:edit-unit-kerja')
+        ->name('master.unit-kerja.update');
+    Route::delete('unit-kerja/{unit_kerja}', [UnitKerjaController::class, 'destroy'])
+        ->middleware('permission:delete-unit-kerja')
+        ->name('master.unit-kerja.destroy');
 
     // SBM Konsumsi CRUD
-    Route::resource('sbm-konsumsi', SBMKonsumsiController::class)->names([
-        'index' => 'master.sbm-konsumsi.index',
-        'create' => 'master.sbm-konsumsi.create',
-        'store' => 'master.sbm-konsumsi.store',
-        'edit' => 'master.sbm-konsumsi.edit',
-        'update' => 'master.sbm-konsumsi.update',
-        'destroy' => 'master.sbm-konsumsi.destroy',
-    ]);
+    Route::get('sbm-konsumsi', [SBMKonsumsiController::class, 'index'])
+        ->middleware('permission:view-sbm-konsumsi')
+        ->name('master.sbm-konsumsi.index');
+    Route::get('sbm-konsumsi/create', [SBMKonsumsiController::class, 'create'])
+        ->middleware('permission:create-sbm-konsumsi')
+        ->name('master.sbm-konsumsi.create');
+    Route::post('sbm-konsumsi', [SBMKonsumsiController::class, 'store'])
+        ->middleware('permission:create-sbm-konsumsi')
+        ->name('master.sbm-konsumsi.store');
+    Route::get('sbm-konsumsi/{sbm_konsumsi}/edit', [SBMKonsumsiController::class, 'edit'])
+        ->middleware('permission:edit-sbm-konsumsi')
+        ->name('master.sbm-konsumsi.edit');
+    Route::put('sbm-konsumsi/{sbm_konsumsi}', [SBMKonsumsiController::class, 'update'])
+        ->middleware('permission:edit-sbm-konsumsi')
+        ->name('master.sbm-konsumsi.update');
+    Route::delete('sbm-konsumsi/{sbm_konsumsi}', [SBMKonsumsiController::class, 'destroy'])
+        ->middleware('permission:delete-sbm-konsumsi')
+        ->name('master.sbm-konsumsi.destroy');
 
     // SBM Honorarium CRUD
-    Route::resource('sbm-honorarium', SBMHonorariumController::class)->names([
-        'index' => 'master.sbm-honorarium.index',
-        'create' => 'master.sbm-honorarium.create',
-        'store' => 'master.sbm-honorarium.store',
-        'edit' => 'master.sbm-honorarium.edit',
-        'update' => 'master.sbm-honorarium.update',
-        'destroy' => 'master.sbm-honorarium.destroy',
-    ]);
+    Route::get('sbm-honorarium', [SBMHonorariumController::class, 'index'])
+        ->middleware('permission:view-sbm-honorarium')
+        ->name('master.sbm-honorarium.index');
+    Route::get('sbm-honorarium/create', [SBMHonorariumController::class, 'create'])
+        ->middleware('permission:create-sbm-honorarium')
+        ->name('master.sbm-honorarium.create');
+    Route::post('sbm-honorarium', [SBMHonorariumController::class, 'store'])
+        ->middleware('permission:create-sbm-honorarium')
+        ->name('master.sbm-honorarium.store');
+    Route::get('sbm-honorarium/{sbm_honorarium}/edit', [SBMHonorariumController::class, 'edit'])
+        ->middleware('permission:edit-sbm-honorarium')
+        ->name('master.sbm-honorarium.edit');
+    Route::put('sbm-honorarium/{sbm_honorarium}', [SBMHonorariumController::class, 'update'])
+        ->middleware('permission:edit-sbm-honorarium')
+        ->name('master.sbm-honorarium.update');
+    Route::delete('sbm-honorarium/{sbm_honorarium}', [SBMHonorariumController::class, 'destroy'])
+        ->middleware('permission:delete-sbm-honorarium')
+        ->name('master.sbm-honorarium.destroy');
 
-    Route::resource('/waktu-konsumsi', App\Http\Controllers\Master\WaktuKonsumsiController::class)
-        ->names('master.waktu-konsumsi');
+    // Waktu Konsumsi CRUD
+    Route::get('waktu-konsumsi', [App\Http\Controllers\Master\WaktuKonsumsiController::class, 'index'])
+        ->middleware('permission:view-waktu-konsumsi')
+        ->name('master.waktu-konsumsi.index');
+    Route::get('waktu-konsumsi/create', [App\Http\Controllers\Master\WaktuKonsumsiController::class, 'create'])
+        ->middleware('permission:create-waktu-konsumsi')
+        ->name('master.waktu-konsumsi.create');
+    Route::post('waktu-konsumsi', [App\Http\Controllers\Master\WaktuKonsumsiController::class, 'store'])
+        ->middleware('permission:create-waktu-konsumsi')
+        ->name('master.waktu-konsumsi.store');
+    Route::get('waktu-konsumsi/{waktu_konsumsi}/edit', [App\Http\Controllers\Master\WaktuKonsumsiController::class, 'edit'])
+        ->middleware('permission:edit-waktu-konsumsi')
+        ->name('master.waktu-konsumsi.edit');
+    Route::put('waktu-konsumsi/{waktu_konsumsi}', [App\Http\Controllers\Master\WaktuKonsumsiController::class, 'update'])
+        ->middleware('permission:edit-waktu-konsumsi')
+        ->name('master.waktu-konsumsi.update');
+    Route::delete('waktu-konsumsi/{waktu_konsumsi}', [App\Http\Controllers\Master\WaktuKonsumsiController::class, 'destroy'])
+        ->middleware('permission:delete-waktu-konsumsi')
+        ->name('master.waktu-konsumsi.destroy');
 
     // MAK CRUD
-    Route::resource('/mak', App\Http\Controllers\Master\MAKController::class)
-        ->names('master.mak');
+    Route::get('mak', [App\Http\Controllers\Master\MAKController::class, 'index'])
+        ->middleware('permission:view-mak')
+        ->name('master.mak.index');
+    Route::get('mak/create', [App\Http\Controllers\Master\MAKController::class, 'create'])
+        ->middleware('permission:create-mak')
+        ->name('master.mak.create');
+    Route::post('mak', [App\Http\Controllers\Master\MAKController::class, 'store'])
+        ->middleware('permission:create-mak')
+        ->name('master.mak.store');
+    Route::get('mak/{mak}/edit', [App\Http\Controllers\Master\MAKController::class, 'edit'])
+        ->middleware('permission:edit-mak')
+        ->name('master.mak.edit');
+    Route::put('mak/{mak}', [App\Http\Controllers\Master\MAKController::class, 'update'])
+        ->middleware('permission:edit-mak')
+        ->name('master.mak.update');
+    Route::delete('mak/{mak}', [App\Http\Controllers\Master\MAKController::class, 'destroy'])
+        ->middleware('permission:delete-mak')
+        ->name('master.mak.destroy');
 
     // PPK CRUD
-    Route::resource('/ppk', App\Http\Controllers\Master\PPKController::class)
-        ->names('master.ppk');
+    Route::get('ppk', [App\Http\Controllers\Master\PPKController::class, 'index'])
+        ->middleware('permission:view-ppk')
+        ->name('master.ppk.index');
+    Route::get('ppk/create', [App\Http\Controllers\Master\PPKController::class, 'create'])
+        ->middleware('permission:create-ppk')
+        ->name('master.ppk.create');
+    Route::post('ppk', [App\Http\Controllers\Master\PPKController::class, 'store'])
+        ->middleware('permission:create-ppk')
+        ->name('master.ppk.store');
+    Route::get('ppk/{ppk}/edit', [App\Http\Controllers\Master\PPKController::class, 'edit'])
+        ->middleware('permission:edit-ppk')
+        ->name('master.ppk.edit');
+    Route::put('ppk/{ppk}', [App\Http\Controllers\Master\PPKController::class, 'update'])
+        ->middleware('permission:edit-ppk')
+        ->name('master.ppk.update');
+    Route::delete('ppk/{ppk}', [App\Http\Controllers\Master\PPKController::class, 'destroy'])
+        ->middleware('permission:delete-ppk')
+        ->name('master.ppk.destroy');
 
     // Bendahara CRUD
-    Route::resource('/bendahara', App\Http\Controllers\BendaharaController::class)
-        ->names('master.bendahara');
+    Route::get('bendahara', [App\Http\Controllers\BendaharaController::class, 'index'])
+        ->middleware('permission:view-bendahara')
+        ->name('master.bendahara.index');
+    Route::get('bendahara/create', [App\Http\Controllers\BendaharaController::class, 'create'])
+        ->middleware('permission:create-bendahara')
+        ->name('master.bendahara.create');
+    Route::post('bendahara', [App\Http\Controllers\BendaharaController::class, 'store'])
+        ->middleware('permission:create-bendahara')
+        ->name('master.bendahara.store');
+    Route::get('bendahara/{bendahara}/edit', [App\Http\Controllers\BendaharaController::class, 'edit'])
+        ->middleware('permission:edit-bendahara')
+        ->name('master.bendahara.edit');
+    Route::put('bendahara/{bendahara}', [App\Http\Controllers\BendaharaController::class, 'update'])
+        ->middleware('permission:edit-bendahara')
+        ->name('master.bendahara.update');
+    Route::delete('bendahara/{bendahara}', [App\Http\Controllers\BendaharaController::class, 'destroy'])
+        ->middleware('permission:delete-bendahara')
+        ->name('master.bendahara.destroy');
 });
 
-// User Management Routes (Admin + Super Admin)
-Route::middleware(['auth', 'admin'])->prefix('users')->group(function () {
-    Route::get('/', [App\Http\Controllers\UserController::class, 'index'])->name('users.index');
-    Route::get('/create', [App\Http\Controllers\UserController::class, 'create'])->name('users.create');
-    Route::post('/', [App\Http\Controllers\UserController::class, 'store'])->name('users.store');
-    Route::get('/{id}/edit', [App\Http\Controllers\UserController::class, 'edit'])->name('users.edit');
-    Route::put('/{id}', [App\Http\Controllers\UserController::class, 'update'])->name('users.update');
-    Route::delete('/{id}', [App\Http\Controllers\UserController::class, 'destroy'])->name('users.destroy');
+// User Management Routes
+Route::middleware(['auth'])->prefix('users')->group(function () {
+    Route::get('/', [App\Http\Controllers\UserController::class, 'index'])
+        ->middleware('permission:view-users')
+        ->name('users.index');
+    Route::get('/create', [App\Http\Controllers\UserController::class, 'create'])
+        ->middleware('permission:create-users')
+        ->name('users.create');
+    Route::post('/', [App\Http\Controllers\UserController::class, 'store'])
+        ->middleware('permission:create-users')
+        ->name('users.store');
+    Route::get('/{id}/edit', [App\Http\Controllers\UserController::class, 'edit'])
+        ->middleware('permission:edit-users')
+        ->name('users.edit');
+    Route::put('/{id}', [App\Http\Controllers\UserController::class, 'update'])
+        ->middleware('permission:edit-users')
+        ->name('users.update');
+    Route::delete('/{id}', [App\Http\Controllers\UserController::class, 'destroy'])
+        ->middleware('permission:delete-users')
+        ->name('users.destroy');
 
     // Super Admin only actions
     Route::post('/{id}/suspend', [App\Http\Controllers\UserController::class, 'suspend'])
         ->name('users.suspend')
-        ->middleware('super_admin');
+        ->middleware('role:super-admin');
     Route::post('/{id}/activate', [App\Http\Controllers\UserController::class, 'activate'])
         ->name('users.activate')
-        ->middleware('super_admin');
+        ->middleware('role:super-admin');
     Route::post('/{id}/reset-password', [App\Http\Controllers\UserController::class, 'resetPassword'])
         ->name('users.reset-password')
-        ->middleware('super_admin');
+        ->middleware('role:super-admin');
+});
+
+// Role Management Routes (Super Admin only)
+Route::middleware(['auth', 'role:super-admin'])->prefix('roles')->group(function () {
+    Route::get('/', [App\Http\Controllers\RoleController::class, 'index'])->name('roles.index');
+    Route::get('/create', [App\Http\Controllers\RoleController::class, 'create'])->name('roles.create');
+    Route::post('/', [App\Http\Controllers\RoleController::class, 'store'])->name('roles.store');
+    Route::get('/{id}/edit', [App\Http\Controllers\RoleController::class, 'edit'])->name('roles.edit');
+    Route::put('/{id}', [App\Http\Controllers\RoleController::class, 'update'])->name('roles.update');
+    Route::delete('/{id}', [App\Http\Controllers\RoleController::class, 'destroy'])->name('roles.destroy');
+});
+
+// Permission Management Routes (Super Admin only)
+Route::middleware(['auth', 'role:super-admin'])->prefix('permissions')->group(function () {
+    Route::get('/', [App\Http\Controllers\PermissionController::class, 'index'])->name('permissions.index');
+    Route::get('/create', [App\Http\Controllers\PermissionController::class, 'create'])->name('permissions.create');
+    Route::post('/', [App\Http\Controllers\PermissionController::class, 'store'])->name('permissions.store');
+    Route::get('/{id}/edit', [App\Http\Controllers\PermissionController::class, 'edit'])->name('permissions.edit');
+    Route::put('/{id}', [App\Http\Controllers\PermissionController::class, 'update'])->name('permissions.update');
+    Route::delete('/{id}', [App\Http\Controllers\PermissionController::class, 'destroy'])->name('permissions.destroy');
 });
 
 // Kegiatan Routes
-Route::resource('daftar-kegiatan', KegiatanController::class)->names([
-    'index' => 'kegiatan.index',
-    'create' => 'kegiatan.create',
-    'store' => 'kegiatan.store',
-    'show' => 'kegiatan.show',
-    'edit' => 'kegiatan.edit',
-    'update' => 'kegiatan.update',
-    'destroy' => 'kegiatan.destroy',
-]);
-Route::get('daftar-kegiatan/{id}/pilih-detail', [KegiatanController::class, 'pilihDetail'])
-    ->name('kegiatan.pilih-detail');
+Route::middleware(['auth'])->group(function () {
+    Route::get('daftar-kegiatan', [KegiatanController::class, 'index'])
+        ->middleware('permission:view-kegiatan')
+        ->name('kegiatan.index');
+    Route::get('daftar-kegiatan/create', [KegiatanController::class, 'create'])
+        ->middleware('permission:create-kegiatan')
+        ->name('kegiatan.create');
+    Route::post('daftar-kegiatan', [KegiatanController::class, 'store'])
+        ->middleware('permission:create-kegiatan')
+        ->name('kegiatan.store');
+    Route::get('daftar-kegiatan/{id}', [KegiatanController::class, 'show'])
+        ->middleware('permission:view-kegiatan')
+        ->name('kegiatan.show');
+    Route::get('daftar-kegiatan/{id}/edit', [KegiatanController::class, 'edit'])
+        ->middleware('permission:edit-kegiatan')
+        ->name('kegiatan.edit');
+    Route::put('daftar-kegiatan/{id}', [KegiatanController::class, 'update'])
+        ->middleware('permission:edit-kegiatan')
+        ->name('kegiatan.update');
+    Route::delete('daftar-kegiatan/{id}', [KegiatanController::class, 'destroy'])
+        ->middleware('permission:delete-kegiatan')
+        ->name('kegiatan.destroy');
+    Route::get('daftar-kegiatan/{id}/pilih-detail', [KegiatanController::class, 'pilihDetail'])
+        ->middleware('permission:view-kegiatan')
+        ->name('kegiatan.pilih-detail');
+});
 
 // Konsumsi Routes
-Route::get('kegiatan/{id}/konsumsi/create', [KonsumsiController::class, 'create'])
-    ->name('konsumsi.create');
-Route::post('konsumsi', [KonsumsiController::class, 'store'])
-    ->name('konsumsi.store');
-Route::delete('konsumsi/{id}', [KonsumsiController::class, 'destroy'])
-    ->name('konsumsi.destroy');
-Route::get('konsumsi/{id}/validasi', [KonsumsiController::class, 'validasiSBM'])
-    ->name('konsumsi.validasi');
-Route::get('konsumsi/{id}/koreksi', [KonsumsiController::class, 'koreksi'])
-    ->name('konsumsi.koreksi');
-Route::put('konsumsi/{id}/koreksi', [KonsumsiController::class, 'updateKoreksi'])
-    ->name('konsumsi.update-koreksi');
+Route::middleware(['auth'])->group(function () {
+    Route::get('kegiatan/{id}/konsumsi/create', [KonsumsiController::class, 'create'])
+        ->middleware('permission:create-konsumsi')
+        ->name('konsumsi.create');
+    Route::post('konsumsi', [KonsumsiController::class, 'store'])
+        ->middleware('permission:create-konsumsi')
+        ->name('konsumsi.store');
+    Route::delete('konsumsi/{id}', [KonsumsiController::class, 'destroy'])
+        ->middleware('permission:delete-konsumsi')
+        ->name('konsumsi.destroy');
+    Route::get('konsumsi/{id}/validasi', [KonsumsiController::class, 'validasiSBM'])
+        ->middleware('permission:validasi-konsumsi')
+        ->name('konsumsi.validasi');
+    Route::get('konsumsi/{id}/koreksi', [KonsumsiController::class, 'koreksi'])
+        ->middleware('permission:edit-konsumsi')
+        ->name('konsumsi.koreksi');
+    Route::put('konsumsi/{id}/koreksi', [KonsumsiController::class, 'updateKoreksi'])
+        ->middleware('permission:edit-konsumsi')
+        ->name('konsumsi.update-koreksi');
+});
 
 // Narasumber Routes
-Route::get('kegiatan/{id}/narasumber/create', [NarasumberController::class, 'create'])
-    ->name('narasumber.create');
-Route::post('narasumber', [NarasumberController::class, 'store'])
-    ->name('narasumber.store');
-Route::delete('narasumber/{id}', [NarasumberController::class, 'destroy'])
-    ->name('narasumber.destroy');
+Route::middleware(['auth'])->group(function () {
+    Route::get('kegiatan/{id}/narasumber/create', [NarasumberController::class, 'create'])
+        ->middleware('permission:create-narasumber')
+        ->name('narasumber.create');
+    Route::post('narasumber', [NarasumberController::class, 'store'])
+        ->middleware('permission:create-narasumber')
+        ->name('narasumber.store');
+    Route::delete('narasumber/{id}', [NarasumberController::class, 'destroy'])
+        ->middleware('permission:delete-narasumber')
+        ->name('narasumber.destroy');
 
-// Narasumber Print Routes
-Route::get('kegiatan/{id}/daftar-hadir-narasumber', [NarasumberController::class, 'daftarHadir'])
-    ->name('narasumber.daftar-hadir');
-Route::get('kegiatan/{id}/daftar-honorarium', [NarasumberController::class, 'daftarHonorarium'])
-    ->name('narasumber.daftar-honorarium');
-
-// Kwitansi Routes
-Route::get('kwitansi/generate', [App\Http\Controllers\KwitansiController::class, 'generate'])
-    ->name('kwitansi.generate');
-Route::get('kwitansi/download/{kegiatan_id}/{jenis}', [App\Http\Controllers\KwitansiController::class, 'download'])
-    ->name('kwitansi.download');
-Route::get('kegiatan/{id}/daftar-hadir', [App\Http\Controllers\KwitansiController::class, 'daftarHadir'])
-    ->name('kegiatan.daftar-hadir');
-
-// Barang Routes
-Route::get('kegiatan/{id}/barang/create', [BarangController::class, 'create'])
-    ->name('barang.create');
-Route::post('barang', [BarangController::class, 'store'])
-    ->name('barang.store');
-
-// Honorarium Routes (Belanja Jasa Profesi)
-Route::get('kegiatan/{id}/honorarium/create', [HonorariumController::class, 'create'])
-    ->name('honorarium.create');
-Route::post('honorarium', [HonorariumController::class, 'store'])
-    ->name('honorarium.store');
+    // Narasumber Print Routes
+    Route::get('kegiatan/{id}/daftar-hadir-narasumber', [NarasumberController::class, 'daftarHadir'])
+        ->middleware('permission:view-narasumber')
+        ->name('narasumber.daftar-hadir');
+    Route::get('kegiatan/{id}/daftar-honorarium', [NarasumberController::class, 'daftarHonorarium'])
+        ->middleware('permission:view-narasumber')
+        ->name('narasumber.daftar-honorarium');
+});
 
 // Kwitansi Routes
-Route::get('kwitansi/generate/{kegiatan_id}/{jenis}', [KwitansiController::class, 'generate'])
-    ->name('kwitansi.generate');
-Route::get('kwitansi/{id}/preview', [KwitansiController::class, 'preview'])
-    ->name('kwitansi.preview');
-Route::post('kwitansi/{id}/approve', [KwitansiController::class, 'approve'])
-    ->name('kwitansi.approve');
-Route::get('kwitansi/{id}/download', [KwitansiController::class, 'downloadPDF'])
-    ->name('kwitansi.download');
+Route::middleware(['auth'])->group(function () {
+    Route::get('kwitansi/generate', [App\Http\Controllers\KwitansiController::class, 'generate'])
+        ->middleware('permission:create-kwitansi')
+        ->name('kwitansi.generate');
+    Route::get('kwitansi/download/{kegiatan_id}/{jenis}', [App\Http\Controllers\KwitansiController::class, 'download'])
+        ->middleware('permission:download-kwitansi')
+        ->name('kwitansi.download');
+    Route::get('kegiatan/{id}/daftar-hadir', [App\Http\Controllers\KwitansiController::class, 'daftarHadir'])
+        ->middleware('permission:view-kwitansi')
+        ->name('kegiatan.daftar-hadir');
+    Route::get('kwitansi/generate/{kegiatan_id}/{jenis}', [KwitansiController::class, 'generate'])
+        ->middleware('permission:create-kwitansi')
+        ->name('kwitansi.generate');
+    Route::get('kwitansi/{id}/preview', [KwitansiController::class, 'preview'])
+        ->middleware('permission:view-kwitansi')
+        ->name('kwitansi.preview');
+    Route::post('kwitansi/{id}/approve', [KwitansiController::class, 'approve'])
+        ->middleware('permission:approve-kwitansi')
+        ->name('kwitansi.approve');
+    Route::get('kwitansi/{id}/download', [KwitansiController::class, 'downloadPDF'])
+        ->middleware('permission:download-kwitansi')
+        ->name('kwitansi.download');
+});
 

@@ -262,6 +262,48 @@ class BreadcrumbHelper
             }
         }
 
+        // Roles breadcrumbs
+        elseif (isset($segments[0]) && $segments[0] === 'roles') {
+            $breadcrumbs[] = [
+                'label' => 'Role Management',
+                'url' => route('roles.index')
+            ];
+
+            if (isset($segments[1])) {
+                $actions = [
+                    'create' => 'Tambah Role',
+                    'edit' => 'Edit Role',
+                ];
+                if (isset($actions[$segments[1]])) {
+                    $breadcrumbs[] = [
+                        'label' => $actions[$segments[1]],
+                        'url' => '#'
+                    ];
+                }
+            }
+        }
+
+        // Permissions breadcrumbs
+        elseif (isset($segments[0]) && $segments[0] === 'permissions') {
+            $breadcrumbs[] = [
+                'label' => 'Permission Management',
+                'url' => route('permissions.index')
+            ];
+
+            if (isset($segments[1])) {
+                $actions = [
+                    'create' => 'Tambah Permission',
+                    'edit' => 'Edit Permission',
+                ];
+                if (isset($actions[$segments[1]])) {
+                    $breadcrumbs[] = [
+                        'label' => $actions[$segments[1]],
+                        'url' => '#'
+                    ];
+                }
+            }
+        }
+
         return $breadcrumbs;
     }
 }

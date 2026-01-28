@@ -58,6 +58,10 @@
                     <button type="submit" class="flex-1 sm:flex-none px-3 sm:px-4 py-1.5 sm:py-2 text-sm bg-primary text-white rounded-lg hover:bg-primary-dark transition">
                         Cari
                     </button>
+                       <a href="{{ route('roles.index') }}"
+                        class="flex-1 sm:flex-none px-3 sm:px-4 py-1.5 sm:py-2 text-sm bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition text-center">
+                        Roles
+                    </a>
                     <a href="{{ route('users.index') }}"
                         class="flex-1 sm:flex-none px-3 sm:px-4 py-1.5 sm:py-2 text-sm bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition text-center">
                         Reset
@@ -184,7 +188,7 @@
                             </div>
                             <span class="text-xs text-gray-400">#{{ $users->firstItem() + $index }}</span>
                         </div>
-                        
+
                         <div class="flex items-center gap-2 mb-3">
                             @if($user->role === 'super_admin')
                                 <span class="px-2 py-0.5 bg-purple-100 text-purple-700 rounded-full text-xs font-medium">Super Admin</span>
@@ -258,8 +262,8 @@
             <div class="px-4 py-3 border-t border-gray-200">
                 <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                     <div class="text-sm text-gray-600 text-center sm:text-left">
-                        Menampilkan <span class="font-medium">{{ $users->firstItem() ?? 0 }}</span> 
-                        - <span class="font-medium">{{ $users->lastItem() ?? 0 }}</span> 
+                        Menampilkan <span class="font-medium">{{ $users->firstItem() ?? 0 }}</span>
+                        - <span class="font-medium">{{ $users->lastItem() ?? 0 }}</span>
                         dari <span class="font-medium">{{ $users->total() }}</span> data
                     </div>
                     @if($users->hasPages())
@@ -274,7 +278,7 @@
                                 $start = max(1, $users->currentPage() - 2);
                                 $end = min($users->lastPage(), $users->currentPage() + 2);
                             @endphp
-                            
+
                             @if($start > 1)
                                 <a href="{{ $users->url(1) }}" class="px-2 sm:px-3 py-1 bg-gray-100 text-gray-700 rounded text-xs sm:text-sm hover:bg-gray-200 transition">1</a>
                                 @if($start > 2)
