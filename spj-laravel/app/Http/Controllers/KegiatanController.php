@@ -14,7 +14,13 @@ class KegiatanController extends Controller
      */
     public function index(Request $request)
     {
-        $query = Kegiatan::with(['unor', 'unitKerja']);
+        $query = Kegiatan::with(['unor', 'unitKerja', 'user']);
+
+        // Filter by user's unit kerja (except super admin)
+        $user = auth()->user();
+        if ($user && !$user->hasRole('super-admin') && $user->id_unker) {
+            $query->where('unit_kerja_id', $user->id_unker);
+        }
 
         // Search
         if ($request->has('search') && $request->search != '') {
@@ -64,6 +70,7 @@ class KegiatanController extends Controller
             'uraian_kegiatan' => 'nullable|string',
             'unor_id' => 'required|exists:unors,id',
             'unit_kerja_id' => 'required|exists:unit_kerjas,id',
+            'unker_id' => 'nullable|exists:unit_kerjas,id',
             'mak_id' => 'required|exists:mak,id',
             'ppk_id' => 'required|exists:ppk,id',
             'bendahara_id' => 'nullable|exists:bendaharas,id',
@@ -80,6 +87,16 @@ class KegiatanController extends Controller
                 ->store('laporan_kegiatan', 'public');
         }
 
+        // set created_by if authenticated
+        if (auth()->check()) {
+            $validated['created_by'] = auth()->id();
+        }
+
+        // map unker_id to unit_kerja_id if provided
+        if (!empty($validated['unker_id'])) {
+            $validated['unit_kerja_id'] = $validated['unker_id'];
+        }
+
         $kegiatan = Kegiatan::create($validated);
 
         return redirect()->route('kegiatan.pilih-detail', $kegiatan->id)
@@ -92,6 +109,13 @@ class KegiatanController extends Controller
     public function show(string $id)
     {
         $kegiatan = Kegiatan::with(['unor', 'unitKerja', 'konsumsis', 'kwitansiBelanjas'])->findOrFail($id);
+
+        // Check authorization: user can only access their own unit kerja's data (except super admin)
+        $user = auth()->user();
+        if ($user && !$user->hasRole('super-admin') && $user->id_unker && $kegiatan->unit_kerja_id != $user->id_unker) {
+            abort(403, 'Anda tidak memiliki akses ke kegiatan ini.');
+        }
+
         return view('kegiatan.show', compact('kegiatan'));
     }
 
@@ -101,6 +125,12 @@ class KegiatanController extends Controller
     public function pilihDetail(string $id)
     {
         $kegiatan = Kegiatan::with(['unor', 'unitKerja'])->findOrFail($id);
+
+        // Check authorization: user can only access their own unit kerja's data (except super admin)
+        $user = auth()->user();
+        if ($user && !$user->hasRole('super-admin') && $user->id_unker && $kegiatan->unit_kerja_id != $user->id_unker) {
+            abort(403, 'Anda tidak memiliki akses ke kegiatan ini.');
+        }
 
         // Get konsumsi grouped by kategori
         // Exclude draft items from the detail view
@@ -148,6 +178,13 @@ class KegiatanController extends Controller
     public function edit(string $id)
     {
         $kegiatan = Kegiatan::findOrFail($id);
+
+        // Check authorization: user can only edit their own unit kerja's data (except super admin)
+        $user = auth()->user();
+        if ($user && !$user->hasRole('super-admin') && $user->id_unker && $kegiatan->unit_kerja_id != $user->id_unker) {
+            abort(403, 'Anda tidak memiliki akses untuk mengedit kegiatan ini.');
+        }
+
         $unors = Unor::all();
         $unitKerjas = UnitKerja::all();
         $makData = \App\Models\MAK::orderBy('tahun', 'desc')->orderBy('nama')->get();
@@ -165,10 +202,15 @@ class KegiatanController extends Controller
     {
         $kegiatan = Kegiatan::findOrFail($id);
 
+        // Check authorization: user can only update their own unit kerja's data (except super admin)
+        $user = auth()->user();
+        if ($user && !$user->hasRole('super-admin') && $user->id_unker && $kegiatan->unit_kerja_id != $user->id_unker) {
+            abort(403, 'Anda tidak memiliki akses untuk mengupdate kegiatan ini.');
+        }
+
         $validated = $request->validate([
             'nama_kegiatan' => 'required|string|max:255',
             'uraian_kegiatan' => 'nullable|string',
-            'unor_id' => 'required|exists:unors,id',
             'unit_kerja_id' => 'required|exists:unit_kerjas,id',
             'mak_id' => 'required|exists:mak,id',
             'ppk_id' => 'required|exists:ppk,id',
@@ -186,6 +228,10 @@ class KegiatanController extends Controller
                 ->store('laporan_kegiatan', 'public');
         }
 
+        // Auto-populate unor_id from unit_kerja relationship
+        $unitKerja = UnitKerja::findOrFail($validated['unit_kerja_id']);
+        $validated['unor_id'] = $unitKerja->unor_id;
+
         $kegiatan->update($validated);
 
         return redirect()->route('kegiatan.index')
@@ -198,6 +244,13 @@ class KegiatanController extends Controller
     public function destroy(string $id)
     {
         $kegiatan = Kegiatan::findOrFail($id);
+
+        // Check authorization: user can only delete their own unit kerja's data (except super admin)
+        $user = auth()->user();
+        if ($user && !$user->hasRole('super-admin') && $user->id_unker && $kegiatan->unit_kerja_id != $user->id_unker) {
+            abort(403, 'Anda tidak memiliki akses untuk menghapus kegiatan ini.');
+        }
+
         $kegiatan->delete();
 
         return redirect()->route('kegiatan.index')

@@ -24,6 +24,7 @@ class User extends Authenticatable
         'password',
         'role',
         'status',
+        'id_unker',
     ];
 
     /**
@@ -63,5 +64,15 @@ class User extends Authenticatable
     public function scopeByRole($query, $role)
     {
         return $query->where('role', $role);
+    }
+
+    public function kegiatans()
+    {
+        return $this->hasMany(Kegiatan::class, 'created_by');
+    }
+
+    public function unitKerja()
+    {
+        return $this->belongsTo(UnitKerja::class, 'id_unker');
     }
 }

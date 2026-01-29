@@ -42,43 +42,23 @@
                     @enderror
                 </div>
 
-                <!-- Unit Organisasi & Unit Kerja -->
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">
-                            Unit Organisasi <span class="text-red-500">*</span>
-                        </label>
-                        <select name="unor_id" required
-                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary @error('unor_id') border-red-500 @enderror">
-                            <option value="">Pilih Unor</option>
-                            @foreach($unors as $unor)
-                                <option value="{{ $unor->id }}" {{ old('unor_id', $kegiatan->unor_id) == $unor->id ? 'selected' : '' }}>
-                                    {{ $unor->nama_unor }}
-                                </option>
-                            @endforeach
-                        </select>
-                        @error('unor_id')
-                            <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                        @enderror
-                    </div>
-
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">
-                            Unit Kerja <span class="text-red-500">*</span>
-                        </label>
-                        <select name="unit_kerja_id" required
-                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary @error('unit_kerja_id') border-red-500 @enderror">
-                            <option value="">Pilih Unit Kerja</option>
-                            @foreach($unitKerjas as $uk)
-                                <option value="{{ $uk->id }}" {{ old('unit_kerja_id', $kegiatan->unit_kerja_id) == $uk->id ? 'selected' : '' }}>
-                                    {{ $uk->nama_unit }}
-                                </option>
-                            @endforeach
-                        </select>
-                        @error('unit_kerja_id')
-                            <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                        @enderror
-                    </div>
+                <!-- Unit Kerja - Unit Organisasi -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">
+                        Unit Kerja - Unit Organisasi <span class="text-red-500">*</span>
+                    </label>
+                    <select name="unit_kerja_id" required
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary @error('unit_kerja_id') border-red-500 @enderror">
+                        <option value="">Pilih Unit Kerja</option>
+                        @foreach($unitKerjas as $uk)
+                            <option value="{{ $uk->id }}" {{ old('unit_kerja_id', $kegiatan->unit_kerja_id) == $uk->id ? 'selected' : '' }}>
+                                {{ $uk->nama_unit }} - {{ $uk->unor->nama_unor }}
+                            </option>
+                        @endforeach
+                    </select>
+                    @error('unit_kerja_id')
+                        <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                    @enderror
                 </div>
 
                 <!-- Tanggal Mulai & Selesai -->

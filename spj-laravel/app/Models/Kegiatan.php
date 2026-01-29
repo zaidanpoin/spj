@@ -13,10 +13,12 @@ class Kegiatan extends Model
 
     protected $fillable = [
         'unor_id',
+        'unker_id',
         'unit_kerja_id',
         'mak_id',
         'ppk_id',
         'bendahara_id',
+        'created_by',
         'nama_kegiatan',
         'uraian_kegiatan',
         'tanggal_mulai',
@@ -70,5 +72,15 @@ class Kegiatan extends Model
     public function kwitansiBelanjas()
     {
         return $this->hasMany(KwitansiBelanja::class, 'kegiatan_id');
+    }
+
+    public function creator()
+    {
+        return $this->belongsTo(\App\Models\User::class, 'created_by');
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(\App\Models\User::class, 'created_by');
     }
 }
