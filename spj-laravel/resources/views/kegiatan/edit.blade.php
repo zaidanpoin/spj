@@ -109,15 +109,11 @@
                         <label class="block text-sm font-medium text-gray-700 mb-1">
                             PPK <span class="text-red-500">*</span>
                         </label>
-                        <select name="ppk_id" required
-                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary @error('ppk_id') border-red-500 @enderror">
-                            <option value="">Pilih PPK</option>
-                            @foreach($ppkData as $ppk)
-                                <option value="{{ $ppk->id }}" {{ old('ppk_id', $kegiatan->ppk_id) == $ppk->id ? 'selected' : '' }}>
-                                    {{ $ppk->nama }} ({{ $ppk->nip }})
-                                </option>
-                            @endforeach
-                        </select>
+                        <input type="hidden" name="ppk_id" id="ppk_id" value="{{ old('ppk_id', $kegiatan->ppk_id) }}" required>
+                        <button type="button" id="ppkSelectorBtn"
+                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-left bg-white hover:bg-gray-50 @error('ppk_id') border-red-500 @enderror">
+                            <span id="ppkSelectedText" class="text-gray-500">Pilih PPK</span>
+                        </button>
                         @error('ppk_id')
                             <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                         @enderror
@@ -127,15 +123,11 @@
                         <label class="block text-sm font-medium text-gray-700 mb-1">
                             Akun (MAK) <span class="text-red-500">*</span>
                         </label>
-                        <select name="mak_id" required
-                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary @error('mak_id') border-red-500 @enderror">
-                            <option value="">Pilih MAK</option>
-                            @foreach($makData as $mak)
-                                <option value="{{ $mak->id }}" {{ old('mak_id', $kegiatan->mak_id) == $mak->id ? 'selected' : '' }}>
-                                    {{ $mak->kode }} - {{ $mak->nama }}
-                                </option>
-                            @endforeach
-                        </select>
+                        <input type="hidden" name="mak_id" id="mak_id" value="{{ old('mak_id', $kegiatan->mak_id) }}" required>
+                        <button type="button" id="makSelectorBtn"
+                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-left bg-white hover:bg-gray-50 @error('mak_id') border-red-500 @enderror">
+                            <span id="makSelectedText" class="text-gray-500">Pilih MAK</span>
+                        </button>
                         @error('mak_id')
                             <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                         @enderror
@@ -220,4 +212,337 @@
             </form>
         </div>
     </div>
+
+    <!-- PPK Selector Modal -->
+    <div id="ppkModal" class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
+        <div class="relative top-20 mx-auto p-5 border w-11/12 max-w-4xl shadow-lg rounded-lg bg-white">
+            <div class="border-b border-gray-200 pb-3 mb-4">
+                <div class="flex justify-between items-center">
+                    <h3 class="text-lg font-semibold text-gray-900">DAFTAR PPK</h3>
+                    <button type="button" id="closePpkModal" class="text-gray-400 hover:text-gray-500">
+                        <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Search -->
+            <div class="mb-4">
+                <label class="block text-sm font-medium text-gray-700 mb-1">Kriteria:</label>
+                <input type="text" id="ppkSearchInput" placeholder="Cari nama atau NIP PPK..."
+                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary">
+            </div>
+
+            <!-- Table -->
+            <div class="overflow-x-auto mb-4">
+                <table class="min-w-full divide-y divide-gray-200 border border-gray-200">
+                    <thead class="bg-teal-600 text-white">
+                        <tr>
+                            <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider border-r border-teal-500">NO</th>
+                            <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider border-r border-teal-500">NAMA</th>
+                            <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider border-r border-teal-500">NIP</th>
+                            <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider border-r border-teal-500">SATKER</th>
+                            <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider">KDPPK</th>
+                        </tr>
+                    </thead>
+                    <tbody id="ppkTableBody" class="bg-white divide-y divide-gray-200">
+                        <!-- Will be populated by JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Pagination -->
+            <div class="flex justify-center items-center gap-2 mb-4">
+                <button type="button" id="ppkFirstPage" class="px-3 py-1 border border-gray-300 rounded hover:bg-gray-50">&lt;&lt;</button>
+                <button type="button" id="ppkPrevPage" class="px-3 py-1 border border-gray-300 rounded hover:bg-gray-50">&lt;</button>
+                <span id="ppkPageInfo" class="px-3 py-1">Hal: 1/1</span>
+                <button type="button" id="ppkNextPage" class="px-3 py-1 border border-gray-300 rounded hover:bg-gray-50">&gt;</button>
+                <button type="button" id="ppkLastPage" class="px-3 py-1 border border-gray-300 rounded hover:bg-gray-50">&gt;&gt;</button>
+            </div>
+
+            <!-- Actions -->
+            <div class="flex justify-end gap-2 border-t border-gray-200 pt-4">
+                <button type="button" id="cancelPpkSelection"
+                    class="px-6 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition">
+                    Close
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MAK Selector Modal -->
+    <div id="makModal" class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
+        <div class="relative top-20 mx-auto p-5 border w-11/12 max-w-4xl shadow-lg rounded-lg bg-white">
+            <div class="border-b border-gray-200 pb-3 mb-4">
+                <div class="flex justify-between items-center">
+                    <h3 class="text-lg font-semibold text-gray-900">DAFTAR MAK</h3>
+                    <button type="button" id="closeMakModal" class="text-gray-400 hover:text-gray-500">
+                        <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Search -->
+            <div class="mb-4">
+                <label class="block text-sm font-medium text-gray-700 mb-1">Kriteria:</label>
+                <input type="text" id="makSearchInput" placeholder="Cari kode atau nama MAK..."
+                    class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary">
+            </div>
+
+            <!-- Table -->
+            <div class="overflow-x-auto mb-4">
+                <table class="min-w-full divide-y divide-gray-200 border border-gray-200">
+                    <thead class="bg-teal-600 text-white">
+                        <tr>
+                            <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider border-r border-teal-500">NO</th>
+                            <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider border-r border-teal-500">KODE</th>
+                            <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider border-r border-teal-500">NAMA</th>
+                            <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider">TAHUN</th>
+                        </tr>
+                    </thead>
+                    <tbody id="makTableBody" class="bg-white divide-y divide-gray-200">
+                        <!-- Will be populated by JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Pagination -->
+            <div class="flex justify-center items-center gap-2 mb-4">
+                <button type="button" id="makFirstPage" class="px-3 py-1 border border-gray-300 rounded hover:bg-gray-50">&lt;&lt;</button>
+                <button type="button" id="makPrevPage" class="px-3 py-1 border border-gray-300 rounded hover:bg-gray-50">&lt;</button>
+                <span id="makPageInfo" class="px-3 py-1">Hal: 1/1</span>
+                <button type="button" id="makNextPage" class="px-3 py-1 border border-gray-300 rounded hover:bg-gray-50">&gt;</button>
+                <button type="button" id="makLastPage" class="px-3 py-1 border border-gray-300 rounded hover:bg-gray-50">&gt;&gt;</button>
+            </div>
+
+            <!-- Actions -->
+            <div class="flex justify-end gap-2 border-t border-gray-200 pt-4">
+                <button type="button" id="cancelMakSelection"
+                    class="px-6 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition">
+                    Close
+                </button>
+            </div>
+        </div>
+    </div>
 @endsection
+
+@push('scripts')
+<script>
+    const ppkData = @json($ppkData);
+    const makData = @json($makData);
+    let filteredPpkData = [...ppkData];
+    let selectedPpkId = {{ old('ppk_id', $kegiatan->ppk_id ?? 'null') }};
+    const itemsPerPage = 10;
+    let currentPage = 1;
+
+    // ========== PPK Selector ==========
+    document.getElementById('ppkSelectorBtn').addEventListener('click', function() {
+        document.getElementById('ppkModal').classList.remove('hidden');
+        renderPpkTable();
+    });
+
+    function closePpkModal() {
+        document.getElementById('ppkModal').classList.add('hidden');
+    }
+
+    document.getElementById('closePpkModal').addEventListener('click', closePpkModal);
+    document.getElementById('cancelPpkSelection').addEventListener('click', closePpkModal);
+
+    document.getElementById('ppkSearchInput').addEventListener('input', function() {
+        const searchTerm = this.value.toLowerCase();
+        if (searchTerm.trim() === '') {
+            filteredPpkData = [...ppkData];
+        } else {
+            filteredPpkData = ppkData.filter(ppk =>
+                ppk.nama.toLowerCase().includes(searchTerm) ||
+                ppk.nip.toLowerCase().includes(searchTerm)
+            );
+        }
+        currentPage = 1;
+        renderPpkTable();
+    });
+
+    function renderPpkTable() {
+        const tbody = document.getElementById('ppkTableBody');
+        const totalPages = Math.ceil(filteredPpkData.length / itemsPerPage);
+        const startIndex = (currentPage - 1) * itemsPerPage;
+        const endIndex = startIndex + itemsPerPage;
+        const pageData = filteredPpkData.slice(startIndex, endIndex);
+
+        tbody.innerHTML = '';
+
+        if (pageData.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="5" class="px-4 py-8 text-center text-gray-500">Tidak ada data</td></tr>';
+        } else {
+            pageData.forEach((ppk, index) => {
+                const row = document.createElement('tr');
+                row.className = 'hover:bg-gray-50 cursor-pointer';
+                row.innerHTML = `
+                    <td class="px-4 py-3 text-sm border-r border-gray-200">${startIndex + index + 1}.</td>
+                    <td class="px-4 py-3 text-sm border-r border-gray-200">${ppk.nama}</td>
+                    <td class="px-4 py-3 text-sm border-r border-gray-200">${ppk.nip}</td>
+                    <td class="px-4 py-3 text-sm border-r border-gray-200">${ppk.satker || '-'}</td>
+                    <td class="px-4 py-3 text-sm">${ppk.kode || '-'}</td>
+                `;
+                row.addEventListener('click', function() {
+                    selectedPpkId = ppk.id;
+                    document.getElementById('ppk_id').value = ppk.id;
+                    document.getElementById('ppkSelectedText').textContent = `${ppk.nama} (${ppk.nip})`;
+                    document.getElementById('ppkSelectedText').classList.remove('text-gray-500');
+                    document.getElementById('ppkSelectedText').classList.add('text-gray-900');
+                    closePpkModal();
+                });
+                tbody.appendChild(row);
+            });
+        }
+
+        document.getElementById('ppkPageInfo').textContent = `Hal: ${currentPage}/${totalPages || 1}`;
+        document.getElementById('ppkFirstPage').disabled = currentPage === 1;
+        document.getElementById('ppkPrevPage').disabled = currentPage === 1;
+        document.getElementById('ppkNextPage').disabled = currentPage === totalPages || totalPages === 0;
+        document.getElementById('ppkLastPage').disabled = currentPage === totalPages || totalPages === 0;
+    }
+
+    document.getElementById('ppkFirstPage').addEventListener('click', function() {
+        currentPage = 1;
+        renderPpkTable();
+    });
+
+    document.getElementById('ppkPrevPage').addEventListener('click', function() {
+        if (currentPage > 1) {
+            currentPage--;
+            renderPpkTable();
+        }
+    });
+
+    document.getElementById('ppkNextPage').addEventListener('click', function() {
+        const totalPages = Math.ceil(filteredPpkData.length / itemsPerPage);
+        if (currentPage < totalPages) {
+            currentPage++;
+            renderPpkTable();
+        }
+    });
+
+    document.getElementById('ppkLastPage').addEventListener('click', function() {
+        currentPage = Math.ceil(filteredPpkData.length / itemsPerPage);
+        renderPpkTable();
+    });
+
+    if (selectedPpkId) {
+        const selectedPpk = ppkData.find(p => p.id === selectedPpkId);
+        if (selectedPpk) {
+            document.getElementById('ppkSelectedText').textContent = `${selectedPpk.nama} (${selectedPpk.nip})`;
+            document.getElementById('ppkSelectedText').classList.remove('text-gray-500');
+            document.getElementById('ppkSelectedText').classList.add('text-gray-900');
+        }
+    }
+
+    // ========== MAK Selector ==========
+    let filteredMakData = [...makData];
+    let selectedMakId = {{ old('mak_id', $kegiatan->mak_id ?? 'null') }};
+    let currentMakPage = 1;
+
+    document.getElementById('makSelectorBtn').addEventListener('click', function() {
+        document.getElementById('makModal').classList.remove('hidden');
+        renderMakTable();
+    });
+
+    function closeMakModal() {
+        document.getElementById('makModal').classList.add('hidden');
+    }
+
+    document.getElementById('closeMakModal').addEventListener('click', closeMakModal);
+    document.getElementById('cancelMakSelection').addEventListener('click', closeMakModal);
+
+    document.getElementById('makSearchInput').addEventListener('input', function() {
+        const searchTerm = this.value.toLowerCase();
+        if (searchTerm.trim() === '') {
+            filteredMakData = [...makData];
+        } else {
+            filteredMakData = makData.filter(mak =>
+                mak.kode.toLowerCase().includes(searchTerm) ||
+                mak.nama.toLowerCase().includes(searchTerm)
+            );
+        }
+        currentMakPage = 1;
+        renderMakTable();
+    });
+
+    function renderMakTable() {
+        const tbody = document.getElementById('makTableBody');
+        const totalPages = Math.ceil(filteredMakData.length / itemsPerPage);
+        const startIndex = (currentMakPage - 1) * itemsPerPage;
+        const endIndex = startIndex + itemsPerPage;
+        const pageData = filteredMakData.slice(startIndex, endIndex);
+
+        tbody.innerHTML = '';
+
+        if (pageData.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="4" class="px-4 py-8 text-center text-gray-500">Tidak ada data</td></tr>';
+        } else {
+            pageData.forEach((mak, index) => {
+                const row = document.createElement('tr');
+                row.className = 'hover:bg-gray-50 cursor-pointer';
+                row.innerHTML = `
+                    <td class="px-4 py-3 text-sm border-r border-gray-200">${startIndex + index + 1}.</td>
+                    <td class="px-4 py-3 text-sm border-r border-gray-200">${mak.kode}</td>
+                    <td class="px-4 py-3 text-sm border-r border-gray-200">${mak.nama}</td>
+                    <td class="px-4 py-3 text-sm">${mak.tahun || '-'}</td>
+                `;
+                row.addEventListener('click', function() {
+                    selectedMakId = mak.id;
+                    document.getElementById('mak_id').value = mak.id;
+                    document.getElementById('makSelectedText').textContent = `${mak.kode} - ${mak.nama}`;
+                    document.getElementById('makSelectedText').classList.remove('text-gray-500');
+                    document.getElementById('makSelectedText').classList.add('text-gray-900');
+                    closeMakModal();
+                });
+                tbody.appendChild(row);
+            });
+        }
+
+        document.getElementById('makPageInfo').textContent = `Hal: ${currentMakPage}/${totalPages || 1}`;
+        document.getElementById('makFirstPage').disabled = currentMakPage === 1;
+        document.getElementById('makPrevPage').disabled = currentMakPage === 1;
+        document.getElementById('makNextPage').disabled = currentMakPage === totalPages || totalPages === 0;
+        document.getElementById('makLastPage').disabled = currentMakPage === totalPages || totalPages === 0;
+    }
+
+    document.getElementById('makFirstPage').addEventListener('click', function() {
+        currentMakPage = 1;
+        renderMakTable();
+    });
+
+    document.getElementById('makPrevPage').addEventListener('click', function() {
+        if (currentMakPage > 1) {
+            currentMakPage--;
+            renderMakTable();
+        }
+    });
+
+    document.getElementById('makNextPage').addEventListener('click', function() {
+        const totalPages = Math.ceil(filteredMakData.length / itemsPerPage);
+        if (currentMakPage < totalPages) {
+            currentMakPage++;
+            renderMakTable();
+        }
+    });
+
+    document.getElementById('makLastPage').addEventListener('click', function() {
+        currentMakPage = Math.ceil(filteredMakData.length / itemsPerPage);
+        renderMakTable();
+    });
+
+    if (selectedMakId) {
+        const selectedMak = makData.find(m => m.id === selectedMakId);
+        if (selectedMak) {
+            document.getElementById('makSelectedText').textContent = `${selectedMak.kode} - ${selectedMak.nama}`;
+            document.getElementById('makSelectedText').classList.remove('text-gray-500');
+            document.getElementById('makSelectedText').classList.add('text-gray-900');
+        }
+    }
+</script>
+@endpush

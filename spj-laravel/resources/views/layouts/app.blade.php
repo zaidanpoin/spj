@@ -215,6 +215,10 @@
                                 <a href="{{ route('users.index') }}"
                                     class="block px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 hover:text-primary">User
                                     Management</a>
+                                    <a href="{{ route('activity-logs.index') }}"
+                                    class="block px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 hover:text-primary">Activiy Logs</a>
+
+
                                 <div class="border-t border-gray-100"></div>
                                 <a href="{{ route('master.sbm-konsumsi.index') }}"
                                     class="block px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 hover:text-primary">SBM
