@@ -10,6 +10,7 @@ use App\Http\Controllers\SBMKonsumsiController;
 use App\Http\Controllers\SBMHonorariumController;
 use App\Http\Controllers\UnorController;
 use App\Http\Controllers\UnitKerjaController;
+use App\Http\Controllers\ActivityLogController;
 use App\Http\Controllers\Auth\LoginController;
 use Illuminate\Support\Facades\Route;
 
@@ -340,3 +341,10 @@ Route::middleware(['auth'])->group(function () {
         ->name('kwitansi.download');
 });
 
+// Activity Logs Routes
+Route::prefix('activity-logs')->middleware(['auth'])->group(function () {
+    Route::get('/', [ActivityLogController::class, 'index'])
+        ->name('activity-logs.index');
+    Route::get('/{id}', [ActivityLogController::class, 'show'])
+        ->name('activity-logs.show');
+});

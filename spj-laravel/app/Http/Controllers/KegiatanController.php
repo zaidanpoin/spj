@@ -51,13 +51,12 @@ class KegiatanController extends Controller
      */
     public function create()
     {
-        $unors = Unor::all();
-        $unitKerjas = UnitKerja::all();
+        $unitKerjas = UnitKerja::with('unor')->orderBy('nama_unit')->get();
         $makData = \App\Models\MAK::orderBy('tahun', 'desc')->orderBy('nama')->get();
         $ppkData = \App\Models\PPK::orderBy('nama')->get();
         $bendaharaData = \App\Models\Bendahara::where('is_active', true)->orderBy('nama')->get();
         $provinsiData = \App\Models\SatuanBiayaKonsumsiProvinsi::orderBy('nama_provinsi')->get();
-        return view('kegiatan.create', compact('unors', 'unitKerjas', 'makData', 'ppkData', 'bendaharaData', 'provinsiData'));
+        return view('kegiatan.create', compact('unitKerjas', 'makData', 'ppkData', 'bendaharaData', 'provinsiData'));
     }
 
     /**
@@ -68,9 +67,7 @@ class KegiatanController extends Controller
         $validated = $request->validate([
             'nama_kegiatan' => 'required|string|max:255',
             'uraian_kegiatan' => 'nullable|string',
-            'unor_id' => 'required|exists:unors,id',
             'unit_kerja_id' => 'required|exists:unit_kerjas,id',
-            'unker_id' => 'nullable|exists:unit_kerjas,id',
             'mak_id' => 'required|exists:mak,id',
             'ppk_id' => 'required|exists:ppk,id',
             'bendahara_id' => 'nullable|exists:bendaharas,id',
@@ -92,10 +89,9 @@ class KegiatanController extends Controller
             $validated['created_by'] = auth()->id();
         }
 
-        // map unker_id to unit_kerja_id if provided
-        if (!empty($validated['unker_id'])) {
-            $validated['unit_kerja_id'] = $validated['unker_id'];
-        }
+        // Auto-populate unor_id from unit_kerja relationship
+        $unitKerja = UnitKerja::findOrFail($validated['unit_kerja_id']);
+        $validated['unor_id'] = $unitKerja->unor_id;
 
         $kegiatan = Kegiatan::create($validated);
 
