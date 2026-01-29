@@ -100,6 +100,17 @@
         </div>
     </div>
 
+    <!-- Calendar -->
+    <div class="bg-white rounded-xl shadow-sm overflow-hidden mb-8">
+        <div class="px-6 py-5 border-b border-gray-200">
+            <h2 class="text-lg font-semibold text-gray-900">Kalender Kegiatan</h2>
+            <p class="text-sm text-gray-500 mt-0.5">Jadwal kegiatan yang sedang berlangsung</p>
+        </div>
+        <div class="p-6">
+            <div id="calendar"></div>
+        </div>
+    </div>
+
     <!-- Recent Activity -->
     <div class="bg-white rounded-xl shadow-sm overflow-hidden">
         <div class="px-6 py-5 border-b border-gray-200">
@@ -136,8 +147,86 @@
     </div>
 @endsection
 
+@push('styles')
+<link href='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.css' rel='stylesheet' />
+<style>
+    /* Custom FullCalendar styling with primary color */
+    .fc .fc-button-primary {
+        background-color: #00e508 !important;
+        border-color: #00e508 !important;
+        color: white !important;
+    }
+    .fc .fc-button-primary:hover {
+        background-color: #0f766e !important;
+        border-color: #0f766e !important;
+    }
+    .fc .fc-button-primary:not(:disabled):active,
+    .fc .fc-button-primary:not(:disabled).fc-button-active {
+        background-color: #0f766e !important;
+        border-color: #0f766e !important;
+    }
+    .fc .fc-button-primary:disabled {
+        background-color: #cccccc !important;
+        border-color: #cccccc !important;
+    }
+    .fc-theme-standard .fc-scrollgrid {
+        border-color: #e5e7eb;
+    }
+    .fc-theme-standard td,
+    .fc-theme-standard th {
+        border-color: #e5e7eb;
+    }
+    /* Event styling */
+    .fc-event {
+        cursor: pointer;
+        border-radius: 4px;
+        padding: 2px 4px;
+        font-size: 0.85rem;
+    }
+    .fc-event-main {
+        color: white !important;
+    }
+    .fc-daygrid-event {
+        border-radius: 4px;
+        margin-bottom: 1px;
+    }
+</style>
+@endpush
+
 @push('scripts')
+<script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js'></script>
 <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const calendarEl = document.getElementById('calendar');
+        const calendar = new FullCalendar.Calendar(calendarEl, {
+            initialView: 'dayGridMonth',
+            headerToolbar: {
+                left: 'prev,next today',
+                center: 'title',
+                right: 'dayGridMonth,timeGridWeek,listWeek'
+            },
+            buttonText: {
+                today: 'Hari Ini',
+                month: 'Bulan',
+                week: 'Minggu',
+                list: 'Daftar'
+            },
+            locale: 'id',
+            height: 'auto',
+            events: '/api/calendar-events',
+            eventClick: function(info) {
+                // Redirect to kegiatan detail
+                window.location.href = '/daftar-kegiatan/' + info.event.id + '/pilih-detail';
+            },
+            eventTimeFormat: {
+                hour: '2-digit',
+                minute: '2-digit',
+                meridiem: false
+            }
+        });
+        calendar.render();
+    });
+
     // AJAX Pagination for Recent Activities
     document.addEventListener('click', function(e) {
         // Check if clicked element is a pagination link

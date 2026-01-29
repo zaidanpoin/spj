@@ -10,6 +10,7 @@ use App\Http\Controllers\SBMKonsumsiController;
 use App\Http\Controllers\SBMHonorariumController;
 use App\Http\Controllers\UnorController;
 use App\Http\Controllers\UnitKerjaController;
+use App\Http\Controllers\ActivityLogController;
 use App\Http\Controllers\Auth\LoginController;
 use Illuminate\Support\Facades\Route;
 
@@ -28,7 +29,46 @@ Route::get('/', function () {
 
     return view('dashboard', compact('totalKegiatan', 'totalAnggaran', 'totalKwitansi', 'recentActivities'));
 })->middleware('auth')->name('home');
+// Calendar API endpoint
+Route::get('/api/calendar-events', function () {
+    $user = auth()->user();
 
+    $query = \App\Models\Kegiatan::select('id', 'nama_kegiatan', 'tanggal_mulai', 'tanggal_selesai', 'unit_kerja_id');
+
+    // Filter by user's unit kerja if not super admin
+    if (!$user->hasRole('super-admin') && $user->id_unker) {
+        $query->where('unit_kerja_id', $user->id_unker);
+    }
+
+    // Color palette for events
+    $colors = [
+        ['bg' => '#3b82f6', 'border' => '#2563eb'], // blue
+        ['bg' => '#10b981', 'border' => '#059669'], // green
+        ['bg' => '#f59e0b', 'border' => '#d97706'], // amber
+        ['bg' => '#8b5cf6', 'border' => '#7c3aed'], // violet
+        ['bg' => '#ef4444', 'border' => '#dc2626'], // red
+        ['bg' => '#06b6d4', 'border' => '#0891b2'], // cyan
+        ['bg' => '#ec4899', 'border' => '#db2777'], // pink
+        ['bg' => '#84cc16', 'border' => '#65a30d'], // lime
+        ['bg' => '#f97316', 'border' => '#ea580c'], // orange
+        ['bg' => '#6366f1', 'border' => '#4f46e5'], // indigo
+    ];
+
+    $kegiatan = $query->get()->map(function ($k, $index) use ($colors) {
+        $colorIndex = $index % count($colors);
+        return [
+            'id' => $k->id,
+            'title' => $k->nama_kegiatan,
+            'start' => $k->tanggal_mulai,
+            'end' => $k->tanggal_selesai,
+            'backgroundColor' => $colors[$colorIndex]['bg'],
+            'borderColor' => $colors[$colorIndex]['border'],
+            'textColor' => '#ffffff',
+        ];
+    });
+
+    return response()->json($kegiatan);
+})->middleware('auth')->name('api.calendar-events');
 // Master Routes - Unor
 Route::prefix('master')->middleware(['auth'])->group(function () {
     Route::get('unor', [UnorController::class, 'index'])
@@ -340,3 +380,10 @@ Route::middleware(['auth'])->group(function () {
         ->name('kwitansi.download');
 });
 
+// Activity Logs Routes
+Route::prefix('activity-logs')->middleware(['auth'])->group(function () {
+    Route::get('/', [ActivityLogController::class, 'index'])
+        ->name('activity-logs.index');
+    Route::get('/{id}', [ActivityLogController::class, 'show'])
+        ->name('activity-logs.show');
+});

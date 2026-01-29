@@ -67,6 +67,7 @@
                             <th class="px-4 py-3 text-left text-xs font-medium text-gray-600">UNOR / UNIT KERJA</th>
                             <th class="px-4 py-3 text-center text-xs font-medium text-gray-600 w-20">PESERTA</th>
                             <th class="px-4 py-3 text-left text-xs font-medium text-gray-600 w-36">PERIODE</th>
+                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-600 w-36">PEMBUAT</th>
                             <th class="px-4 py-3 text-center text-xs font-medium text-gray-600 w-28">AKSI</th>
                         </tr>
                     </thead>
@@ -96,6 +97,9 @@
                                     @else
                                         -
                                     @endif
+                                </td>
+                                <td class="px-4 py-3 text-left text-xs text-gray-600">
+                                    {{ $kegiatan->user->name ?? '-' }}
                                 </td>
                                 <td class="px-4 py-3 aksi-col">
                                     <div class="flex items-center justify-center gap-1">
@@ -139,7 +143,7 @@
                                 </div>
                                 <span class="text-xs text-gray-400">#{{ $kegiatans->firstItem() + $index }}</span>
                             </div>
-                            
+
                             <div class="flex items-center gap-3 text-xs">
                                 <div class="flex items-center gap-1">
                                     <span class="text-gray-400">Peserta:</span>
@@ -186,8 +190,8 @@
             <div class="px-4 py-3 border-t border-gray-200">
                 <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                     <div class="text-sm text-gray-600 text-center sm:text-left">
-                        Menampilkan <span class="font-medium">{{ $kegiatans->firstItem() ?? 0 }}</span> 
-                        - <span class="font-medium">{{ $kegiatans->lastItem() ?? 0 }}</span> 
+                        Menampilkan <span class="font-medium">{{ $kegiatans->firstItem() ?? 0 }}</span>
+                        - <span class="font-medium">{{ $kegiatans->lastItem() ?? 0 }}</span>
                         dari <span class="font-medium">{{ $kegiatans->total() }}</span> kegiatan
                     </div>
                     @if($kegiatans->hasPages())
@@ -202,7 +206,7 @@
                                 $start = max(1, $kegiatans->currentPage() - 2);
                                 $end = min($kegiatans->lastPage(), $kegiatans->currentPage() + 2);
                             @endphp
-                            
+
                             @if($start > 1)
                                 <a href="{{ $kegiatans->url(1) }}" class="px-2 sm:px-3 py-1 bg-gray-100 text-gray-700 rounded text-xs sm:text-sm hover:bg-gray-200 transition">1</a>
                                 @if($start > 2)

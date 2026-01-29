@@ -90,6 +90,10 @@ class RolePermissionSeeder extends Seeder
                 'edit-sbm-konsumsi',
                 'delete-sbm-konsumsi',
             ],
+            'activity-log' => [
+                'view-activity-log',
+                'delete-activity-log',
+            ],
             'sbm-honorarium' => [
                 'view-sbm-honorarium',
                 'create-sbm-honorarium',
