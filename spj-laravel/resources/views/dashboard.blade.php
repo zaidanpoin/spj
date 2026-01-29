@@ -176,6 +176,20 @@
     .fc-theme-standard th {
         border-color: #e5e7eb;
     }
+    /* Event styling */
+    .fc-event {
+        cursor: pointer;
+        border-radius: 4px;
+        padding: 2px 4px;
+        font-size: 0.85rem;
+    }
+    .fc-event-main {
+        color: white !important;
+    }
+    .fc-daygrid-event {
+        border-radius: 4px;
+        margin-bottom: 1px;
+    }
 </style>
 @endpush
 

@@ -63,6 +63,7 @@ Route::get('/api/calendar-events', function () {
             'end' => $k->tanggal_selesai,
             'backgroundColor' => $colors[$colorIndex]['bg'],
             'borderColor' => $colors[$colorIndex]['border'],
+            'textColor' => '#ffffff',
         ];
     });
 
