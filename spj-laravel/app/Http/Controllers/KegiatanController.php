@@ -51,12 +51,15 @@ class KegiatanController extends Controller
      */
     public function create()
     {
+        $user = auth()->user();
+        $isSuperAdmin = $user->hasRole('super-admin');
+
         $unitKerjas = UnitKerja::with('unor')->orderBy('nama_unit')->get();
         $makData = \App\Models\MAK::orderBy('tahun', 'desc')->orderBy('nama')->get();
         $ppkData = \App\Models\PPK::orderBy('nama')->get();
         $bendaharaData = \App\Models\Bendahara::where('is_active', true)->orderBy('nama')->get();
         $provinsiData = \App\Models\SatuanBiayaKonsumsiProvinsi::orderBy('nama_provinsi')->get();
-        return view('kegiatan.create', compact('unitKerjas', 'makData', 'ppkData', 'bendaharaData', 'provinsiData'));
+        return view('kegiatan.create', compact('unitKerjas', 'makData', 'ppkData', 'bendaharaData', 'provinsiData', 'user', 'isSuperAdmin'));
     }
 
     /**
@@ -181,6 +184,7 @@ class KegiatanController extends Controller
             abort(403, 'Anda tidak memiliki akses untuk mengedit kegiatan ini.');
         }
 
+        $isSuperAdmin = $user->hasRole('super-admin');
         $unors = Unor::all();
         $unitKerjas = UnitKerja::all();
         $makData = \App\Models\MAK::orderBy('tahun', 'desc')->orderBy('nama')->get();
@@ -188,7 +192,7 @@ class KegiatanController extends Controller
         $bendaharaData = \App\Models\Bendahara::where('is_active', true)->orderBy('nama')->get();
         $provinsiData = \App\Models\SatuanBiayaKonsumsiProvinsi::orderBy('nama_provinsi')->get();
 
-        return view('kegiatan.edit', compact('kegiatan', 'unors', 'unitKerjas', 'makData', 'ppkData', 'bendaharaData', 'provinsiData'));
+        return view('kegiatan.edit', compact('kegiatan', 'unors', 'unitKerjas', 'makData', 'ppkData', 'bendaharaData', 'provinsiData', 'user', 'isSuperAdmin'));
     }
 
     /**

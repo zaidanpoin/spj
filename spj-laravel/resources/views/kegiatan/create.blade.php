@@ -48,14 +48,20 @@
                         Unit Kerja - Unit Organisasi <span class="text-red-500">*</span>
                     </label>
                     <select name="unit_kerja_id" required
-                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary @error('unit_kerja_id') border-red-500 @enderror">
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary @error('unit_kerja_id') border-red-500 @enderror {{ !$isSuperAdmin ? 'bg-gray-100 cursor-not-allowed' : '' }}"
+                        {{ !$isSuperAdmin ? 'disabled' : '' }}>
                         <option value="">Pilih Unit Kerja</option>
                         @foreach($unitKerjas as $uk)
-                            <option value="{{ $uk->id }}" {{ old('unit_kerja_id') == $uk->id ? 'selected' : '' }}>
+                            <option value="{{ $uk->id }}"
+                                {{ (old('unit_kerja_id') == $uk->id || (!$isSuperAdmin && $user->id_unker == $uk->id)) ? 'selected' : '' }}>
                                 {{ $uk->nama_unit }} - {{ $uk->unor->nama_unor }}
                             </option>
                         @endforeach
                     </select>
+                    @if(!$isSuperAdmin)
+                        <!-- Hidden input to submit value when select is disabled -->
+                        <input type="hidden" name="unit_kerja_id" value="{{ $user->id_unker }}">
+                    @endif
                     @error('unit_kerja_id')
                         <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                     @enderror
