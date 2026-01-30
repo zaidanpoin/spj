@@ -332,37 +332,31 @@
 @endpush
 
 @push('scripts')
-    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js'></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const calendarEl = document.getElementById('calendar');
-            const calendar = new FullCalendar.Calendar(calendarEl, {
-                initialView: 'dayGridMonth',
-                headerToolbar: {
-                    left: 'prev,next today',
-                    center: 'title',
-                    right: 'dayGridMonth,timeGridWeek,listWeek'
-                },
-                buttonText: {
-                    today: 'Hari Ini',
-                    month: 'Bulan',
-                    week: 'Minggu',
-                    list: 'Daftar'
-                },
-                locale: 'id',
-                height: 'auto',
-                events: '/api/calendar-events',
-                eventClick: function (info) {
-                    // Redirect to kegiatan detail
-                    window.location.href = '/daftar-kegiatan/' + info.event.id + '/pilih-detail';
-                },
-                eventTimeFormat: {
-                    hour: '2-digit',
-                    minute: '2-digit',
-                    meridiem: false
-                }
-            });
-            calendar.render();
+<script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js'></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const calendarEl = document.getElementById('calendar');
+        const calendar = new FullCalendar.Calendar(calendarEl, {
+            initialView: 'dayGridMonth',
+            headerToolbar: {
+                left: 'prev,next today',
+                center: 'title',
+                right: 'dayGridMonth,timeGridWeek,listWeek'
+            },
+            buttonText: {
+                today: 'Hari Ini',
+                month: 'Bulan',
+                week: 'Minggu',
+                list: 'Daftar'
+            },
+            locale: 'id',
+            height: 'auto',
+            events: '/api/calendar-events',
+            eventClick: function(info) {
+                // Redirect to kegiatan detail
+                window.location.href = '/daftar-kegiatan/' + info.event.id + '/pilih-detail';
+            },
+            displayEventTime: false
         });
 
         // AJAX Pagination for Recent Activities
