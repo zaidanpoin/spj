@@ -18,11 +18,14 @@ class MAK extends Model
         'satker',
         'akun',
         'paket',
+        'nip_ppk',
     ];
 
-    // Relationships bisa ditambahkan nanti jika ada
-    // public function konsumsis()
-    // {
-    //     return $this->hasMany(Konsumsi::class, 'mak_id');
-    // }
+    /**
+     * Get the PPK that owns the MAK
+     */
+    public function ppk()
+    {
+        return $this->belongsTo(PPK::class, 'nip_ppk', 'nip');
+    }
 }

@@ -1,8 +1,17 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="id" class="">
 
 <head>
     <meta charset="UTF-8">
+    <!-- Prevent flash of light mode -->
+    <script>
+        (function () {
+            const darkMode = localStorage.getItem('darkMode');
+            if (darkMode === 'true' || (!darkMode && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                document.documentElement.classList.add('dark');
+            }
+        })();
+    </script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@yield('title', 'SPJ Laravel')</title>
 
@@ -100,12 +109,86 @@
             font-weight: 600;
             white-space: nowrap;
         }
+
+        /* ========== GLOBAL DARK MODE ========== */
+        html.dark body {
+            background-color: #1a1a2e !important;
+            color: #f1f5f9 !important;
+        }
+
+        html.dark .bg-white {
+            background-color: #1a1a2e !important;
+        }
+
+        html.dark .bg-gray-50,
+        html.dark .bg-gray-100 {
+            background-color: #252542 !important;
+        }
+
+        html.dark .text-gray-900 {
+            color: #f1f5f9 !important;
+        }
+
+        html.dark .text-gray-700,
+        html.dark .text-gray-600 {
+            color: #94a3b8 !important;
+        }
+
+        html.dark .text-gray-500,
+        html.dark .text-gray-400 {
+            color: #64748b !important;
+        }
+
+        html.dark .border-gray-200,
+        html.dark .border-gray-100 {
+            border-color: #2d2d4a !important;
+        }
+
+        html.dark .divide-gray-200>*+* {
+            border-color: #2d2d4a !important;
+        }
+
+        html.dark .hover\:bg-gray-50:hover {
+            background-color: #252542 !important;
+        }
+
+        html.dark footer {
+            background-color: #1a1a2e !important;
+            border-color: #2d2d4a !important;
+        }
+
+        html.dark .page-loader {
+            background: rgba(26, 26, 46, 0.95) !important;
+        }
+
+        /* Calendar */
+        html.dark .fc,
+        html.dark .fc td,
+        html.dark .fc th,
+        html.dark .fc table {
+            background-color: #1a1a2e !important;
+        }
+
+        html.dark .fc-col-header-cell {
+            background-color: #252542 !important;
+        }
+
+        html.dark .fc-daygrid-day-number,
+        html.dark .fc-col-header-cell-cushion,
+        html.dark .fc-toolbar-title {
+            color: #f1f5f9 !important;
+        }
+
+        html.dark .fc-theme-standard td,
+        html.dark .fc-theme-standard th {
+            border-color: #2d2d4a !important;
+        }
     </style>
 
     @stack('styles')
 </head>
 
-<body class="bg-white flex flex-col min-h-screen">
+<body class="flex flex-col min-h-screen transition-colors duration-300">
     <!-- Page Loading Spinner -->
     <div id="pageLoader" class="page-loader">
         <div class="text-center">
@@ -142,6 +225,23 @@
                                         class="text-primary font-bold text-sm">{{ substr(Auth::user()->name, 0, 1) }}</span>
                                 </div>
                             </div>
+
+                            <!-- Dark Mode Toggle -->
+                            <button type="button" id="darkModeToggle" class="dark-mode-toggle text-white"
+                                title="Toggle Dark Mode">
+                                <!-- Sun Icon (shown in dark mode) -->
+                                <svg id="sunIcon" class="hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z">
+                                    </path>
+                                </svg>
+                                <!-- Moon Icon (shown in light mode) -->
+                                <svg id="moonIcon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z">
+                                    </path>
+                                </svg>
+                            </button>
 
                             <!-- Logout (always visible) -->
                             <form action="{{ route('logout') }}" method="POST" class="inline" data-no-loader>
@@ -215,8 +315,9 @@
                                 <a href="{{ route('users.index') }}"
                                     class="block px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 hover:text-primary">User
                                     Management</a>
-                                    <a href="{{ route('activity-logs.index') }}"
-                                    class="block px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 hover:text-primary">Activiy Logs</a>
+                                <a href="{{ route('activity-logs.index') }}"
+                                    class="block px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 hover:text-primary">Activiy
+                                    Logs</a>
 
 
                                 <div class="border-t border-gray-100"></div>
@@ -403,6 +504,40 @@
                     hamburgerIcon.classList.remove('hidden');
                     closeIcon.classList.add('hidden');
                 });
+            });
+        }
+
+        // Dark Mode Toggle
+        const darkModeToggle = document.getElementById('darkModeToggle');
+        const sunIcon = document.getElementById('sunIcon');
+        const moonIcon = document.getElementById('moonIcon');
+        const html = document.documentElement;
+
+        // Function to update icons based on current mode
+        function updateDarkModeIcons() {
+            if (html.classList.contains('dark')) {
+                sunIcon.classList.remove('hidden');
+                moonIcon.classList.add('hidden');
+            } else {
+                sunIcon.classList.add('hidden');
+                moonIcon.classList.remove('hidden');
+            }
+        }
+
+        // Initialize icons on page load
+        updateDarkModeIcons();
+
+        // Toggle dark mode on button click
+        if (darkModeToggle) {
+            darkModeToggle.addEventListener('click', function () {
+                html.classList.toggle('dark');
+
+                // Save preference to localStorage
+                const isDark = html.classList.contains('dark');
+                localStorage.setItem('darkMode', isDark);
+
+                // Update icons
+                updateDarkModeIcons();
             });
         }
     </script>

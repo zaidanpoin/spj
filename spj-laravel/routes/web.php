@@ -69,6 +69,53 @@ Route::get('/api/calendar-events', function () {
 
     return response()->json($kegiatan);
 })->middleware('auth')->name('api.calendar-events');
+
+// EHRM API - Fetch Pegawai by NIP
+Route::get('/api/ehrm/pegawai/{nip}', function ($nip) {
+    try {
+        \Log::info('EHRM API called with NIP: ' . $nip);
+
+        $ehrmService = new \App\Services\EHRMService();
+        $pegawai = $ehrmService->getPegawaiByNip($nip);
+
+        \Log::info('EHRM API result: ', ['pegawai' => $pegawai]);
+
+        if ($pegawai) {
+            return response()->json([
+                'success' => true,
+                'data' => $pegawai
+            ]);
+        }
+
+        return response()->json([
+            'success' => false,
+            'message' => 'Pegawai tidak ditemukan'
+        ], 404);
+    } catch (\Exception $e) {
+        \Log::error('EHRM API error: ' . $e->getMessage(), [
+            'trace' => $e->getTraceAsString()
+        ]);
+
+        return response()->json([
+            'success' => false,
+            'message' => 'Error: ' . $e->getMessage()
+        ], 500);
+    }
+})->middleware('auth')->name('api.ehrm.pegawai');
+
+// API to get MAK by PPK NIP
+Route::get('/api/mak-by-ppk/{nip}', function ($nip) {
+    $maks = \App\Models\MAK::where('nip_ppk', $nip)
+        ->select('id', 'kode', 'nama', 'tahun')
+        ->orderBy('nama')
+        ->get();
+
+    return response()->json([
+        'success' => true,
+        'data' => $maks
+    ]);
+})->middleware('auth')->name('api.mak.by-ppk');
+
 // Master Routes - Unor
 Route::prefix('master')->middleware(['auth'])->group(function () {
     Route::get('unor', [UnorController::class, 'index'])
@@ -189,6 +236,9 @@ Route::prefix('master')->middleware(['auth'])->group(function () {
     Route::delete('mak/{mak}', [App\Http\Controllers\Master\MAKController::class, 'destroy'])
         ->middleware('permission:delete-mak')
         ->name('master.mak.destroy');
+    Route::get('mak/sync', [App\Http\Controllers\Master\MAKController::class, 'sync'])
+        ->middleware('permission:create-mak')
+        ->name('master.mak.sync');
 
     // PPK CRUD
     Route::get('ppk', [App\Http\Controllers\Master\PPKController::class, 'index'])
@@ -209,6 +259,9 @@ Route::prefix('master')->middleware(['auth'])->group(function () {
     Route::delete('ppk/{ppk}', [App\Http\Controllers\Master\PPKController::class, 'destroy'])
         ->middleware('permission:delete-ppk')
         ->name('master.ppk.destroy');
+    Route::get('ppk/sync', [App\Http\Controllers\Master\PPKController::class, 'sync'])
+        ->middleware('permission:create-ppk')
+        ->name('master.ppk.sync');
 
     // Bendahara CRUD
     Route::get('bendahara', [App\Http\Controllers\BendaharaController::class, 'index'])

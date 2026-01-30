@@ -27,7 +27,8 @@
                 <div>
                     <p class="text-sm font-medium text-gray-600">Total Anggaran</p>
                     <p class="text-3xl font-bold text-gray-900 mt-2">Rp
-                        {{ number_format($totalAnggaran ?? 0, 0, ',', '.') }}</p>
+                        {{ number_format($totalAnggaran ?? 0, 0, ',', '.') }}
+                    </p>
                 </div>
                 <div
                     class="w-12 h-12 bg-gradient-to-br from-green-500 to-green-600 rounded-lg flex items-center justify-center">
@@ -148,49 +149,186 @@
 @endsection
 
 @push('styles')
-<link href='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.css' rel='stylesheet' />
-<style>
-    /* Custom FullCalendar styling with primary color */
-    .fc .fc-button-primary {
-        background-color: #00e508 !important;
-        border-color: #00e508 !important;
-        color: white !important;
-    }
-    .fc .fc-button-primary:hover {
-        background-color: #0f766e !important;
-        border-color: #0f766e !important;
-    }
-    .fc .fc-button-primary:not(:disabled):active,
-    .fc .fc-button-primary:not(:disabled).fc-button-active {
-        background-color: #0f766e !important;
-        border-color: #0f766e !important;
-    }
-    .fc .fc-button-primary:disabled {
-        background-color: #cccccc !important;
-        border-color: #cccccc !important;
-    }
-    .fc-theme-standard .fc-scrollgrid {
-        border-color: #e5e7eb;
-    }
-    .fc-theme-standard td,
-    .fc-theme-standard th {
-        border-color: #e5e7eb;
-    }
-    /* Event styling */
-    .fc-event {
-        cursor: pointer;
-        border-radius: 4px;
-        padding: 2px 4px;
-        font-size: 0.85rem;
-    }
-    .fc-event-main {
-        color: white !important;
-    }
-    .fc-daygrid-event {
-        border-radius: 4px;
-        margin-bottom: 1px;
-    }
-</style>
+    <link href='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.css' rel='stylesheet' />
+    <style>
+        /* Custom FullCalendar styling with primary color */
+        .fc .fc-button-primary {
+            background-color: #00e508 !important;
+            border-color: #00e508 !important;
+            color: white !important;
+        }
+
+        .fc .fc-button-primary:hover {
+            background-color: #0f766e !important;
+            border-color: #0f766e !important;
+        }
+
+        .fc .fc-button-primary:not(:disabled):active,
+        .fc .fc-button-primary:not(:disabled).fc-button-active {
+            background-color: #0f766e !important;
+            border-color: #0f766e !important;
+        }
+
+        .fc .fc-button-primary:disabled {
+            background-color: #cccccc !important;
+            border-color: #cccccc !important;
+        }
+
+        .fc-theme-standard .fc-scrollgrid {
+            border-color: #e5e7eb;
+        }
+
+        .fc-theme-standard td,
+        .fc-theme-standard th {
+            border-color: #e5e7eb;
+        }
+
+        /* Event styling */
+        .fc-event {
+            cursor: pointer;
+            border-radius: 4px;
+            padding: 2px 4px;
+            font-size: 0.85rem;
+        }
+
+        .fc-event-main {
+            color: white !important;
+        }
+
+        .fc-daygrid-event {
+            border-radius: 4px;
+            margin-bottom: 1px;
+        }
+
+        /* ========== DARK MODE STYLES ========== */
+        html.dark .bg-white {
+            background-color: #1a1a2e !important;
+        }
+
+        html.dark .text-gray-900 {
+            color: #f1f5f9 !important;
+        }
+
+        html.dark .text-gray-700 {
+            color: #cbd5e1 !important;
+        }
+
+        html.dark .text-gray-600 {
+            color: #94a3b8 !important;
+        }
+
+        html.dark .text-gray-500 {
+            color: #64748b !important;
+        }
+
+        html.dark .border-gray-200 {
+            border-color: #2d2d4a !important;
+        }
+
+        html.dark .border-gray-100 {
+            border-color: #2d2d4a !important;
+        }
+
+        html.dark .hover\:bg-gray-50:hover {
+            background-color: #252542 !important;
+        }
+
+        html.dark .hover\:bg-blue-50:hover {
+            background-color: rgba(59, 130, 246, 0.15) !important;
+        }
+
+        html.dark .divide-gray-200>*+* {
+            border-color: #2d2d4a !important;
+        }
+
+        /* Quick Action Cards */
+        html.dark .border-2.border-gray-200 {
+            border-color: #2d2d4a !important;
+            background-color: #1a1a2e !important;
+        }
+
+        html.dark .bg-blue-100 {
+            background-color: rgba(59, 130, 246, 0.2) !important;
+        }
+
+        html.dark .bg-green-100 {
+            background-color: rgba(16, 185, 129, 0.2) !important;
+        }
+
+        html.dark .bg-purple-100 {
+            background-color: rgba(147, 51, 234, 0.2) !important;
+        }
+
+        html.dark .bg-amber-100 {
+            background-color: rgba(245, 158, 11, 0.2) !important;
+        }
+
+        /* Calendar Dark Mode */
+        html.dark .fc-theme-standard .fc-scrollgrid {
+            border-color: #2d2d4a !important;
+        }
+
+        html.dark .fc-theme-standard td,
+        html.dark .fc-theme-standard th {
+            border-color: #2d2d4a !important;
+        }
+
+        html.dark .fc .fc-daygrid-day-number,
+        html.dark .fc .fc-col-header-cell-cushion {
+            color: #f1f5f9 !important;
+        }
+
+        html.dark .fc .fc-daygrid-day.fc-day-today {
+            background-color: rgba(0, 229, 8, 0.1) !important;
+        }
+
+        html.dark .fc-toolbar-title {
+            color: #f1f5f9 !important;
+        }
+
+        /* Calendar cells background */
+        html.dark .fc-daygrid-day,
+        html.dark .fc-daygrid-day-frame,
+        html.dark .fc-scrollgrid,
+        html.dark .fc-scrollgrid-section,
+        html.dark .fc-scrollgrid-section>td,
+        html.dark .fc-scrollgrid-section>th,
+        html.dark .fc-scrollgrid table,
+        html.dark .fc-daygrid-body,
+        html.dark .fc .fc-view-harness,
+        html.dark .fc-view,
+        html.dark .fc table,
+        html.dark .fc td,
+        html.dark .fc th {
+            background-color: #1a1a2e !important;
+        }
+
+        html.dark .fc-col-header-cell {
+            background-color: #252542 !important;
+        }
+
+        /* Desktop Menu Bar */
+        html.dark .md\:block.bg-white {
+            background-color: #1a1a2e !important;
+        }
+
+        html.dark nav .bg-white {
+            background-color: #1a1a2e !important;
+        }
+
+        /* Footer */
+        html.dark footer {
+            background-color: #1a1a2e !important;
+        }
+
+        html.dark footer .text-gray-600 {
+            color: #94a3b8 !important;
+        }
+
+        html.dark footer .text-gray-500 {
+            color: #64748b !important;
+        }
+    </style>
 @endpush
 
 @push('scripts')
@@ -220,76 +358,74 @@
             },
             displayEventTime: false
         });
-        calendar.render();
-    });
 
-    // AJAX Pagination for Recent Activities
-    document.addEventListener('click', function(e) {
-        // Check if clicked element is a pagination link
-        const paginationLink = e.target.closest('#pagination-links a');
-        if (!paginationLink) return;
+        // AJAX Pagination for Recent Activities
+        document.addEventListener('click', function (e) {
+            // Check if clicked element is a pagination link
+            const paginationLink = e.target.closest('#pagination-links a');
+            if (!paginationLink) return;
 
-        e.preventDefault();
+            e.preventDefault();
 
-        // Hide global page loader (prevent showing on AJAX)
-        const pageLoader = document.getElementById('pageLoader');
-        if (pageLoader) {
-            pageLoader.classList.remove('active');
-        }
-
-        const url = paginationLink.href;
-        const activitiesList = document.getElementById('activities-list');
-        const paginationContainer = document.getElementById('pagination-links');
-        const activityCount = document.getElementById('activity-count');
-
-        // Show loading state
-        activitiesList.style.opacity = '0.5';
-
-        // Fetch data via AJAX
-        fetch(url, {
-            headers: {
-                'X-Requested-With': 'XMLHttpRequest',
-            }
-        })
-        .then(response => response.text())
-        .then(html => {
-            // Parse HTML response
-            const parser = new DOMParser();
-            const doc = parser.parseFromString(html, 'text/html');
-
-            // Extract activities list
-            const newActivitiesList = doc.getElementById('activities-list');
-            const newPaginationLinks = doc.getElementById('pagination-links');
-            const newActivityCount = doc.getElementById('activity-count');
-
-            // Update DOM
-            if (newActivitiesList) {
-                activitiesList.innerHTML = newActivitiesList.innerHTML;
-            }
-            if (newPaginationLinks) {
-                paginationContainer.innerHTML = newPaginationLinks.innerHTML;
-            }
-            if (newActivityCount) {
-                activityCount.textContent = newActivityCount.textContent;
+            // Hide global page loader (prevent showing on AJAX)
+            const pageLoader = document.getElementById('pageLoader');
+            if (pageLoader) {
+                pageLoader.classList.remove('active');
             }
 
-            // Restore opacity
-            activitiesList.style.opacity = '1';
+            const url = paginationLink.href;
+            const activitiesList = document.getElementById('activities-list');
+            const paginationContainer = document.getElementById('pagination-links');
+            const activityCount = document.getElementById('activity-count');
 
-            // Smooth scroll to top of activities
-            const activitiesSection = document.querySelector('.bg-white.rounded-xl.shadow-sm.overflow-hidden:last-of-type');
-            if (activitiesSection) {
-                activitiesSection.scrollIntoView({
-                    behavior: 'smooth',
-                    block: 'start'
+            // Show loading state
+            activitiesList.style.opacity = '0.5';
+
+            // Fetch data via AJAX
+            fetch(url, {
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                }
+            })
+                .then(response => response.text())
+                .then(html => {
+                    // Parse HTML response
+                    const parser = new DOMParser();
+                    const doc = parser.parseFromString(html, 'text/html');
+
+                    // Extract activities list
+                    const newActivitiesList = doc.getElementById('activities-list');
+                    const newPaginationLinks = doc.getElementById('pagination-links');
+                    const newActivityCount = doc.getElementById('activity-count');
+
+                    // Update DOM
+                    if (newActivitiesList) {
+                        activitiesList.innerHTML = newActivitiesList.innerHTML;
+                    }
+                    if (newPaginationLinks) {
+                        paginationContainer.innerHTML = newPaginationLinks.innerHTML;
+                    }
+                    if (newActivityCount) {
+                        activityCount.textContent = newActivityCount.textContent;
+                    }
+
+                    // Restore opacity
+                    activitiesList.style.opacity = '1';
+
+                    // Smooth scroll to top of activities
+                    const activitiesSection = document.querySelector('.bg-white.rounded-xl.shadow-sm.overflow-hidden:last-of-type');
+                    if (activitiesSection) {
+                        activitiesSection.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'start'
+                        });
+                    }
+                })
+                .catch(error => {
+                    console.error('Error loading activities:', error);
+                    activitiesList.style.opacity = '1';
+                    alert('Gagal memuat data. Silakan coba lagi.');
                 });
-            }
-        })
-        .catch(error => {
-            console.error('Error loading activities:', error);
-            activitiesList.style.opacity = '1';
-            alert('Gagal memuat data. Silakan coba lagi.');
         });
-    });
-</script>
+    </script>
 @endpush

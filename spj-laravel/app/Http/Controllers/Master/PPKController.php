@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Master;
 use App\Http\Controllers\Controller;
 use App\Models\PPK;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
 class PPKController extends Controller
 {
@@ -78,5 +80,83 @@ class PPKController extends Controller
 
         return redirect()->route('master.ppk.index')
             ->with('success', 'Data PPK berhasil dihapus!');
+    }
+
+    /**
+     * Sync PPK data from IEMON API
+     */
+    public function sync()
+    {
+        try {
+            $url = env('IEMON_PPK_URL');
+            $thang = env('IEMON_PPK_THANG', '2026');
+            $sat = env('IEMON_PPK_SAT', '12694431');
+
+            $fullUrl = "{$url}?thang={$thang}&sat={$sat}";
+
+            Log::info('PPK Sync: Fetching from IEMON API', ['url' => $fullUrl]);
+
+            $response = Http::timeout(30)->get($fullUrl);
+
+            if (!$response->successful()) {
+                Log::error('PPK Sync: API request failed', ['status' => $response->status()]);
+                return redirect()->route('master.ppk.index')
+                    ->with('error', 'Gagal mengambil data dari API IEMON. Status: ' . $response->status());
+            }
+
+            $data = $response->json();
+
+            if (empty($data)) {
+                return redirect()->route('master.ppk.index')
+                    ->with('error', 'Tidak ada data yang diterima dari API IEMON');
+            }
+
+            $syncCount = 0;
+            $updateCount = 0;
+            $processedNips = [];
+
+            foreach ($data as $item) {
+                // Skip if no NIP PPK
+                if (empty($item['nipppk'])) {
+                    continue;
+                }
+
+                $nip = $item['nipppk'];
+
+                // Skip if already processed (deduplicate)
+                if (in_array($nip, $processedNips)) {
+                    continue;
+                }
+                $processedNips[] = $nip;
+
+                $ppkData = [
+                    'nama' => $item['nmppk'] ?? '-',
+                    'nip' => $nip,
+                    'satker' => $item['nmsatker'] ?? '-',
+                    'kdppk' => $item['kdppk'] ?? '-',
+                ];
+
+                // Update or create
+                $existing = PPK::where('nip', $ppkData['nip'])->first();
+
+                if ($existing) {
+                    $existing->update($ppkData);
+                    $updateCount++;
+                } else {
+                    PPK::create($ppkData);
+                    $syncCount++;
+                }
+            }
+
+            Log::info('PPK Sync: Completed', ['new' => $syncCount, 'updated' => $updateCount]);
+
+            return redirect()->route('master.ppk.index')
+                ->with('success', "Sync berhasil! {$syncCount} data baru, {$updateCount} data diupdate.");
+
+        } catch (\Exception $e) {
+            Log::error('PPK Sync: Exception', ['message' => $e->getMessage()]);
+            return redirect()->route('master.ppk.index')
+                ->with('error', 'Error saat sync: ' . $e->getMessage());
+        }
     }
 }

@@ -7,11 +7,11 @@
 @section('content')
     <div class="space-y-4">
         <!-- Success Message -->
-        @if(session('success'))
+        <!-- @if(session('success'))
             <div class="bg-green-50 border-l-4 border-green-500 p-4 rounded">
                 <p class="text-green-700 font-medium">{{ session('success') }}</p>
             </div>
-        @endif
+        @endif -->
 
         <!-- Search & Filter Card -->
         <div class="bg-white rounded-lg border border-gray-200 p-4">
@@ -29,9 +29,13 @@
                     <button type="submit" class="flex-1 sm:flex-none px-3 sm:px-4 py-1.5 sm:py-2 text-sm bg-primary text-white rounded-lg hover:bg-primary-dark transition">
                         Cari
                     </button>
-                    <a href="{{ route('master.ppk.index') }}"
-                        class="flex-1 sm:flex-none px-3 sm:px-4 py-1.5 sm:py-2 text-sm bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition text-center">
-                        Reset
+                    <a href="{{ route('master.ppk.sync') }}"
+                        class="flex-1 sm:flex-none px-3 sm:px-4 py-1.5 sm:py-2 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition text-center flex items-center justify-center gap-1"
+                        onclick="return confirm('Sync data PPK dari API IEMON?')">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                        </svg>
+                        Sync
                     </a>
                     <a href="{{ route('master.ppk.create') }}"
                         class="flex-1 sm:flex-none px-3 sm:px-4 py-1.5 sm:py-2 text-sm bg-green-600 text-white rounded-lg hover:bg-green-700 transition text-center">

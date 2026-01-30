@@ -86,9 +86,43 @@
                     <input type="hidden" name="status" value="{{ $user->status }}">
                     <p class="text-xs text-gray-500 mt-1">Hanya Super Admin yang bisa mengubah status</p>
                 @endif
-                @error('status')
+            @error('status')
                     <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                 @enderror
+            </div>
+
+            <!-- Unit Kerja (Super Admin Only) -->
+            <div class="mb-4">
+                <label class="form-label">Unit Kerja</label>
+                @if(Auth::user()->role === 'super_admin')
+                    <select name="id_unker" id="id_unker"
+                        class="form-input @error('id_unker') border-red-500 @enderror"
+                        onchange="updateUnor()">
+                        <option value="">Pilih Unit Kerja</option>
+                        @foreach($unitKerjas as $unker)
+                            <option value="{{ $unker->id }}" 
+                                data-unor="{{ $unker->unor->nama_unor ?? '-' }}"
+                                {{ old('id_unker', $user->id_unker) == $unker->id ? 'selected' : '' }}>
+                                {{ $unker->nama_unit }}
+                            </option>
+                        @endforeach
+                    </select>
+                @else
+                    <input type="text" readonly class="form-input bg-gray-100" 
+                        value="{{ $user->unitKerja->nama_unit ?? '-' }}">
+                    <input type="hidden" name="id_unker" value="{{ $user->id_unker }}">
+                @endif
+                @error('id_unker')
+                    <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                @enderror
+            </div>
+
+            <!-- Unor (Readonly) -->
+            <div class="mb-4">
+                <label class="form-label">Unit Organisasi (Unor)</label>
+                <input type="text" id="unor_display" readonly class="form-input bg-gray-100" 
+                    value="{{ $user->unitKerja->unor->nama_unor ?? '-' }}">
+                <p class="text-xs text-gray-500 mt-1">Otomatis terisi berdasarkan Unit Kerja</p>
             </div>
 
             <!-- Actions -->
@@ -106,3 +140,18 @@
     </div>
 </div>
 @endsection
+
+@push('scripts')
+<script>
+function updateUnor() {
+    const select = document.getElementById('id_unker');
+    const unorDisplay = document.getElementById('unor_display');
+    
+    if (select && unorDisplay) {
+        const selectedOption = select.options[select.selectedIndex];
+        const unor = selectedOption.getAttribute('data-unor') || '-';
+        unorDisplay.value = unor;
+    }
+}
+</script>
+@endpush

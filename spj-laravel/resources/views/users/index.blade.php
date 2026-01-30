@@ -19,6 +19,62 @@
             </div>
         @endif
 
+        <!-- Stats Cards -->
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <!-- Total Users -->
+            <div class="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-4 flex items-center gap-3">
+                <div class="p-3 bg-blue-100 dark:bg-blue-900 rounded-lg">
+                    <svg class="w-6 h-6 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                    </svg>
+                </div>
+                <div>
+                    <p class="text-2xl font-bold text-gray-900 dark:text-white">{{ $totalUsers }}</p>
+                    <p class="text-xs text-gray-500 dark:text-gray-400">Total Users</p>
+                </div>
+            </div>
+
+            <!-- Super Admin -->
+            <div class="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-4 flex items-center gap-3">
+                <div class="p-3 bg-purple-100 dark:bg-purple-900 rounded-lg">
+                    <svg class="w-6 h-6 text-purple-600 dark:text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
+                    </svg>
+                </div>
+                <div>
+                    <p class="text-2xl font-bold text-gray-900 dark:text-white">{{ $superAdminCount }}</p>
+                    <p class="text-xs text-gray-500 dark:text-gray-400">Super Admin</p>
+                </div>
+            </div>
+
+            <!-- Admin -->
+            <div class="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-4 flex items-center gap-3">
+                <div class="p-3 bg-orange-100 dark:bg-orange-900 rounded-lg">
+                    <svg class="w-6 h-6 text-orange-600 dark:text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                    </svg>
+                </div>
+                <div>
+                    <p class="text-2xl font-bold text-gray-900 dark:text-white">{{ $adminCount }}</p>
+                    <p class="text-xs text-gray-500 dark:text-gray-400">Admin</p>
+                </div>
+            </div>
+
+            <!-- User -->
+            <div class="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-4 flex items-center gap-3">
+                <div class="p-3 bg-green-100 dark:bg-green-900 rounded-lg">
+                    <svg class="w-6 h-6 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                    </svg>
+                </div>
+                <div>
+                    <p class="text-2xl font-bold text-gray-900 dark:text-white">{{ $userCount }}</p>
+                    <p class="text-xs text-gray-500 dark:text-gray-400">User</p>
+                </div>
+            </div>
+        </div>
+
         <!-- Search & Filter Card -->
         <div class="bg-white rounded-lg border border-gray-200 p-4">
             <form method="GET" action="{{ route('users.index') }}" class="flex flex-col md:flex-row md:items-end gap-3">
@@ -62,10 +118,6 @@
                         class="flex-1 sm:flex-none px-3 sm:px-4 py-1.5 sm:py-2 text-sm bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition text-center">
                         Roles
                     </a>
-                    <a href="{{ route('users.index') }}"
-                        class="flex-1 sm:flex-none px-3 sm:px-4 py-1.5 sm:py-2 text-sm bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition text-center">
-                        Reset
-                    </a>
                     <a href="{{ route('users.create') }}"
                         class="flex-1 sm:flex-none px-3 sm:px-4 py-1.5 sm:py-2 text-sm bg-green-600 text-white rounded-lg hover:bg-green-700 transition text-center">
                         + Tambah
@@ -91,6 +143,8 @@
                             <th class="px-4 py-3 text-left text-xs font-medium text-gray-600 w-12">NO</th>
                             <th class="px-4 py-3 text-left text-xs font-medium text-gray-600">NAMA</th>
                             <th class="px-4 py-3 text-left text-xs font-medium text-gray-600">EMAIL</th>
+                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-600">UNKER</th>
+                            <th class="px-4 py-3 text-left text-xs font-medium text-gray-600">UNOR</th>
                             <th class="px-4 py-3 text-left text-xs font-medium text-gray-600">ROLE</th>
                             <th class="px-4 py-3 text-left text-xs font-medium text-gray-600">STATUS</th>
                             <th class="px-4 py-3 text-center text-xs font-medium text-gray-600 w-56">AKSI</th>
@@ -102,13 +156,19 @@
                                 <td class="px-4 py-3 text-gray-500">{{ $users->firstItem() + $index }}</td>
                                 <td class="px-4 py-3 font-medium text-gray-900">{{ $user->name }}</td>
                                 <td class="px-4 py-3 text-gray-600">{{ $user->email }}</td>
+                                <td class="px-4 py-3 text-gray-600 text-xs">
+                                    {{ $user->unitKerja->nama_unit ?? '-' }}
+                                </td>
+                                <td class="px-4 py-3 text-gray-600 text-xs">
+                                    {{ $user->unitKerja->unor->nama_unor ?? '-' }}
+                                </td>
                                 <td class="px-4 py-3">
                                     @if($user->role === 'super_admin')
-                                        <span class="px-2 py-1 bg-purple-100 text-purple-700 rounded-full text-xs font-medium">Super Admin</span>
+                                        <span class="px-2 py-1 bg-purple-100 dark:bg-purple-900 text-purple-700 dark:text-purple-300 rounded-full text-xs font-medium">Super Admin</span>
                                     @elseif($user->role === 'admin')
-                                        <span class="px-2 py-1 bg-orange-100 text-orange-700 rounded-full text-xs font-medium">Admin</span>
+                                        <span class="px-2 py-1 bg-orange-100 dark:bg-orange-900 text-orange-700 dark:text-orange-300 rounded-full text-xs font-medium">Admin</span>
                                     @else
-                                        <span class="px-2 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-medium">User</span>
+                                        <span class="px-2 py-1 bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 rounded-full text-xs font-medium">User</span>
                                     @endif
                                 </td>
                                 <td class="px-4 py-3">
@@ -143,14 +203,6 @@
                                                     </button>
                                                 </form>
                                             @endif
-
-                                            <form action="{{ route('users.reset-password', $user->id) }}" method="POST" class="inline">
-                                                @csrf
-                                                <button type="submit" onclick="return confirm('Reset password user ini?')"
-                                                    class="px-2 py-1 bg-indigo-50 text-indigo-600 rounded hover:bg-indigo-100 text-xs font-medium">
-                                                    Reset PW
-                                                </button>
-                                            </form>
                                         @endif
 
                                         @if($user->id !== Auth::id())
@@ -168,7 +220,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="6" class="px-4 py-8 text-center text-gray-500">
+                                <td colspan="8" class="px-4 py-8 text-center text-gray-500">
                                     Belum ada data user
                                 </td>
                             </tr>
@@ -191,11 +243,11 @@
 
                         <div class="flex items-center gap-2 mb-3">
                             @if($user->role === 'super_admin')
-                                <span class="px-2 py-0.5 bg-purple-100 text-purple-700 rounded-full text-xs font-medium">Super Admin</span>
+                                <span class="px-2 py-0.5 bg-purple-100 dark:bg-purple-900 text-purple-700 dark:text-purple-300 rounded-full text-xs font-medium">Super Admin</span>
                             @elseif($user->role === 'admin')
-                                <span class="px-2 py-0.5 bg-orange-100 text-orange-700 rounded-full text-xs font-medium">Admin</span>
+                                <span class="px-2 py-0.5 bg-orange-100 dark:bg-orange-900 text-orange-700 dark:text-orange-300 rounded-full text-xs font-medium">Admin</span>
                             @else
-                                <span class="px-2 py-0.5 bg-blue-100 text-blue-700 rounded-full text-xs font-medium">User</span>
+                                <span class="px-2 py-0.5 bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 rounded-full text-xs font-medium">User</span>
                             @endif
 
                             @if($user->status === 'active')
@@ -229,14 +281,6 @@
                                         </button>
                                     </form>
                                 @endif
-
-                                <form action="{{ route('users.reset-password', $user->id) }}" method="POST">
-                                    @csrf
-                                    <button type="submit" onclick="return confirm('Reset password user ini?')"
-                                        class="w-full px-3 py-1.5 bg-indigo-50 text-indigo-600 rounded-lg hover:bg-indigo-100 text-xs font-medium">
-                                        Reset PW
-                                    </button>
-                                </form>
                             @endif
 
                             @if($user->id !== Auth::id())

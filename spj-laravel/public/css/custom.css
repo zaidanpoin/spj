@@ -57,8 +57,9 @@
 
 body {
     font-family: var(--font-family);
-    background-color: var(--color-white);
+    background-color: #ffffff;
     color: var(--color-gray-900);
+    transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 /* ========================================
@@ -324,4 +325,1020 @@ body {
 /* Container untuk inline loader */
 .loader-container {
     position: relative;
+}
+
+/* ========================================
+   Dark Mode Styles
+   ======================================== */
+
+/* Dark Mode Toggle Button */
+.dark-mode-toggle {
+    cursor: pointer;
+    padding: 0.5rem;
+    border-radius: var(--radius-md);
+    transition: all 0.3s ease;
+    background: transparent;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.dark-mode-toggle:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.dark-mode-toggle svg {
+    width: 1.25rem;
+    height: 1.25rem;
+    transition: transform 0.3s ease;
+}
+
+.dark-mode-toggle:hover svg {
+    transform: rotate(15deg);
+}
+
+/* Dark Mode Variables */
+.dark {
+    --color-bg-primary: #1a1a2e;
+    --color-bg-secondary: #1a1a2e;
+    --color-bg-tertiary: #252542;
+    --color-text-primary: #f1f5f9;
+    --color-text-secondary: #94a3b8;
+    --color-text-muted: #64748b;
+    --color-border: #2d2d4a;
+}
+
+:root {
+    --color-bg-primary: #ffffff;
+    --color-bg-secondary: #f9fafb;
+    --color-bg-tertiary: #f3f4f6;
+    --color-text-primary: #111827;
+    --color-text-secondary: #4b5563;
+    --color-text-muted: #6b7280;
+    --color-border: #e5e7eb;
+}
+
+/* Dark Mode Body */
+.dark body,
+body.dark {
+    background-color: var(--color-bg-primary) !important;
+    color: var(--color-text-primary) !important;
+}
+
+html.dark {
+    background-color: #1a1a2e;
+}
+
+html.dark body {
+    background-color: #1a1a2e !important;
+}
+
+/* Dark Mode Cards */
+.dark .bg-white,
+html.dark .bg-white,
+.dark div.bg-white,
+.dark section.bg-white,
+html.dark div.bg-white {
+    background-color: var(--color-bg-secondary) !important;
+}
+
+.dark .bg-gray-50,
+html.dark .bg-gray-50,
+.dark div.bg-gray-50 {
+    background-color: var(--color-bg-tertiary) !important;
+}
+
+.dark .bg-gray-100,
+html.dark .bg-gray-100 {
+    background-color: var(--color-bg-tertiary) !important;
+}
+
+/* Dark Mode - Specific card combinations */
+.dark .bg-white.rounded-xl,
+.dark .bg-white.rounded-lg,
+.dark .bg-white.shadow-sm,
+html.dark .bg-white.rounded-xl,
+html.dark .bg-white.rounded-lg,
+html.dark .bg-white.shadow-sm {
+    background-color: var(--color-bg-secondary) !important;
+}
+
+/* Dark Mode Text */
+.dark .text-gray-900 {
+    color: var(--color-text-primary) !important;
+}
+
+.dark .text-gray-700 {
+    color: #cbd5e1 !important;
+}
+
+.dark .text-gray-600 {
+    color: var(--color-text-secondary) !important;
+}
+
+.dark .text-gray-500 {
+    color: var(--color-text-muted) !important;
+}
+
+.dark .text-gray-400 {
+    color: #64748b !important;
+}
+
+/* Dark Mode Borders */
+.dark .border-gray-200 {
+    border-color: var(--color-border) !important;
+}
+
+.dark .border-gray-100 {
+    border-color: var(--color-border) !important;
+}
+
+.dark .divide-gray-200> :not([hidden])~ :not([hidden]) {
+    border-color: var(--color-border) !important;
+}
+
+/* Dark Mode Shadows */
+.dark .shadow-sm,
+.dark .shadow-md,
+.dark .shadow-lg {
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -2px rgba(0, 0, 0, 0.2) !important;
+}
+
+/* Dark Mode Hover States */
+.dark .hover\:bg-gray-50:hover {
+    background-color: var(--color-bg-tertiary) !important;
+}
+
+.dark .hover\:bg-blue-50:hover {
+    background-color: rgba(59, 130, 246, 0.15) !important;
+}
+
+/* Dark Mode Form Inputs */
+.dark .form-input,
+.dark .form-select,
+.dark input[type="text"],
+.dark input[type="email"],
+.dark input[type="password"],
+.dark input[type="number"],
+.dark input[type="date"],
+.dark textarea,
+.dark select {
+    background-color: var(--color-bg-tertiary) !important;
+    border-color: var(--color-border) !important;
+    color: var(--color-text-primary) !important;
+}
+
+.dark .form-input::placeholder,
+.dark input::placeholder,
+.dark textarea::placeholder {
+    color: var(--color-text-muted) !important;
+}
+
+/* Dark Mode Tables */
+.dark .table thead {
+    background-color: var(--color-bg-tertiary) !important;
+}
+
+.dark .table th {
+    color: var(--color-text-secondary) !important;
+}
+
+.dark .table td {
+    border-color: var(--color-border) !important;
+}
+
+.dark .table tr:hover {
+    background-color: var(--color-bg-tertiary) !important;
+}
+
+/* Dark Mode Alerts */
+.dark .alert-success {
+    background-color: rgba(16, 185, 129, 0.15) !important;
+}
+
+.dark .alert-error {
+    background-color: rgba(239, 68, 68, 0.15) !important;
+}
+
+/* Dark Mode Navbar - Desktop Menu */
+.dark .nav-menu,
+.dark #mobileMenu {
+    background-color: var(--color-bg-secondary) !important;
+    border-color: var(--color-border) !important;
+}
+
+/* Dark Mode Footer */
+.dark footer {
+    background-color: var(--color-bg-secondary) !important;
+    border-color: var(--color-border) !important;
+}
+
+/* Dark Mode Dropdown */
+.dark .group-hover\:opacity-100 {
+    background-color: var(--color-bg-secondary) !important;
+}
+
+/* Dark Mode Page Loader */
+.dark .page-loader {
+    background: rgba(15, 23, 42, 0.95) !important;
+}
+
+.dark .spinner-text {
+    color: var(--color-primary-light) !important;
+}
+
+/* Dark Mode Quick Action Cards */
+.dark .border-gray-200.rounded-lg {
+    border-color: var(--color-border) !important;
+}
+
+.dark .bg-blue-100 {
+    background-color: rgba(59, 130, 246, 0.2) !important;
+}
+
+.dark .bg-green-100 {
+    background-color: rgba(16, 185, 129, 0.2) !important;
+}
+
+.dark .bg-purple-100 {
+    background-color: rgba(147, 51, 234, 0.2) !important;
+}
+
+.dark .bg-amber-100 {
+    background-color: rgba(245, 158, 11, 0.2) !important;
+}
+
+/* Dark Mode Status Badges */
+.dark .bg-green-100 {
+    background-color: rgba(16, 185, 129, 0.2) !important;
+}
+
+.dark .text-green-700 {
+    color: #34d399 !important;
+}
+
+/* Dark Mode Inline Loader */
+.dark .inline-loader {
+    background: rgba(15, 23, 42, 0.85) !important;
+}
+
+/* Dark Mode Transitions */
+html,
+body,
+.bg-white,
+.text-gray-900,
+.text-gray-600,
+.border-gray-200 {
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
+
+/* Dark Mode FullCalendar */
+.dark .fc-theme-standard .fc-scrollgrid {
+    border-color: var(--color-border) !important;
+}
+
+.dark .fc-theme-standard td,
+.dark .fc-theme-standard th {
+    border-color: var(--color-border) !important;
+}
+
+.dark .fc .fc-daygrid-day-number,
+.dark .fc .fc-col-header-cell-cushion {
+    color: var(--color-text-primary) !important;
+}
+
+.dark .fc .fc-daygrid-day.fc-day-today {
+    background-color: rgba(0, 229, 8, 0.1) !important;
+}
+
+.dark .fc-theme-standard .fc-list {
+    border-color: var(--color-border) !important;
+}
+
+.dark .fc .fc-list-day-cushion {
+    background-color: var(--color-bg-tertiary) !important;
+}
+
+.dark .fc .fc-list-event:hover td {
+    background-color: var(--color-bg-tertiary) !important;
+}
+
+/* ========================================
+   COMPREHENSIVE DARK MODE FIX
+   ======================================== */
+
+/* Force all bg-white elements to dark */
+html.dark .bg-white,
+html.dark [class*="bg-white"],
+html.dark div.bg-white,
+html.dark section.bg-white,
+html.dark article.bg-white,
+html.dark main.bg-white,
+html.dark aside.bg-white,
+html.dark header.bg-white,
+html.dark nav.bg-white,
+html.dark footer.bg-white,
+html.dark a.bg-white {
+    background-color: #1f2937 !important;
+}
+
+/* Stats Cards and Quick Action Cards */
+html.dark .rounded-xl,
+html.dark .rounded-lg,
+html.dark [class*="rounded-xl"][class*="bg-white"],
+html.dark [class*="rounded-lg"][class*="bg-white"],
+html.dark [class*="shadow-sm"][class*="bg-white"],
+html.dark [class*="shadow-md"][class*="bg-white"] {
+    background-color: #1f2937 !important;
+}
+
+/* Specific dashboard cards fix */
+html.dark .grid>div.bg-white,
+html.dark .grid>a.bg-white,
+html.dark .mb-8>div.bg-white,
+html.dark .mb-8.bg-white {
+    background-color: #1f2937 !important;
+}
+
+/* Quick Action card borders */
+html.dark .border-2,
+html.dark [class*="border-2"][class*="border-gray"] {
+    border-color: #374151 !important;
+    background-color: #1f2937 !important;
+}
+
+/* Card with p-6 class (common pattern) */
+html.dark .p-6.bg-white,
+html.dark .p-4.bg-white,
+html.dark [class*="p-6"][class*="bg-white"],
+html.dark [class*="p-4"][class*="bg-white"] {
+    background-color: #1f2937 !important;
+}
+
+/* Overflow hidden cards */
+html.dark .overflow-hidden.bg-white,
+html.dark [class*="overflow-hidden"][class*="bg-white"] {
+    background-color: #1f2937 !important;
+}
+
+/* Any element with shadow and white bg */
+html.dark [class*="shadow"][class*="bg-white"] {
+    background-color: #1f2937 !important;
+}
+
+/* Force text colors in dark mode */
+html.dark h1,
+html.dark h2,
+html.dark h3,
+html.dark h4,
+html.dark h5,
+html.dark h6 {
+    color: #f1f5f9 !important;
+}
+
+html.dark p,
+html.dark span,
+html.dark label,
+html.dark div {
+    color: inherit;
+}
+
+/* Dropdown menus */
+html.dark .group-hover\:opacity-100,
+html.dark [class*="group-hover"][class*="opacity"],
+html.dark .absolute.bg-white,
+html.dark [class*="absolute"][class*="bg-white"] {
+    background-color: #1f2937 !important;
+}
+
+/* Dropdown items */
+html.dark .dropdown-item,
+html.dark [class*="dropdown"] {
+    background-color: #1f2937 !important;
+    color: #e2e8f0 !important;
+}
+
+html.dark .dropdown-item:hover {
+    background-color: #374151 !important;
+}
+
+/* Table specific dark mode */
+html.dark table,
+html.dark tbody,
+html.dark thead,
+html.dark tr,
+html.dark td,
+html.dark th {
+    background-color: #1f2937 !important;
+    border-color: #374151 !important;
+}
+
+html.dark thead {
+    background-color: #111827 !important;
+}
+
+html.dark tr:hover {
+    background-color: #374151 !important;
+}
+
+/* Pagination */
+html.dark .pagination,
+html.dark [class*="pagination"] {
+    background-color: #1f2937 !important;
+}
+
+html.dark .pagination a,
+html.dark .pagination span {
+    background-color: #374151 !important;
+    border-color: #4b5563 !important;
+    color: #e2e8f0 !important;
+}
+
+/* Form inputs dark mode */
+html.dark input,
+html.dark select,
+html.dark textarea {
+    background-color: #374151 !important;
+    border-color: #4b5563 !important;
+    color: #f1f5f9 !important;
+}
+
+html.dark input::placeholder,
+html.dark textarea::placeholder {
+    color: #9ca3af !important;
+}
+
+/* Modal and overlays */
+html.dark .modal-content,
+html.dark [class*="modal"] {
+    background-color: #1f2937 !important;
+}
+
+/* Fix for any remaining white backgrounds */
+html.dark *[style*="background-color: white"],
+html.dark *[style*="background-color: #fff"],
+html.dark *[style*="background-color: #ffffff"],
+html.dark *[style*="background: white"],
+html.dark *[style*="background: #fff"],
+html.dark *[style*="background: #ffffff"] {
+    background-color: #1f2937 !important;
+}
+
+/* Dark mode shadows - make them more visible */
+html.dark .shadow-sm,
+html.dark .shadow-md,
+html.dark .shadow-lg,
+html.dark .shadow-xl,
+html.dark [class*="shadow"] {
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.4), 0 2px 4px -2px rgba(0, 0, 0, 0.3) !important;
+}
+
+/* Fix hover states */
+html.dark .hover\:bg-blue-50:hover,
+html.dark [class*="hover:bg-blue-50"]:hover {
+    background-color: rgba(59, 130, 246, 0.2) !important;
+}
+
+html.dark .hover\:border-primary:hover {
+    border-color: var(--color-primary) !important;
+}
+
+/* Fix icon backgrounds in dark mode */
+html.dark .bg-blue-100,
+html.dark .bg-green-100,
+html.dark .bg-purple-100,
+html.dark .bg-amber-100,
+html.dark .bg-red-100,
+html.dark .bg-yellow-100,
+html.dark .bg-indigo-100,
+html.dark .bg-pink-100,
+html.dark .bg-teal-100 {
+    opacity: 0.8;
+}
+
+/* Ensure gradient backgrounds stay visible */
+html.dark [class*="bg-gradient-to"] {
+    opacity: 1 !important;
+}
+
+/* ========================================
+   QUICK ACTION BUTTONS - DARK MODE FIX
+   ======================================== */
+
+/* Quick Action card links - specific targeting */
+html.dark a.p-4.border-2,
+html.dark a[class*="p-4"][class*="border-2"],
+html.dark .grid a.border-2,
+html.dark .grid>a[class*="border"],
+html.dark a.border-2.border-gray-200,
+html.dark a.rounded-lg.border-2 {
+    background-color: #1f2937 !important;
+    border-color: #374151 !important;
+}
+
+/* Hover state for quick action buttons */
+html.dark a.p-4.border-2:hover,
+html.dark a[class*="p-4"][class*="border-2"]:hover,
+html.dark .grid a.border-2:hover,
+html.dark a.border-2.border-gray-200:hover {
+    background-color: #374151 !important;
+    border-color: var(--color-primary) !important;
+}
+
+/* Quick action icon containers in dark mode */
+html.dark .group .bg-blue-100,
+html.dark .group .bg-green-100,
+html.dark .group .bg-purple-100,
+html.dark .group .bg-amber-100 {
+    background-color: rgba(59, 130, 246, 0.25) !important;
+}
+
+html.dark .group .bg-green-100 {
+    background-color: rgba(16, 185, 129, 0.25) !important;
+}
+
+html.dark .group .bg-purple-100 {
+    background-color: rgba(147, 51, 234, 0.25) !important;
+}
+
+html.dark .group .bg-amber-100 {
+    background-color: rgba(245, 158, 11, 0.25) !important;
+}
+
+/* Hover state for icon backgrounds */
+html.dark .group:hover .bg-blue-100,
+html.dark .group:hover .group-hover\:bg-blue-200 {
+    background-color: rgba(59, 130, 246, 0.4) !important;
+}
+
+html.dark .group:hover .bg-green-100,
+html.dark .group:hover .group-hover\:bg-green-200 {
+    background-color: rgba(16, 185, 129, 0.4) !important;
+}
+
+html.dark .group:hover .bg-purple-100,
+html.dark .group:hover .group-hover\:bg-purple-200 {
+    background-color: rgba(147, 51, 234, 0.4) !important;
+}
+
+html.dark .group:hover .bg-amber-100,
+html.dark .group:hover .group-hover\:bg-amber-200 {
+    background-color: rgba(245, 158, 11, 0.4) !important;
+}
+
+/* Text colors inside quick action cards */
+html.dark a.p-4 h3,
+html.dark a.border-2 h3,
+html.dark .grid a h3 {
+    color: #f1f5f9 !important;
+}
+
+html.dark a.p-4 p,
+html.dark a.border-2 p,
+html.dark .grid a p {
+    color: #94a3b8 !important;
+}
+
+/* Icon text colors */
+html.dark .text-blue-600 {
+    color: #60a5fa !important;
+}
+
+html.dark .text-green-600 {
+    color: #34d399 !important;
+}
+
+html.dark .text-purple-600 {
+    color: #a78bfa !important;
+}
+
+html.dark .text-amber-600 {
+    color: #fbbf24 !important;
+}
+
+/* ========================================
+   ACTION BUTTONS & BADGES - DARK MODE FIX
+   ======================================== */
+
+/* Edit Button - bg-blue-50 */
+html.dark .bg-blue-50,
+html.dark [class*="bg-blue-50"],
+html.dark a.bg-blue-50,
+html.dark button.bg-blue-50 {
+    background-color: rgba(59, 130, 246, 0.2) !important;
+}
+
+html.dark .bg-blue-50:hover,
+html.dark a.bg-blue-50:hover,
+html.dark [class*="bg-blue-50"]:hover {
+    background-color: rgba(59, 130, 246, 0.35) !important;
+}
+
+/* Hapus/Delete Button - bg-red-50 */
+html.dark .bg-red-50,
+html.dark [class*="bg-red-50"],
+html.dark a.bg-red-50,
+html.dark button.bg-red-50 {
+    background-color: rgba(239, 68, 68, 0.2) !important;
+}
+
+html.dark .bg-red-50:hover,
+html.dark a.bg-red-50:hover,
+html.dark button.bg-red-50:hover,
+html.dark [class*="bg-red-50"]:hover {
+    background-color: rgba(239, 68, 68, 0.35) !important;
+}
+
+/* Success/Green buttons - bg-green-50 */
+html.dark .bg-green-50,
+html.dark [class*="bg-green-50"] {
+    background-color: rgba(16, 185, 129, 0.2) !important;
+}
+
+html.dark .bg-green-50:hover,
+html.dark [class*="bg-green-50"]:hover {
+    background-color: rgba(16, 185, 129, 0.35) !important;
+}
+
+/* Yellow/Warning - bg-yellow-50, bg-amber-50 */
+html.dark .bg-yellow-50,
+html.dark .bg-amber-50,
+html.dark [class*="bg-yellow-50"],
+html.dark [class*="bg-amber-50"] {
+    background-color: rgba(245, 158, 11, 0.2) !important;
+}
+
+/* Purple buttons - bg-purple-50 */
+html.dark .bg-purple-50,
+html.dark [class*="bg-purple-50"] {
+    background-color: rgba(147, 51, 234, 0.2) !important;
+}
+
+/* Indigo buttons - bg-indigo-50 */
+html.dark .bg-indigo-50,
+html.dark [class*="bg-indigo-50"] {
+    background-color: rgba(99, 102, 241, 0.2) !important;
+}
+
+/* Gray backgrounds - bg-gray-50, bg-gray-100 */
+html.dark .bg-gray-50,
+html.dark [class*="bg-gray-50"] {
+    background-color: #374151 !important;
+}
+
+html.dark .bg-gray-100,
+html.dark [class*="bg-gray-100"],
+html.dark code.bg-gray-100 {
+    background-color: #374151 !important;
+    color: #e2e8f0 !important;
+}
+
+/* Badges - rounded-full elements */
+html.dark .rounded-full.bg-blue-100,
+html.dark [class*="rounded-full"][class*="bg-blue-100"] {
+    background-color: rgba(59, 130, 246, 0.25) !important;
+}
+
+html.dark .text-blue-700 {
+    color: #60a5fa !important;
+}
+
+html.dark .text-red-600 {
+    color: #f87171 !important;
+}
+
+html.dark .text-red-700 {
+    color: #fca5a5 !important;
+}
+
+html.dark .text-green-700 {
+    color: #34d399 !important;
+}
+
+/* Code elements */
+html.dark code {
+    background-color: #374151 !important;
+    color: #e2e8f0 !important;
+}
+
+/* Table header bg-gray-50 */
+html.dark thead.bg-gray-50,
+html.dark thead[class*="bg-gray-50"],
+html.dark .bg-gray-50.border-b {
+    background-color: #111827 !important;
+}
+
+/* Pagination buttons */
+html.dark .bg-gray-100.text-gray-700,
+html.dark a.bg-gray-100,
+html.dark span.bg-gray-100 {
+    background-color: #374151 !important;
+    color: #e2e8f0 !important;
+}
+
+html.dark a.bg-gray-100:hover {
+    background-color: #4b5563 !important;
+}
+
+/* Reset button */
+html.dark .bg-gray-100.text-gray-700:hover {
+    background-color: #4b5563 !important;
+}
+
+/* Alert boxes dark mode */
+html.dark .bg-green-50.border-l-4 {
+    background-color: rgba(16, 185, 129, 0.15) !important;
+}
+
+html.dark .bg-red-50.border-l-4 {
+    background-color: rgba(239, 68, 68, 0.15) !important;
+}
+
+/* Disabled/muted elements */
+html.dark .text-gray-400,
+html.dark .cursor-not-allowed {
+    color: #6b7280 !important;
+}
+
+/* Primary colored buttons stay visible */
+html.dark .bg-primary,
+html.dark [class*="bg-primary"] {
+    background-color: var(--color-primary) !important;
+}
+
+html.dark .bg-green-600 {
+    background-color: #059669 !important;
+}
+
+html.dark .bg-green-600:hover {
+    background-color: #047857 !important;
+}
+
+/* ========================================
+   KEGIATAN FORM - DARK MODE FIX
+   ======================================== */
+
+/* Form input text color fix with higher specificity */
+html.dark form input[type="text"],
+html.dark form input[type="email"],
+html.dark form input[type="password"],
+html.dark form input[type="number"],
+html.dark form input[type="date"],
+html.dark form input[type="datetime-local"],
+html.dark form input[type="time"],
+html.dark form textarea,
+html.dark form select {
+    background-color: #374151 !important;
+    border-color: #4b5563 !important;
+    color: #f1f5f9 !important;
+}
+
+/* Date picker icon color */
+html.dark input[type="date"]::-webkit-calendar-picker-indicator,
+html.dark input[type="datetime-local"]::-webkit-calendar-picker-indicator,
+html.dark input[type="time"]::-webkit-calendar-picker-indicator {
+    filter: invert(1);
+}
+
+/* Form button selectors (PPK, MAK buttons) */
+html.dark button.bg-white,
+html.dark button[class*="bg-white"],
+html.dark form button[type="button"].bg-white {
+    background-color: #374151 !important;
+    border-color: #4b5563 !important;
+    color: #f1f5f9 !important;
+}
+
+html.dark button.bg-white span,
+html.dark button[class*="bg-white"] span {
+    color: #9ca3af !important;
+}
+
+html.dark button.bg-white:hover,
+html.dark button[class*="bg-white"]:hover {
+    background-color: #4b5563 !important;
+}
+
+/* File input dark mode */
+html.dark input[type="file"] {
+    background-color: #374151 !important;
+    border-color: #4b5563 !important;
+    color: #f1f5f9 !important;
+}
+
+html.dark input[type="file"]::file-selector-button {
+    background-color: var(--color-primary) !important;
+    color: white !important;
+    border: none !important;
+}
+
+/* Select option styling */
+html.dark select option {
+    background-color: #374151 !important;
+    color: #f1f5f9 !important;
+}
+
+/* Disabled inputs */
+html.dark input:disabled,
+html.dark select:disabled,
+html.dark textarea:disabled,
+html.dark .bg-gray-100.cursor-not-allowed {
+    background-color: #2d3748 !important;
+    color: #9ca3af !important;
+}
+
+/* Form card header */
+html.dark .border-b.border-gray-200 h3,
+html.dark .border-b h3.font-semibold {
+    color: #f1f5f9 !important;
+}
+
+/* Label text */
+html.dark label.text-gray-700,
+html.dark .text-sm.font-medium.text-gray-700 {
+    color: #cbd5e1 !important;
+}
+
+/* Helper text */
+html.dark p.text-gray-500.text-xs,
+html.dark .text-xs.text-gray-500 {
+    color: #9ca3af !important;
+}
+
+/* ========================================
+   PPK Modal Dark Mode Styles
+   ======================================== */
+
+/* PPK Modal Search Input */
+html.dark #ppkSearchInput,
+html.dark #makSearchInput {
+    background-color: #374151 !important;
+    color: #f1f5f9 !important;
+    border-color: #4b5563 !important;
+}
+
+html.dark #ppkSearchInput::placeholder,
+html.dark #makSearchInput::placeholder {
+    color: #9ca3af !important;
+}
+
+/* PPK Modal Table Body */
+html.dark #ppkTableBody,
+html.dark #makTableBody {
+    background-color: #1f2937 !important;
+}
+
+html.dark #ppkTableBody tr,
+html.dark #makTableBody tr {
+    color: #e5e7eb !important;
+}
+
+html.dark #ppkTableBody tr:hover,
+html.dark #makTableBody tr:hover {
+    background-color: #374151 !important;
+}
+
+html.dark #ppkTableBody td,
+html.dark #makTableBody td {
+    border-color: #374151 !important;
+    color: #e5e7eb !important;
+}
+
+/* PPK/MAK Modal Pagination */
+html.dark #ppkPageInfo,
+html.dark #makPageInfo {
+    color: #d1d5db !important;
+}
+
+html.dark #ppkFirstPage,
+html.dark #ppkPrevPage,
+html.dark #ppkNextPage,
+html.dark #ppkLastPage,
+html.dark #makFirstPage,
+html.dark #makPrevPage,
+html.dark #makNextPage,
+html.dark #makLastPage {
+    background-color: #374151 !important;
+    color: #d1d5db !important;
+    border-color: #4b5563 !important;
+}
+
+html.dark #ppkFirstPage:hover,
+html.dark #ppkPrevPage:hover,
+html.dark #ppkNextPage:hover,
+html.dark #ppkLastPage:hover,
+html.dark #makFirstPage:hover,
+html.dark #makPrevPage:hover,
+html.dark #makNextPage:hover,
+html.dark #makLastPage:hover {
+    background-color: #4b5563 !important;
+}
+
+/* EHRM Result Box */
+html.dark #ehrmPpkResult {
+    background-color: rgba(30, 58, 138, 0.3) !important;
+    border-color: #1e40af !important;
+}
+
+html.dark #ehrmPpkResult p {
+    color: #93c5fd !important;
+}
+
+html.dark #ehrmPpkResultContent {
+    color: #e5e7eb !important;
+}
+
+html.dark #ehrmPpkResultContent>div {
+    background-color: #374151 !important;
+    border-color: #3b82f6 !important;
+}
+
+html.dark #ehrmPpkResultContent>div:hover {
+    background-color: #4b5563 !important;
+}
+
+html.dark #ehrmPpkResultContent p {
+    color: #e5e7eb !important;
+}
+
+/* ========================================
+   Bendahara Modal Dark Mode Styles
+   ======================================== */
+
+/* Bendahara Modal Search Input */
+html.dark #bendaharaSearchInput {
+    background-color: #374151 !important;
+    color: #f1f5f9 !important;
+    border-color: #4b5563 !important;
+}
+
+html.dark #bendaharaSearchInput::placeholder {
+    color: #9ca3af !important;
+}
+
+/* Bendahara Modal Table Body */
+html.dark #bendaharaTableBody {
+    background-color: #1f2937 !important;
+}
+
+html.dark #bendaharaTableBody tr {
+    color: #e5e7eb !important;
+}
+
+html.dark #bendaharaTableBody tr:hover {
+    background-color: #374151 !important;
+}
+
+html.dark #bendaharaTableBody td {
+    border-color: #374151 !important;
+    color: #e5e7eb !important;
+}
+
+/* Bendahara Modal Pagination */
+html.dark #bendaharaPageInfo {
+    color: #d1d5db !important;
+}
+
+html.dark #bendaharaFirstPage,
+html.dark #bendaharaPrevPage,
+html.dark #bendaharaNextPage,
+html.dark #bendaharaLastPage {
+    background-color: #374151 !important;
+    color: #d1d5db !important;
+    border-color: #4b5563 !important;
+}
+
+html.dark #bendaharaFirstPage:hover,
+html.dark #bendaharaPrevPage:hover,
+html.dark #bendaharaNextPage:hover,
+html.dark #bendaharaLastPage:hover {
+    background-color: #4b5563 !important;
+}
+
+/* EHRM Bendahara Result Box */
+html.dark #ehrmBendaharaResult {
+    background-color: rgba(30, 58, 138, 0.3) !important;
+    border-color: #1e40af !important;
+}
+
+html.dark #ehrmBendaharaResult p {
+    color: #93c5fd !important;
+}
+
+html.dark #ehrmBendaharaResultContent {
+    color: #e5e7eb !important;
+}
+
+html.dark #ehrmBendaharaResultContent>div {
+    background-color: #374151 !important;
+    border-color: #3b82f6 !important;
+}
+
+html.dark #ehrmBendaharaResultContent>div:hover {
+    background-color: #4b5563 !important;
+}
+
+html.dark #ehrmBendaharaResultContent p {
+    color: #e5e7eb !important;
 }

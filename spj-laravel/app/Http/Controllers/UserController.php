@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Models\UnitKerja;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
@@ -41,9 +42,16 @@ class UserController extends Controller
             // Future: filter by unit
         }
 
-        $users = $query->latest()->paginate(15);
+        $users = $query->with('unitKerja.unor')->latest()->paginate(15);
 
-        return view('users.index', compact('users'));
+        // Get role counts for stats cards
+        $totalUsers = User::count();
+        $superAdminCount = User::where('role', 'super_admin')->count();
+        $adminCount = User::where('role', 'admin')->count();
+        $userCount = User::where('role', 'user')->count();
+        $activeCount = User::where('status', 'active')->count();
+
+        return view('users.index', compact('users', 'totalUsers', 'superAdminCount', 'adminCount', 'userCount', 'activeCount'));
     }
 
     /**
@@ -51,7 +59,8 @@ class UserController extends Controller
      */
     public function create()
     {
-        return view('users.create');
+        $unitKerjas = UnitKerja::with('unor')->orderBy('nama_unit')->get();
+        return view('users.create', compact('unitKerjas'));
     }
 
     /**
@@ -65,6 +74,7 @@ class UserController extends Controller
             'password' => 'required|min:8|confirmed',
             'role' => ['required', Rule::in($this->getAllowedRoles())],
             'status' => 'required|in:active,suspended',
+            'id_unker' => 'nullable|exists:unit_kerjas,id',
         ]);
 
         $validated['password'] = Hash::make($validated['password']);
@@ -81,7 +91,8 @@ class UserController extends Controller
     public function edit($id)
     {
         $user = User::findOrFail($id);
-        return view('users.edit', compact('user'));
+        $unitKerjas = UnitKerja::with('unor')->orderBy('nama_unit')->get();
+        return view('users.edit', compact('user', 'unitKerjas'));
     }
 
     /**
@@ -96,6 +107,7 @@ class UserController extends Controller
             'email' => ['required', 'email', Rule::unique('users')->ignore($id)],
             'role' => ['required', Rule::in($this->getAllowedRoles())],
             'status' => 'required|in:active,suspended',
+            'id_unker' => 'nullable|exists:unit_kerjas,id',
         ]);
 
         // Only update password if provided
