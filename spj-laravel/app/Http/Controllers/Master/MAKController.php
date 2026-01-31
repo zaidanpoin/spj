@@ -105,7 +105,7 @@ class MAKController extends Controller
 
             Log::info('MAK Sync: Fetching from IEMON API', ['url' => $fullUrl]);
 
-            $response = Http::timeout(30)->get($fullUrl);
+            $response = Http::withoutVerifying()->timeout(30)->get($fullUrl);
 
             if (!$response->successful()) {
                 Log::error('MAK Sync: API request failed', ['status' => $response->status()]);

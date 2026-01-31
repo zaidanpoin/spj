@@ -251,6 +251,148 @@
 
         </div>
     </div>
+
+    <!-- PAGE 2: Daftar Belanja / Pembayaran UP -->
+    <div class="sheet" style="page-break-before: always;">
+        <!-- Title -->
+        <div class="text-center mb-6">
+            <h1 class="text-base font-bold uppercase mb-1">PEMBAYARAN UP</h1>
+            <p class="text-sm">{{ $kegiatan->nama_kegiatan }}</p>
+        </div>
+
+        <!-- Data Table -->
+        <table class="w-full border-collapse mb-6" style="font-size: 10pt;">
+            <thead>
+                <tr>
+                    <th class="border border-black px-2 py-1.5 bg-gray-100 text-center" style="width: 40px;">No.</th>
+                    <th class="border border-black px-2 py-1.5 bg-gray-100 text-left" style="width: 40%;">Nama Barang</th>
+                    <th class="border border-black px-2 py-1.5 bg-gray-100 text-center" style="width: 70px;">Jumlah</th>
+                    <th class="border border-black px-2 py-1.5 bg-gray-100 text-center" style="width: 110px;">Harga</th>
+                    <th class="border border-black px-2 py-1.5 bg-gray-100 text-center" style="width: 120px;">Nominal</th>
+                </tr>
+            </thead>
+            <tbody>
+                @forelse($konsumsis as $index => $konsumsi)
+                <tr>
+                    <td class="border border-black px-2 py-1.5 text-center">{{ $index + 1 }}</td>
+                    <td class="border border-black px-2 py-1.5 text-left">{{ $konsumsi->nama_konsumsi ?? 'Hidangan ' . ($konsumsi->waktuKonsumsi->nama ?? 'Konsumsi') }}</td>
+                    <td class="border border-black px-2 py-1.5 text-center">{{ number_format($konsumsi->jumlah, 0, ',', '.') }}</td>
+                    <td class="border border-black px-2 py-1.5 text-right">Rp&nbsp;&nbsp;&nbsp;&nbsp;{{ number_format($konsumsi->harga, 0, ',', '.') }}</td>
+                    <td class="border border-black px-2 py-1.5 text-right">Rp&nbsp;&nbsp;&nbsp;&nbsp;{{ number_format($konsumsi->jumlah * $konsumsi->harga, 0, ',', '.') }}</td>
+                </tr>
+                @empty
+                <tr>
+                    <td colspan="5" class="border border-black px-2 py-4 text-center">Tidak ada data konsumsi</td>
+                </tr>
+                @endforelse
+                <tr class="bg-gray-200">
+                    <td colspan="4" class="border border-black px-2 py-1.5 text-left font-bold">Total</td>
+                    <td class="border border-black px-2 py-1.5 text-right font-bold">Rp&nbsp;&nbsp;&nbsp;&nbsp;{{ number_format($totalKonsumsi, 0, ',', '.') }}</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <!-- Signature Section -->
+        <div class="mt-10" style="font-size: 10pt;">
+            <div class="flex justify-between">
+                <!-- Left: Bendahara Pengeluaran -->
+                <div class="text-center" style="width: 45%;">
+                    <p class="mb-1">Mengetahui/Menyetujui</p>
+                    <p class="mb-16">Bendahara Pengeluaran</p>
+                    <div class="mt-16">
+                        <p class="font-bold underline">{{ $kegiatan->bendahara->nama ?? '..............................' }}</p>
+                        <p class="text-sm">NIP. {{ $kegiatan->bendahara->nip ?? '..............................' }}</p>
+                    </div>
+                </div>
+
+                <!-- Right: Pembuat Daftar -->
+                <div class="text-center" style="width: 45%;">
+                    <p class="mb-1">Jakarta, {{ now()->translatedFormat('d F Y') }}</p>
+                    <p>Yang Menerima,</p>
+                    <p class="font-bold mb-16">Pembuat Daftar</p>
+                    <div class="mt-16">
+                        <p class="font-bold underline">{{ auth()->user()->name ?? '..............................' }}</p>
+                        <p class="text-sm">NIP. {{ auth()->user()->nip ?? '..............................' }}</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bottom: PPK -->
+            <div class="mt-10 text-center" style="width: 50%;">
+                <p class="mb-1">Setuju dibebankan pada mata anggaran berkenan,</p>
+                <p>an. Kuasa Pengguna Anggaran</p>
+                <p class="mb-16">Pejabat Pembuat Komitmen</p>
+                <div class="mt-16">
+                    <p class="font-bold underline">{{ $kegiatan->ppk->nama ?? '..............................' }}</p>
+                    <p class="text-sm">NIP. {{ $kegiatan->ppk->nip ?? '..............................' }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- PAGE 3: Daftar Hadir -->
+    <div class="sheet" style="page-break-before: always;">
+        <!-- Header -->
+        <div class="text-center mb-6">
+            <h1 class="text-base font-bold uppercase mb-1">DAFTAR HADIR</h1>
+            <p class="text-sm">{{ $kegiatan->nama_kegiatan }}</p>
+            <p class="text-xs text-gray-600 mt-1">
+                {{ $kegiatan->tanggal_mulai ? $kegiatan->tanggal_mulai->translatedFormat('d F Y') : '-' }}
+                @if($kegiatan->tanggal_selesai && $kegiatan->tanggal_selesai != $kegiatan->tanggal_mulai)
+                    - {{ $kegiatan->tanggal_selesai->translatedFormat('d F Y') }}
+                @endif
+            </p>
+        </div>
+
+        @php $totalPeserta = $kegiatan->jumlah_peserta ?? 20; @endphp
+
+        <!-- Daftar Hadir Table -->
+        <table class="w-full border-collapse" style="font-size: 10pt;">
+            <thead>
+                <tr>
+                    <th class="border border-black px-2 py-1.5 bg-gray-100 text-center" style="width: 40px;">No</th>
+                    <th class="border border-black px-2 py-1.5 bg-gray-100 text-center" style="width: 35%;">Nama Lengkap</th>
+                    <th class="border border-black px-2 py-1.5 bg-gray-100 text-center" style="width: 30%;">Instansi</th>
+                    <th class="border border-black px-2 py-1.5 bg-gray-100 text-center" style="width: 35%;">Tanda Tangan</th>
+                </tr>
+            </thead>
+            <tbody>
+                @for($i = 1; $i <= $totalPeserta; $i++)
+                    <tr>
+                        <td class="border border-black px-2 py-3 text-center">{{ $i }}</td>
+                        <td class="border border-black px-2 py-3"></td>
+                        <td class="border border-black px-2 py-3"></td>
+                        <td class="border border-black px-2 py-3">
+                            <div class="flex justify-between items-start h-5">
+                                <div class="w-1/2">
+                                    @if($i % 2 == 1)
+                                        <span class="text-gray-500 text-xs">{{ $i }}.</span>
+                                    @endif
+                                </div>
+                                <div class="w-1/2 text-right">
+                                    @if($i % 2 == 0)
+                                        <span class="text-gray-500 text-xs">{{ $i }}.</span>
+                                    @endif
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                @endfor
+            </tbody>
+        </table>
+
+        <!-- Footer/Signature -->
+        <div class="mt-8 flex justify-end">
+            <div class="text-center" style="font-size: 10pt;">
+                <p>Jakarta, {{ now()->translatedFormat('d F Y') }}</p>
+                <p class="mt-1">Mengetahui,</p>
+                <div class="mt-16">
+                    <p class="font-bold underline">{{ $kegiatan->ppk->nama ?? '..............................' }}</p>
+                    <p class="text-sm">NIP. {{ $kegiatan->ppk->nip ?? '..............................' }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
 </body>
 
 </html>

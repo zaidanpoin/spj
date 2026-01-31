@@ -614,7 +614,19 @@
             btn.textContent = 'Mencari...';
 
             try {
-                const response = await fetch(`/api/ehrm/pegawai/${nip}`);
+                const response = await fetch(`/api/ehrm/pegawai/${nip}`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest'
+                    },
+                    credentials: 'same-origin'
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
                 const data = await response.json();
 
                 if (data.success && data.data) {
@@ -671,8 +683,43 @@
                                         <td class="px-3 py-2 text-sm border-r border-gray-200 dark:border-gray-700 dark:text-gray-200">${bendahara.eselon || '-'}</td>
                                         <td class="px-3 py-2 text-sm dark:text-gray-200">${bendahara.tgl_lahir || '-'}</td>
                                     `;
-                    row.addEventListener('click', function () {
-                        document.getElementById('bendahara_id').value = bendahara.id;
+                    row.addEventListener('click', async function () {
+                        // If from EHRM, save to database first
+                        if (bendahara.isEhrm) {
+                            try {
+                                const saveResponse = await fetch('/api/bendahara/save-from-ehrm', {
+                                    method: 'POST',
+                                    headers: {
+                                        'Content-Type': 'application/json',
+                                        'X-Requested-With': 'XMLHttpRequest',
+                                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                                    },
+                                    credentials: 'same-origin',
+                                    body: JSON.stringify({
+                                        nama: bendahara.nama,
+                                        nip: bendahara.nip,
+                                        jabatan: bendahara.jabatan,
+                                        golongan: bendahara.golongan,
+                                        eselon: bendahara.eselon,
+                                        tgl_lahir: bendahara.tgl_lahir
+                                    })
+                                });
+                                const saveData = await saveResponse.json();
+                                if (saveData.success) {
+                                    document.getElementById('bendahara_id').value = saveData.data.id;
+                                } else {
+                                    alert('Gagal menyimpan data bendahara');
+                                    return;
+                                }
+                            } catch (error) {
+                                console.error('Error saving bendahara:', error);
+                                alert('Gagal menyimpan data bendahara');
+                                return;
+                            }
+                        } else {
+                            document.getElementById('bendahara_id').value = bendahara.id;
+                        }
+
                         document.getElementById('bendaharaSelectedText').textContent = `${bendahara.nama} (${bendahara.nip})`;
                         document.getElementById('bendaharaSelectedText').classList.remove('text-gray-500');
                         document.getElementById('bendaharaSelectedText').classList.add('text-gray-900');
@@ -736,17 +783,17 @@
             try {
                 const response = await fetch(`/api/mak-by-ppk/${nipPpk}`);
                 const result = await response.json();
-                
+
                 if (result.success && result.data.length > 0) {
                     makData = result.data;
                     filteredMakData = [...makData];
-                    
+
                     // Reset MAK selection
                     document.getElementById('mak_id').value = '';
                     document.getElementById('makSelectedText').textContent = 'Pilih MAK';
                     document.getElementById('makSelectedText').classList.add('text-gray-500');
                     document.getElementById('makSelectedText').classList.remove('text-gray-900');
-                    
+
                     currentMakPage = 1;
                     console.log(`Loaded ${makData.length} MAK for PPK NIP: ${nipPpk}`);
                 } else {

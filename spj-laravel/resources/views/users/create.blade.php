@@ -179,7 +179,19 @@
                     `;
 
             try {
-                const response = await fetch(`/api/ehrm/pegawai/${nip}`);
+                const response = await fetch(`/api/ehrm/pegawai/${nip}`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest'
+                    },
+                    credentials: 'same-origin'
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
                 const data = await response.json();
 
                 if (data.success && data.data) {

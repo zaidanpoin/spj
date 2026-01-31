@@ -3,6 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <!-- Prevent flash of light mode -->
     <script>
         (function () {
@@ -459,8 +460,6 @@
             </div>
         </div>
     </footer>
-
-    @stack('scripts')
 
     <script>
         // Page loader - only for form submissions
