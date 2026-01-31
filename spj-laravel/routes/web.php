@@ -103,6 +103,39 @@ Route::get('/api/ehrm/pegawai/{nip}', function ($nip) {
     }
 })->middleware('auth')->name('api.ehrm.pegawai');
 
+// API to save Bendahara from EHRM
+Route::post('/api/bendahara/save-from-ehrm', function (\Illuminate\Http\Request $request) {
+    try {
+        $validated = $request->validate([
+            'nama' => 'required|string|max:255',
+            'nip' => 'required|string|max:20',
+            'jabatan' => 'nullable|string|max:255',
+            'golongan' => 'nullable|string|max:10',
+            'eselon' => 'nullable|string|max:10',
+            'tgl_lahir' => 'nullable|string|max:20',
+        ]);
+
+        // Check if bendahara already exists by NIP
+        $bendahara = \App\Models\Bendahara::where('nip', $validated['nip'])->first();
+
+        if (!$bendahara) {
+            // Create new bendahara
+            $bendahara = \App\Models\Bendahara::create($validated);
+        }
+
+        return response()->json([
+            'success' => true,
+            'data' => $bendahara
+        ]);
+    } catch (\Exception $e) {
+        \Log::error('Save Bendahara from EHRM error: ' . $e->getMessage());
+        return response()->json([
+            'success' => false,
+            'message' => 'Error: ' . $e->getMessage()
+        ], 500);
+    }
+})->middleware('auth')->name('api.bendahara.save-from-ehrm');
+
 // API to get MAK by PPK NIP
 Route::get('/api/mak-by-ppk/{nip}', function ($nip) {
     $maks = \App\Models\MAK::where('nip_ppk', $nip)
@@ -410,27 +443,35 @@ Route::middleware(['auth'])->group(function () {
 
 // Kwitansi Routes
 Route::middleware(['auth'])->group(function () {
-    Route::get('kwitansi/generate', [App\Http\Controllers\KwitansiController::class, 'generate'])
-        ->middleware('permission:create-kwitansi')
-        ->name('kwitansi.generate');
-    Route::get('kwitansi/download/{kegiatan_id}/{jenis}', [App\Http\Controllers\KwitansiController::class, 'download'])
-        ->middleware('permission:download-kwitansi')
-        ->name('kwitansi.download');
-    Route::get('kegiatan/{id}/daftar-hadir', [App\Http\Controllers\KwitansiController::class, 'daftarHadir'])
-        ->middleware('permission:view-kwitansi')
-        ->name('kegiatan.daftar-hadir');
+    // Generate kwitansi dengan parameter (kegiatan_id dan jenis)
     Route::get('kwitansi/generate/{kegiatan_id}/{jenis}', [KwitansiController::class, 'generate'])
         ->middleware('permission:create-kwitansi')
         ->name('kwitansi.generate');
+
+    // Generate kwitansi via query string (legacy support)
+    Route::get('kwitansi/generate', [KwitansiController::class, 'generate'])
+        ->middleware('permission:create-kwitansi')
+        ->name('kwitansi.generate.query');
+
+    Route::get('kwitansi/download/{kegiatan_id}/{jenis}', [App\Http\Controllers\KwitansiController::class, 'download'])
+        ->middleware('permission:download-kwitansi')
+        ->name('kwitansi.download');
+
+    Route::get('kegiatan/{id}/daftar-hadir', [App\Http\Controllers\KwitansiController::class, 'daftarHadir'])
+        ->middleware('permission:view-kwitansi')
+        ->name('kegiatan.daftar-hadir');
+
     Route::get('kwitansi/{id}/preview', [KwitansiController::class, 'preview'])
         ->middleware('permission:view-kwitansi')
         ->name('kwitansi.preview');
+
     Route::post('kwitansi/{id}/approve', [KwitansiController::class, 'approve'])
         ->middleware('permission:approve-kwitansi')
         ->name('kwitansi.approve');
-    Route::get('kwitansi/{id}/download', [KwitansiController::class, 'downloadPDF'])
+
+    Route::get('kwitansi/{id}/download-pdf', [KwitansiController::class, 'downloadPDF'])
         ->middleware('permission:download-kwitansi')
-        ->name('kwitansi.download');
+        ->name('kwitansi.download-pdf');
 });
 
 // Activity Logs Routes

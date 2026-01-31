@@ -5,30 +5,45 @@ namespace App\Http\Controllers;
 use App\Models\Kegiatan;
 use App\Models\Konsumsi;
 use Illuminate\Http\Request;
+use Carbon\Carbon;
 
 class KwitansiController extends Controller
 {
     /**
      * Show kwitansi preview page
      */
-    public function generate(Request $request)
+    public function generate(Request $request, $kegiatan_id = null, $jenis = null)
     {
-        $kegiatanId = $request->get('kegiatan_id');
-        $jenis = $request->get('jenis', 'UP'); // UP or LS
+        // Support both route parameter and query string
+        $kegiatanId = $kegiatan_id ?? $request->get('kegiatan_id');
+        $jenis = $jenis ?? $request->get('jenis', 'UP');
 
-        $kegiatan = Kegiatan::with(['unor', 'unitKerja', 'mak', 'ppk', 'bendahara'])->findOrFail($kegiatanId);
+        $kegiatan = Kegiatan::with(['unor', 'unitKerja', 'mak', 'ppk', 'bendahara', 'konsumsis.waktuKonsumsi'])->findOrFail($kegiatanId);
 
         // Get konsumsi data
-        $konsumsis = Konsumsi::where('kegiatan_id', $kegiatanId)->get();
+        $konsumsis = Konsumsi::with('waktuKonsumsi')->where('kegiatan_id', $kegiatanId)->get();
         $totalKonsumsi = $konsumsis->sum(fn($item) => $item->jumlah * $item->harga);
 
         // Generate terbilang
         $terbilang = $this->terbilang($totalKonsumsi);
 
-        if ($jenis === 'LS') {
+        // Tanggal dokumen
+        $tanggalDokumen = Carbon::now()->locale('id')->translatedFormat('j F Y');
+        $tanggalDokumen = 'Jakarta, ' . $tanggalDokumen;
+
+        // Pembuat daftar (current user)
+        $pembuatDaftar = auth()->user();
+
+        // Handle different jenis kwitansi
+        if ($jenis === 'LS' || $jenis === 'ls') {
             return view('kwitansi.preview-ls', compact('kegiatan', 'konsumsis', 'totalKonsumsi', 'terbilang', 'jenis'));
         }
 
+        if ($jenis === 'pembayaran-up' || $jenis === 'pembayaran_up') {
+            return view('kwitansi.pembayaran-up', compact('kegiatan', 'konsumsis', 'totalKonsumsi', 'terbilang', 'jenis', 'tanggalDokumen', 'pembuatDaftar'));
+        }
+
+        // Default UP kwitansi
         return view('kwitansi.preview', compact('kegiatan', 'konsumsis', 'totalKonsumsi', 'terbilang', 'jenis'));
     }
 

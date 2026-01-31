@@ -50,10 +50,12 @@ class EHRMService
                 'email' => $this->email,
             ]);
 
-            $response = Http::post("{$this->baseUrl}/user/login", [
-                'email' => $this->email,
-                'password' => $this->password,
-            ]);
+            $response = Http::withOptions([
+                'verify' => false, // Disable SSL verification for development
+            ])->post("{$this->baseUrl}/user/login", [
+                        'email' => $this->email,
+                        'password' => $this->password,
+                    ]);
 
             Log::info('EHRM Login response', [
                 'status' => $response->status(),
@@ -112,10 +114,12 @@ class EHRMService
                 'token' => substr($token, 0, 20) . '...',
             ]);
 
-            $response = Http::withHeaders([
-                'X-DreamFactory-Api-Key' => $this->apiKey,
-                'X-DreamFactory-Session-Token' => $token,
-            ])->get("{$this->baseUrl}/v1/ehrm/data-pegawai", [
+            $response = Http::withOptions([
+                'verify' => false, // Disable SSL verification for development
+            ])->withHeaders([
+                        'X-DreamFactory-Api-Key' => $this->apiKey,
+                        'X-DreamFactory-Session-Token' => $token,
+                    ])->get("{$this->baseUrl}/v1/ehrm/data-pegawai", [
                         'nip' => $nip,
                     ]);
 
