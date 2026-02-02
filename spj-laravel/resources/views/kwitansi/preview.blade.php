@@ -17,7 +17,7 @@
         .sheet {
             width: 210mm;
             min-height: 297mm;
-            padding: 1cm 12mm;
+            padding: 1.27cm 15mm;
             margin: 10px auto;
             background: white;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
@@ -51,6 +51,16 @@
             font-weight: bold;
         }
 
+        /* Very compact small-number header (used for Daftar Hadir tiny header row) */
+        .compact-header th {
+            padding: 2px 4px !important;
+            line-height: 1 !important;
+            height: 14px !important;
+            font-size: 8pt !important;
+            vertical-align: middle !important;
+            text-align: center !important;
+        }
+
         @media print {
             /* Hide elements when printing */
             .no-print {
@@ -66,7 +76,7 @@
                 height: auto;
                 box-shadow: none;
                 margin: 0;
-                padding: 1cm 12mm;
+                padding: 1.27cm 15mm;
                 page-break-after: always;
             }
 
@@ -97,9 +107,9 @@
         .main-box {
             border: 1.5px solid black;
             width: 100%;
-            height: 100%;
             display: flex;
             flex-direction: column;
+            padding-bottom: 20px;
         }
 
         .border-top-black {
@@ -108,26 +118,7 @@
 
         td {
             vertical-align: top;
-            padding-bottom: 4px;
-        }
-
-        /* Very compact small-number header (used for Daftar Hadir tiny header row) */
-        .compact-header th {
-            padding: 2px 4px !important;
-            line-height: 1 !important;
-            height: 14px !important;
-            font-size: 8pt !important;
-            vertical-align: middle !important;
-            text-align: center !important;
-        }
-
-        /* Print-specific rules for landscape pages */
-        @media print {
-            .landscape-page {
-                width: 297mm !important;
-                height: 210mm !important;
-                padding: 8mm 12mm !important;
-            }
+            padding-bottom: 6px;
         }
     </style>
 </head>
