@@ -7,66 +7,52 @@
     <title>Kuitansi LS - {{ $kegiatan->nama_kegiatan }}</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-
-@media print {
-    @page {
-        size: A4 landscape;
-        margin: 1cm;
-    }
-    body {
-        background-color: white;
-    }
-    .sheet {
-        width: 100% !important;
-        box-shadow: none !important;
-        margin: 0 !important;
-        padding: 0 !important;
-    }
-}
-
-.sheet.landscape {
-    width: 297mm; /* Lebar A4 Landscape */
-    min-height: 210mm;
-    padding: 10mm 15mm;
-    margin: 10px auto;
-    background: white;
-}
-
-/* Tabel Honorarium Spesifik */
-.table-honor {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 9pt; /* Ukuran font diperkecil agar pas */
-}
-.table-honor th, .table-honor td {
-    border: 1px solid black;
-    padding: 4px 6px;
-    vertical-align: middle;
-}
-.table-honor thead th {
-    background-color: #f3f4f6 !important;
-    text-align: center;
-    font-weight: bold;
-}
-
         body {
             font-family: Arial, Helvetica, sans-serif;
             font-size: 10pt;
             line-height: 1.3;
             background-color: #f3f4f6;
-
-            @page {
-                size: A4;
-                margin: 0;
-            }
-
-            @page .landscape {
-                size: A4 landscape;
-                margin: 0;
-            }
         }
 
-.compact-header th {
+        .sheet {
+            width: 210mm;
+            min-height: 297mm;
+            padding: 1.27cm 15mm;
+            margin: 10px auto;
+            background: white;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            position: relative;
+        }
+
+        .sheet.landscape {
+            width: 297mm;
+            min-height: 210mm;
+            padding: 10mm 15mm;
+            margin: 10px auto;
+            background: white;
+        }
+
+        /* Tabel Honorarium Spesifik */
+        .table-honor {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 9pt;
+        }
+
+        .table-honor th, .table-honor td {
+            border: 1px solid black;
+            padding: 4px 6px;
+            vertical-align: middle;
+        }
+
+        .table-honor thead th {
+            background-color: #f3f4f6 !important;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        /* Very compact small-number header (used for Daftar Hadir tiny header row) */
+        .compact-header th {
             padding: 2px 4px !important;
             line-height: 1 !important;
             height: 14px !important;
@@ -75,27 +61,45 @@
             text-align: center !important;
         }
 
-        .sheet {
-            width: 210mm;
-            min-height: 297mm;
-            padding: 1.27cm 15mm;
-            margin: 0 auto;
-            background: white;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            position: relative;
-        }
-
         @media print {
-            .sheet {
-                width: 100%;
-                height: 100%;
-                box-shadow: none;
-                margin: 0;
-                padding: 1.27cm 15mm;
+            /* Hide elements when printing */
+            .no-print {
+                display: none !important;
             }
 
             body {
                 background-color: white;
+            }
+
+            .sheet {
+                width: 100%;
+                height: auto;
+                box-shadow: none;
+                margin: 0;
+                padding: 1.27cm 15mm;
+                page-break-after: always;
+            }
+
+            .sheet.landscape {
+                width: 100%;
+                height: auto;
+                padding: 10mm 15mm;
+            }
+
+            /* Untuk halaman landscape (honorarium) */
+            .landscape-page {
+                page-break-before: always;
+            }
+
+            @page {
+                size: A4 portrait;
+                margin: 0;
+            }
+
+            /* Page untuk landscape (honorarium page) */
+            @page landscape-page {
+                size: A4 landscape;
+                margin: 0;
             }
         }
 
