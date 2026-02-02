@@ -50,6 +50,7 @@ class NarasumberController extends Controller
             'narasumber.*.golongan_jabatan' => 'required|string',
             'narasumber.*.nama_narasumber' => 'required|string|max:255',
             'narasumber.*.npwp' => 'required|string|max:20',
+            'narasumber.*.jumlah_jam' => 'required|integer|min:1',
             'narasumber.*.tarif_pph21' => 'required|in:0,5,6,15',
             'narasumber.*.honorarium_bruto' => 'required|integer|min:0',
         ]);
@@ -86,8 +87,11 @@ class NarasumberController extends Controller
 
             // Calculate PPh21
             $tarif_persen = (int) $item['tarif_pph21'];
-            $pph21 = ($item['honorarium_bruto'] * $tarif_persen) / 100;
-            $honorarium_netto = $item['honorarium_bruto'] - $pph21;
+            $jumlahJam = (int) ($item['jumlah_jam'] ?? 1);
+            $tarifPerJam = $item['honorarium_bruto']; // Tarif per OJ = honorarium_bruto / jumlah_jam atau langsung input
+            $totalHonorarium = $tarifPerJam * $jumlahJam;
+            $pph21 = ($totalHonorarium * $tarif_persen) / 100;
+            $honorarium_netto = $totalHonorarium - $pph21;
 
             // Save narasumber with status
             Narasumber::create([
@@ -96,8 +100,10 @@ class NarasumberController extends Controller
                 'jenis' => $item['jenis'],
                 'golongan_jabatan' => $item['golongan_jabatan'],
                 'npwp' => $item['npwp'],
+                'jumlah_jam' => $jumlahJam,
+                'tarif_per_jam' => $tarifPerJam,
                 'tarif_pph21' => $item['tarif_pph21'],
-                'honorarium_bruto' => $item['honorarium_bruto'],
+                'honorarium_bruto' => $totalHonorarium,
                 'pph21' => $pph21,
                 'honorarium_netto' => $honorarium_netto,
                 'status' => $status,

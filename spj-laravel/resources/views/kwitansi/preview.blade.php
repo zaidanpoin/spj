@@ -7,22 +7,49 @@
     <title>Kuitansi {{ $jenis }} - {{ $kegiatan->nama_kegiatan }}</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        @media print {
-            body {
-                -webkit-print-color-adjust: exact;
-                print-color-adjust: exact;
-            }
 
-            .no-print {
-                display: none !important;
-            }
 
-            @page {
-                size: A4;
-                margin: 0;
-            }
-        }
 
+@media print {
+    @page {
+        size: A4 landscape;
+        margin: 1cm;
+    }
+    body {
+        background-color: white;
+    }
+    .sheet {
+        width: 100% !important;
+        box-shadow: none !important;
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+}
+
+.sheet.landscape {
+    width: 297mm; /* Lebar A4 Landscape */
+    min-height: 210mm;
+    padding: 10mm 15mm;
+    margin: 10px auto;
+    background: white;
+}
+
+/* Tabel Honorarium Spesifik */
+.table-honor {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 9pt; /* Ukuran font diperkecil agar pas */
+}
+.table-honor th, .table-honor td {
+    border: 1px solid black;
+    padding: 4px 6px;
+    vertical-align: middle;
+}
+.table-honor thead th {
+    background-color: #f3f4f6 !important;
+    text-align: center;
+    font-weight: bold;
+}
         body {
             font-family: Arial, Helvetica, sans-serif;
             font-size: 10pt;
@@ -33,7 +60,7 @@
         .sheet {
             width: 210mm;
             min-height: 297mm;
-            padding: 1.27cm 15mm;
+            padding: 1cm 12mm;
             margin: 0 auto;
             background: white;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
@@ -46,11 +73,26 @@
                 height: 100%;
                 box-shadow: none;
                 margin: 0;
-                padding: 1.27cm 15mm;
+                padding: 1cm 12mm;
+            }
+
+            .sheet.landscape {
+                width: 297mm;
+                height: 210mm;
             }
 
             body {
                 background-color: white;
+            }
+
+            @page {
+                size: A4;
+                margin: 0;
+            }
+
+            @page .landscape {
+                size: A4 landscape;
+                margin: 0;
             }
         }
 
@@ -70,6 +112,16 @@
         td {
             vertical-align: top;
             padding-bottom: 4px;
+        }
+
+        /* Very compact small-number header (used for Daftar Hadir tiny header row) */
+        .compact-header th {
+            padding: 2px 4px !important;
+            line-height: 1 !important;
+            height: 14px !important;
+            font-size: 8pt !important;
+            vertical-align: middle !important;
+            text-align: center !important;
         }
     </style>
 </head>
@@ -251,8 +303,10 @@
 
         </div>
     </div>
-
+      <div class="h-16 no-print"></div>
+@if($kwitansiApa === 'konsumsi')
     <!-- PAGE 2: Daftar Belanja / Pembayaran UP -->
+
     <div class="sheet" style="page-break-before: always;">
         <!-- Title -->
         <div class="text-center mb-6">
@@ -330,7 +384,9 @@
         </div>
     </div>
 
+
     <!-- PAGE 3: Daftar Hadir -->
+      <div class="h-16 no-print"></div>
     <div class="sheet" style="page-break-before: always;">
         <!-- Header -->
         <div class="text-center mb-6">
@@ -352,7 +408,7 @@
                 <tr>
                     <th class="border border-black px-2 py-1.5 bg-gray-100 text-center" style="width: 40px;">No</th>
                     <th class="border border-black px-2 py-1.5 bg-gray-100 text-center" style="width: 35%;">Nama Lengkap</th>
-                    <th class="border border-black px-2 py-1.5 bg-gray-100 text-center" style="width: 30%;">Instansi</th>
+                    <th class="border border-black px-2 py-1.5 bg-gray-100 text-center" style="width: 30%;">Unit Kerja</th>
                     <th class="border border-black px-2 py-1.5 bg-gray-100 text-center" style="width: 35%;">Tanda Tangan</th>
                 </tr>
             </thead>
@@ -393,6 +449,253 @@
             </div>
         </div>
     </div>
+         @endif
+
+         @if($kwitansiApa === 'honorarium')
+    <!-- PAGE 2: Daftar Honorarium Narasumber -->
+    <div class="sheet landscape">
+    <div class="text-center mb-4 uppercase">
+        <h1 class="text-sm font-bold">DAFTAR HONORARIUM</h1>
+        <p class="text-[9pt]">Sesuai SK. Kuasa Pengguna Anggaran Sekretariat Badan Pengembangan SDM Kementerian Pekerjaan Umum</p>
+        <p class="text-[9pt] font-mono">{{ $kegiatan->mak->kode ?? '12.694431.WA.7770.EBA.963.100.A.522151' }}</p>
+        <p class="text-[9pt]">Tahun Anggaran {{ date('Y') }}</p>
+    </div>
+
+    <table class="table-honor">
+        <thead>
+   <td colspan="11" class="p-2 italic"></td>
+            <tr>
+                <th rowspan="2" style="width: 30px;">No</th>
+                <th rowspan="2" style="width: 180px;">Nama</th>
+                <th rowspan="2" style="width: 130px;">NPWP</th>
+                <th rowspan="2" style="width: 80px;">Pangkat/Gol</th>
+                <th rowspan="2" style="width: 100px;">Jabatan dalam Kegiatan</th>
+                <th colspan="2">Jumlah dan Tarif</th>
+                <th rowspan="2" style="width: 100px;">Jumlah Honorarium</th>
+                <th rowspan="2" style="width: 90px;">Pot. Pajak PPh/21 15%</th>
+                <th rowspan="2" style="width: 110px;">Diterima sebesar Rp</th>
+                <th rowspan="3" style="width: 120px;">Tanda Tangan</th>
+            </tr>
+            <tr>
+                <th style="width: 40px;">OJ</th>
+                <th style="width: 90px;">Tarif/OJ</th>
+            </tr>
+            <tr class="bg-gray-100 italic text-[8pt]">
+                <th></th>
+                <th>1</th>
+                <th>2</th>
+                <th>3</th>
+                <th>4</th>
+                <th>5</th>
+                <th>6</th>
+            <th style="padding:0; text-align:center;">
+                <div style="border-bottom:1px solid #000;">7</div>
+                <div>(5x6)</div>
+                </th>
+
+                 <th style="padding:0; text-align:center;">
+                <div style="border-bottom:1px solid #000;">8</div>
+                <div>(7x15%)</div>
+                </th>
+
+
+                   <th style="padding:0; text-align:center;">
+                <div style="border-bottom:1px solid #000;">9</div>
+                <div>(7-8)</div>
+                </th>
+
+            </tr>
+        </thead>
+        <tbody>
+            @php
+                $totalHonorarium = 0;
+                $totalPph = 0;
+                $totalNetto = 0;
+            @endphp
+            @foreach($narasumbers as $index => $narasumber)
+            @php
+                $jumlahOJ = $narasumber->jumlah_jam ?? 2;
+                $tarifOJ = $narasumber->tarif_per_jam ?? 900000;
+                $jumlahHonor = $jumlahOJ * $tarifOJ;
+                $pph = $jumlahHonor * 0.15;
+                $netto = $jumlahHonor - $pph;
+
+                $totalHonorarium += $jumlahHonor;
+                $totalPph += $pph;
+                $totalNetto += $netto;
+            @endphp
+            <tr>
+                <td class="text-center font-bold">{{ $index + 1 }}</td>
+                <td>{{ $narasumber->nama_narasumber }}</td>
+                <td class="text-center">{{ $narasumber->npwp }}</td>
+                <td class="text-center">{{ $narasumber->golongan_jabatan }}</td>
+                <td class="text-center">{{ mb_convert_case($narasumber->jenis ?? '', MB_CASE_TITLE, "UTF-8") }}</td>
+                <td class="text-center">{{ $jumlahOJ }}</td>
+                <td class="text-right">{{ number_format($tarifOJ, 0, ',', '.') }}</td>
+                <td class="text-right">{{ number_format($jumlahHonor, 0, ',', '.') }}</td>
+                <td class="text-right">{{ number_format($pph, 0, ',', '.') }}</td>
+                <td class="text-right">{{ number_format($netto, 0, ',', '.') }}</td>
+                <td class="relative h-12">
+                    <span class="absolute top-1 left-1 text-[7pt] text-gray-400">{{ $index + 1 }}.</span>
+                </td>
+            </tr>
+            @endforeach
+        </tbody>
+        <tfoot>
+            <tr class="font-bold bg-gray-50 uppercase">
+                <td colspan="7" class="text-center">Jumlah</td>
+                <td class="text-right">{{ number_format($totalHonorarium, 0, ',', '.') }}</td>
+                <td class="text-right">{{ number_format($totalPph, 0, ',', '.') }}</td>
+                <td class="text-right">{{ number_format($totalNetto, 0, ',', '.') }}</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td colspan="11" class="p-2 italic">
+                    Terbilang Jumlah Honorarium : <strong>{{ ucwords($terbilang) }} Rupiah</strong>
+                </td>
+            </tr>
+        </tfoot>
+    </table>
+
+    <div class="mt-10 flex justify-between text-[9pt]">
+        <div class="text-center w-1/3">
+            <p class="mb-20">Pejabat Pembuat Komitmen</p>
+            <p class="font-bold underline">{{ $kegiatan->ppk->nama ?? 'Dini Rianti, SE' }}</p>
+            <p>NIP : {{ $kegiatan->ppk->nip ?? '198010172005022001' }}</p>
+        </div>
+
+        <div class="text-center w-1/3">
+            <p class="mb-20">Bendahara Pengeluaran</p>
+            <p class="font-bold underline">{{ $kegiatan->bendahara->nama ?? 'Endah Anggun Ningsih, SE' }}</p>
+            <p>NIP : {{ $kegiatan->bendahara->nip ?? '198701162015032001' }}</p>
+        </div>
+
+        <div class="text-center w-1/3">
+            <p class="mb-1">Jakarta, {{ now()->translatedFormat('d F Y') }}</p>
+            <p class="mb-16">Pembuat Daftar</p>
+            <p class="font-bold underline">{{ auth()->user()->name  }}</p>
+            <p>NIP : {{ auth()->user()->nip ?? '199610112022031007' }}</p>
+        </div>
+    </div>
+</div>
+  <div class="h-16 no-print"></div>
+    <!-- PAGE 3: Tanda Terima -->
+    <div class="sheet" style="page-break-before: always;">
+        <!-- Title -->
+        <div class="text-center mb-6">
+            <h1 class="text-base font-bold uppercase mb-1">TANDA TERIMA</h1>
+            <p class="text-sm">Dalam rangka Pembiayaan Narasumber dan Penelitian Transformasi Digital</p>
+        </div>
+
+        <!-- Info Section -->
+        <div class="mb-4" style="font-size: 10pt;">
+            <table>
+                <tr>
+                    <td class="w-20">Hari</td>
+                    <td class="w-4">:</td>
+                    <td>{{  now()->locale('id')->translatedFormat('l')}}</td>
+                </tr>
+                <tr>
+                    <td>Tanggal</td>
+                    <td>:</td>
+                    <td>{{ now()->locale('id')->translatedFormat('d F Y') }}</td>
+                </tr>
+            </table>
+        </div>
+
+        <!-- Simple Table for Tanda Terima -->
+        <table class="w-full border-collapse mb-6" style="font-size: 10pt;">
+            <thead>
+                <tr>
+                    <th class="border border-black px-2 py-1.5 bg-gray-100 text-center" style="width: 40px;">NO</th>
+                     <th class="border border-black px-2 py-1.5 bg-gray-100 text-center" style="width: 1%;"></th>
+                    <th class="border border-black px-2 py-1.5 bg-gray-100 text-center" style="width: 40%;">NAMA</th>
+                    <th class="border border-black px-2 py-1.5 bg-gray-100 text-center" style="width: 30%;">Total Honor</th>
+                    <th class="border border-black px-2 py-1.5 bg-gray-100 text-center" style="width: 30%;">TANDA TANGAN</th>
+                </tr>
+            </thead>
+            <tbody>
+                @forelse($narasumbers as $index => $narasumber)
+                <tr>
+                    <td class="border border-black px-2 py-3 text-center">{{ $index + 1 }}</td>
+                     <td class="border border-black px-2 py-3 text-center"></td>
+                    <td class="border border-black px-2 py-3 text-center">{{ $narasumber->nama_narasumber ?? '' }}</td>
+                    <td class="border border-black px-2 py-3 text-center">{{ number_format($narasumber->honorarium_netto ?? 0, 0, ',', '.') }}</td>
+                    <td class="border border-black px-2 py-6">{{ $index + 1 }} ...........................................</td>
+                </tr>
+
+                @empty
+                <tr>
+                    <td colspan="4" class="border border-black px-2 py-4 text-center">Tidak ada data narasumber</td>
+                </tr>
+                @endforelse
+
+                <thead> <th class="border border-black px-2 py-1.5  text-center" style="width: 40px;"></th>
+                    <th class="border border-black px-2 py-1.5  text-center" style="width: 1%; height: 30px;"></th>
+                    <th class="border border-black px-2 py-1.5  text-center" style="width: 40%;"></th>
+                    <th class="border border-black px-2 py-1.5  text-center" style="width: 30%;"></th>
+                    <th class="border border-black px-2 py-1.5  text-center" style="width: 30%;"></th>
+
+                </thead>
+            </tbody>
+        </table>
+    </div>
+      <div class="h-16 no-print"></div>
+     <!-- PAGE 4: Daftar Hadir -->
+    <div class="sheet" style="page-break-before: always;">
+        <!-- Title -->
+        <div class="text-center mb-2">
+            <h1 class="text-base font-bold uppercase mb-1">DAFTAR HADIAR</h1>
+            <p class="text-sm font-bold text-center">Dalam rangka Pembiayaan Narasumber <br> dan Penelitian Transformasi Digital</p>
+        </div>
+
+        <!-- Info Section -->
+        <div class="mb-4 text-center" style="font-size: 10pt;">
+<p class="text-sm font-bold text-center">{{ now()->locale('id')->translatedFormat('l, d F Y') }}</p>
+        </div>
+
+        <!-- Simple Table for Tanda Terima -->
+        <table class="w-full border-collapse mb-6" style="font-size: 10pt;">
+            <thead>
+                <tr>
+                    <th class="border border-black px-2 py-1.5  text-center" style="width: 1%;">NO</th>
+
+                    <th class="border border-black px-2 py-1.5  text-center" style="width: 40%;">NAMA</th>
+ <th class="border border-black px-2 py-1.5  text-center" style="width: 30%;">JABATAN DALAM KEGIATAN</th>
+                    <th class="border border-black px-2 py-1.5  text-center" style="width: 30%;">TANDA TANGAN</th>
+                </tr>
+            </thead>
+            <thead class="compact-header">
+                <tr>
+                    <th class="border border-black px-2 py-1.5 text-center">1</th>
+                    <th class="border border-black px-2 py-1.5 text-center">2</th>
+                    <th class="border border-black px-2 py-1.5 text-center">3</th>
+                    <th class="border border-black px-2 py-1.5 text-center">4</th>
+                </tr>
+            </thead>
+            <tbody>
+                @forelse($narasumbers as $index => $narasumber)
+                <tr>
+                    <td class="border border-black px-2 py-3 text-center">{{ $index + 1 }}</td>
+
+                    <td class="border border-black px-2 py-3 text-center">{{ $narasumber->nama_narasumber ?? '' }}</td>
+                    <td class="border border-black px-2 py-3 text-center">{{ mb_convert_case($narasumber->jenis ?? '', MB_CASE_TITLE, "UTF-8") }}</td>
+                    <td class="border border-black px-2 py-6"></td>
+                </tr>
+
+                @empty
+                <tr>
+                    <td colspan="4" class="border border-black px-2 py-4 text-center">Tidak ada data narasumber</td>
+                </tr>
+                @endforelse
+
+
+            </tbody>
+        </table>
+    </div>
+         @endif
+
+
 </body>
 
 </html>

@@ -17,6 +17,8 @@ class Narasumber extends Model
         'jenis',
         'golongan_jabatan',
         'npwp',
+        'jumlah_jam',
+        'tarif_per_jam',
         'tarif_pph21',
         'honorarium_bruto',
         'pph21',
@@ -26,6 +28,8 @@ class Narasumber extends Model
 
     protected $casts = [
         'tarif_pph21' => 'string',
+        'jumlah_jam' => 'integer',
+        'tarif_per_jam' => 'integer',
         'honorarium_bruto' => 'integer',
         'pph21' => 'integer',
         'honorarium_netto' => 'integer',
