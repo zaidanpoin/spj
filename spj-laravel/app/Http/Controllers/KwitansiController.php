@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Kegiatan;
 use App\Models\Konsumsi;
+use App\Models\Narasumber;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 
@@ -16,13 +17,28 @@ class KwitansiController extends Controller
     {
         // Support both route parameter and query string
         $kegiatanId = $kegiatan_id ?? $request->get('kegiatan_id');
-        $jenis = $jenis ?? $request->get('jenis', 'UP');
+        $jenis = $type = $request->query('type');
+
+
 
         $kegiatan = Kegiatan::with(['unor', 'unitKerja', 'mak', 'ppk', 'bendahara', 'konsumsis.waktuKonsumsi'])->findOrFail($kegiatanId);
 
-        // Get konsumsi data
-        $konsumsis = Konsumsi::with('waktuKonsumsi')->where('kegiatan_id', $kegiatanId)->get();
-        $totalKonsumsi = $konsumsis->sum(fn($item) => $item->jumlah * $item->harga);
+        // Check if honorarium type
+        $isHonorarium = (strtolower($jenis) === 'honorarium');
+        // dd($isHonorarium);
+        if ($isHonorarium) {
+            // Get narasumber data for honorarium
+            $narasumbers = Narasumber::where('kegiatan_id', $kegiatanId)->get();
+            $totalHonorarium = $narasumbers->sum('honorarium_bruto');
+            $konsumsis = collect(); // Empty collection for compatibility
+            $totalKonsumsi = $totalHonorarium;
+
+        } else {
+            // Get konsumsi data
+            $konsumsis = Konsumsi::with('waktuKonsumsi')->where('kegiatan_id', $kegiatanId)->get();
+            $totalKonsumsi = $konsumsis->sum(fn($item) => $item->jumlah * $item->harga);
+            $narasumbers = collect(); // Empty collection for compatibility
+        }
 
         // Generate terbilang
         $terbilang = $this->terbilang($totalKonsumsi);
@@ -36,15 +52,15 @@ class KwitansiController extends Controller
 
         // Handle different jenis kwitansi
         if ($jenis === 'LS' || $jenis === 'ls') {
-            return view('kwitansi.preview-ls', compact('kegiatan', 'konsumsis', 'totalKonsumsi', 'terbilang', 'jenis'));
+            return view('kwitansi.preview-ls', compact('kegiatan', 'konsumsis', 'totalKonsumsi', 'terbilang', 'jenis', 'narasumbers'));
         }
 
         if ($jenis === 'pembayaran-up' || $jenis === 'pembayaran_up') {
-            return view('kwitansi.pembayaran-up', compact('kegiatan', 'konsumsis', 'totalKonsumsi', 'terbilang', 'jenis', 'tanggalDokumen', 'pembuatDaftar'));
+            return view('kwitansi.pembayaran-up', compact('kegiatan', 'konsumsis', 'totalKonsumsi', 'terbilang', 'jenis', 'tanggalDokumen', 'pembuatDaftar', 'narasumbers'));
         }
 
-        // Default UP kwitansi
-        return view('kwitansi.preview', compact('kegiatan', 'konsumsis', 'totalKonsumsi', 'terbilang', 'jenis'));
+        // Default UP kwitansi (or honorarium)
+        return view('kwitansi.preview', compact('kegiatan', 'konsumsis', 'totalKonsumsi', 'terbilang', 'jenis', 'narasumbers'));
     }
 
     /**
