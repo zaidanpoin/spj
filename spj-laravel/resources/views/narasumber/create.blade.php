@@ -113,16 +113,22 @@
 
                                     <!-- Row 2: Nama & NPWP -->
                                     <div class="grid grid-cols-12 gap-3">
-                                        <div class="col-span-6">
+                                        <div class="col-span-5">
                                             <label class="form-label">Nama Narasumber <span class="text-red-600">*</span></label>
                                             <input type="text" name="narasumber[{{ $index }}][nama_narasumber]" class="form-input"
                                                 required placeholder="Masukkan nama narasumber"
                                                 value="{{ $draft->nama_narasumber }}">
                                         </div>
-                                        <div class="col-span-6">
+                                        <div class="col-span-4">
                                             <label class="form-label">NPWP <span class="text-red-600">*</span></label>
                                             <input type="text" name="narasumber[{{ $index }}][npwp]" class="form-input" required
                                                 placeholder="01.234.567.8-901.000" maxlength="20" value="{{ $draft->npwp }}">
+                                        </div>
+                                        <div class="col-span-3">
+                                            <label class="form-label">Jumlah OJ <span class="text-red-600">*</span></label>
+                                            <input type="number" name="narasumber[{{ $index }}][jumlah_jam]" class="form-input jumlah-jam-input"
+                                                required min="1" value="{{ $draft->jumlah_jam ?? 1 }}" data-index="{{ $index }}">
+                                            <p class="text-xs text-gray-500 mt-1">Orang Jam</p>
                                         </div>
                                     </div>
 
@@ -198,15 +204,21 @@
 
                                 <!-- Row 2: Nama & NPWP -->
                                 <div class="grid grid-cols-12 gap-3">
-                                    <div class="col-span-6">
+                                    <div class="col-span-5">
                                         <label class="form-label">Nama Narasumber <span class="text-red-600">*</span></label>
                                         <input type="text" name="narasumber[0][nama_narasumber]" class="form-input" required
                                             placeholder="Masukkan nama narasumber">
                                     </div>
-                                    <div class="col-span-6">
+                                    <div class="col-span-4">
                                         <label class="form-label">NPWP <span class="text-red-600">*</span></label>
                                         <input type="text" name="narasumber[0][npwp]" class="form-input" required
                                             placeholder="01.234.567.8-901.000" maxlength="20">
+                                    </div>
+                                    <div class="col-span-3">
+                                        <label class="form-label">Jumlah OJ <span class="text-red-600">*</span></label>
+                                        <input type="number" name="narasumber[0][jumlah_jam]" class="form-input jumlah-jam-input"
+                                            required min="1" value="1" data-index="0">
+                                        <p class="text-xs text-gray-500 mt-1">Orang Jam</p>
                                     </div>
                                 </div>
 
@@ -323,13 +335,18 @@
 
                             <!-- Row 2: Nama & NPWP -->
                             <div class="grid grid-cols-12 gap-3">
-                                <div class="col-span-6">
+                                <div class="col-span-5">
                                     <label class="form-label">Nama Narasumber <span class="text-red-600">*</span></label>
                                     <input type="text" name="narasumber[${narasumberIndex}][nama_narasumber]" class="form-input" required placeholder="Masukkan nama narasumber">
                                 </div>
-                                <div class="col-span-6">
+                                <div class="col-span-4">
                                     <label class="form-label">NPWP <span class="text-red-600">*</span></label>
                                     <input type="text" name="narasumber[${narasumberIndex}][npwp]" class="form-input" required placeholder="01.234.567.8-901.000" maxlength="20">
+                                </div>
+                                <div class="col-span-3">
+                                    <label class="form-label">Jumlah OJ <span class="text-red-600">*</span></label>
+                                    <input type="number" name="narasumber[${narasumberIndex}][jumlah_jam]" class="form-input jumlah-jam-input" required min="1" value="1" data-index="${narasumberIndex}">
+                                    <p class="text-xs text-gray-500 mt-1">Orang Jam</p>
                                 </div>
                             </div>
 

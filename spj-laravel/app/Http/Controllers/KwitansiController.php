@@ -17,19 +17,20 @@ class KwitansiController extends Controller
     {
         // Support both route parameter and query string
         $kegiatanId = $kegiatan_id ?? $request->get('kegiatan_id');
-        $jenis = $type = $request->query('type');
+        $jenis = $jenis ?? $request->get('jenis', 'UP');
+        $kwitansiApa = $request->query('type');
 
 
 
         $kegiatan = Kegiatan::with(['unor', 'unitKerja', 'mak', 'ppk', 'bendahara', 'konsumsis.waktuKonsumsi'])->findOrFail($kegiatanId);
 
         // Check if honorarium type
-        $isHonorarium = (strtolower($jenis) === 'honorarium');
+        $isHonorarium = (strtolower($kwitansiApa) === 'honorarium');
         // dd($isHonorarium);
         if ($isHonorarium) {
             // Get narasumber data for honorarium
             $narasumbers = Narasumber::where('kegiatan_id', $kegiatanId)->get();
-            $totalHonorarium = $narasumbers->sum('honorarium_bruto');
+            $totalHonorarium = $narasumbers->sum('honorarium_netto');
             $konsumsis = collect(); // Empty collection for compatibility
             $totalKonsumsi = $totalHonorarium;
 
@@ -52,15 +53,15 @@ class KwitansiController extends Controller
 
         // Handle different jenis kwitansi
         if ($jenis === 'LS' || $jenis === 'ls') {
-            return view('kwitansi.preview-ls', compact('kegiatan', 'konsumsis', 'totalKonsumsi', 'terbilang', 'jenis', 'narasumbers'));
+            return view('kwitansi.preview-ls', compact('kegiatan', 'konsumsis', 'totalKonsumsi', 'terbilang', 'jenis', 'narasumbers', 'kwitansiApa'));
         }
 
         if ($jenis === 'pembayaran-up' || $jenis === 'pembayaran_up') {
-            return view('kwitansi.pembayaran-up', compact('kegiatan', 'konsumsis', 'totalKonsumsi', 'terbilang', 'jenis', 'tanggalDokumen', 'pembuatDaftar', 'narasumbers'));
+            return view('kwitansi.pembayaran-up', compact('kegiatan', 'konsumsis', 'totalKonsumsi', 'terbilang', 'jenis', 'tanggalDokumen', 'pembuatDaftar', 'narasumbers', 'kwitansiApa'));
         }
 
         // Default UP kwitansi (or honorarium)
-        return view('kwitansi.preview', compact('kegiatan', 'konsumsis', 'totalKonsumsi', 'terbilang', 'jenis', 'narasumbers'));
+        return view('kwitansi.preview', compact('kegiatan', 'konsumsis', 'totalKonsumsi', 'terbilang', 'jenis', 'narasumbers', 'kwitansiApa'));
     }
 
     /**
