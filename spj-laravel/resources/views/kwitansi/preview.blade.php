@@ -7,49 +7,6 @@
     <title>Kuitansi {{ $jenis }} - {{ $kegiatan->nama_kegiatan }}</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-
-
-
-@media print {
-    @page {
-        size: A4 landscape;
-        margin: 1cm;
-    }
-    body {
-        background-color: white;
-    }
-    .sheet {
-        width: 100% !important;
-        box-shadow: none !important;
-        margin: 0 !important;
-        padding: 0 !important;
-    }
-}
-
-.sheet.landscape {
-    width: 297mm; /* Lebar A4 Landscape */
-    min-height: 210mm;
-    padding: 10mm 15mm;
-    margin: 10px auto;
-    background: white;
-}
-
-/* Tabel Honorarium Spesifik */
-.table-honor {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 9pt; /* Ukuran font diperkecil agar pas */
-}
-.table-honor th, .table-honor td {
-    border: 1px solid black;
-    padding: 4px 6px;
-    vertical-align: middle;
-}
-.table-honor thead th {
-    background-color: #f3f4f6 !important;
-    text-align: center;
-    font-weight: bold;
-}
         body {
             font-family: Arial, Helvetica, sans-serif;
             font-size: 10pt;
@@ -61,36 +18,76 @@
             width: 210mm;
             min-height: 297mm;
             padding: 1cm 12mm;
-            margin: 0 auto;
+            margin: 10px auto;
             background: white;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             position: relative;
         }
 
-        @media print {
-            .sheet {
-                width: 100%;
-                height: 100%;
-                box-shadow: none;
-                margin: 0;
-                padding: 1cm 12mm;
-            }
+        .sheet.landscape {
+            width: 297mm;
+            min-height: 210mm;
+            padding: 10mm 15mm;
+            margin: 10px auto;
+            background: white;
+        }
 
-            .sheet.landscape {
-                width: 297mm;
-                height: 210mm;
+        /* Tabel Honorarium Spesifik */
+        .table-honor {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 9pt;
+        }
+
+        .table-honor th, .table-honor td {
+            border: 1px solid black;
+            padding: 4px 6px;
+            vertical-align: middle;
+        }
+
+        .table-honor thead th {
+            background-color: #f3f4f6 !important;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        @media print {
+            /* Hide elements when printing */
+            .no-print {
+                display: none !important;
             }
 
             body {
                 background-color: white;
             }
 
+            .sheet {
+                width: 100%;
+                height: auto;
+                box-shadow: none;
+                margin: 0;
+                padding: 1cm 12mm;
+                page-break-after: always;
+            }
+
+            .sheet.landscape {
+                width: 100%;
+                height: auto;
+                padding: 10mm 15mm;
+            }
+
+            /* Untuk halaman landscape (honorarium) */
+            .landscape-page {
+                page-break-before: always;
+            }
+
             @page {
-                size: A4;
+                size: A4 portrait;
                 margin: 0;
             }
 
-            @page .landscape {
+            /* Page untuk landscape (honorarium page) */
+            @page landscape-page {
                 size: A4 landscape;
                 margin: 0;
             }
@@ -122,6 +119,15 @@
             font-size: 8pt !important;
             vertical-align: middle !important;
             text-align: center !important;
+        }
+
+        /* Print-specific rules for landscape pages */
+        @media print {
+            .landscape-page {
+                width: 297mm !important;
+                height: 210mm !important;
+                padding: 8mm 12mm !important;
+            }
         }
     </style>
 </head>
@@ -453,7 +459,7 @@
 
          @if($kwitansiApa === 'honorarium')
     <!-- PAGE 2: Daftar Honorarium Narasumber -->
-    <div class="sheet landscape">
+    <div class="sheet landscape landscape-page" style="page-break-before: always;">
     <div class="text-center mb-4 uppercase">
         <h1 class="text-sm font-bold">DAFTAR HONORARIUM</h1>
         <p class="text-[9pt]">Sesuai SK. Kuasa Pengguna Anggaran Sekretariat Badan Pengembangan SDM Kementerian Pekerjaan Umum</p>
