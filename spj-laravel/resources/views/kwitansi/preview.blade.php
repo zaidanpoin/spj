@@ -98,6 +98,173 @@
     <!-- Spacer -->
     <div class="h-16 no-print"></div>
 
+    <!-- NEW PAGE 1: Kuitansi (refined to match sample) -->
+   <!-- PAGE 1 : KUITANSI SESUAI CONTOH -->
+<div class="sheet">
+
+
+
+        <!-- HEADER KANAN -->
+        <div class="flex justify-end mb-6">
+            <table class="text-[10pt]" style="border-collapse:collapse;">
+                <tr>
+                    <td style="width:120px">Tahun Anggaran</td>
+                    <td style="width:8px">:</td>
+                    <td>{{ date('Y') }}</td>
+                </tr>
+                <tr>
+                    <td>Nomor Bukti</td>
+                    <td>:</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>Akun</td>
+                    <td>:</td>
+                    <td>{{ $kegiatan->mak->akun ?? '-' }}</td>
+                </tr>
+                <tr>
+                    <td>Kepada</td>
+                    <td>:</td>
+                    <td>BENDAHARA PENGELUARAN SATKER</td>
+                </tr>
+                <tr>
+                    <td>Satker</td>
+                    <td>:</td>
+                    <td>{{ $kegiatan->unitKerja->nama_unit }}</td>
+                </tr>
+            </table>
+        </div>
+
+        <!-- JUDUL -->
+        <div class="text-center mb-8">
+            <h1 class="font-bold text-[13pt] uppercase">
+                KUITANSI/ BUKTI PEMBAYARAN
+            </h1>
+        </div>
+
+        <!-- ISI -->
+        <table class="w-full text-[10pt]" style="border-collapse:collapse;">
+            <tr>
+                <td style="width:170px">Sudah Terima Dari</td>
+                <td style="width:10px">:</td>
+                <td>
+                    Pejabat Pembuat Komitmen<br>
+                    {{ $kegiatan->unitKerja->nama_unit }}
+                </td>
+            </tr>
+
+            <tr>
+                <td>Jumlah Uang</td>
+                <td>:</td>
+                <td class="font-bold">Rp. {{ number_format($totalKonsumsi,0,',','.') }}</td>
+            </tr>
+
+            <tr>
+                <td>Terbilang</td>
+                <td>:</td>
+                <td class="font-bold capitalize">
+                    {{ ucwords($terbilang) }} Rupiah
+                </td>
+            </tr>
+
+            <tr>
+                <td>Kuitansi Supplier</td>
+                <td>:</td>
+                <td></td>
+            </tr>
+
+            <tr>
+                <td>Untuk Pembayaran</td>
+                <td>:</td>
+                <td>{{ $kegiatan->uraian_kegiatan }}</td>
+            </tr>
+        </table>
+
+        <!-- TANGGAL + PENERIMA -->
+      <!-- PENERIMA UANG (KANAN tapi text center) -->
+<div class="flex justify-end mt-10">
+
+    <table class="text-[10pt]" style="width:45%; text-align:center;">
+        <tr>
+            <td>
+                KOTA JAKARTA SELATAN, {{ now()->translatedFormat('d F Y') }}
+            </td>
+        </tr>
+
+        <tr>
+            <td class="font-bold">
+                PENERIMA UANG
+            </td>
+        </tr>
+
+        <tr>
+            <td>
+                Pelaksana/Pembuat Daftar
+            </td>
+        </tr>
+
+        <!-- ruang tanda tangan -->
+        <tr>
+            <td style="height:110px;"></td>
+        </tr>
+
+        <tr>
+            <td class="font-bold underline">
+                {{ auth()->user()->name }}
+            </td>
+        </tr>
+
+        <tr>
+            <td>
+                NIP. {{ auth()->user()->nip }}
+            </td>
+        </tr>
+    </table>
+
+</div>
+
+
+        <!-- GARIS PEMBATAS -->
+        <div class="border-t border-black my-6"></div>
+
+        <!-- TANDA TANGAN BAWAH -->
+        <div class="flex justify-between text-center text-[10pt]">
+
+            <div class="w-1/2">
+                <p>a.n. Kuasa Pengguna Anggaran<br>Pejabat Pembuat Komitmen</p>
+
+                <div style="height:70px"></div>
+
+                <p class="font-bold underline">{{ $kegiatan->ppk->nama }}</p>
+                <p>NIP. {{ $kegiatan->ppk->nip }}</p>
+            </div>
+
+            <div class="w-1/2">
+                <p>Lunas dibayar, {{ now()->translatedFormat('d F Y') }}<br>
+                Bendahara Pengeluaran</p>
+
+                <div style="height:70px"></div>
+
+                <p class="font-bold underline">{{ $kegiatan->bendahara->nama }}</p>
+                <p>NIP. {{ $kegiatan->bendahara->nip }}</p>
+            </div>
+
+        </div>
+
+        <!-- CATATAN BAWAH -->
+        <div class="text-xs mt-6">
+            <p>Barang/pekerjaan tersebut telah diterima/diselesaikan dengan lengkap dan</p>
+            <p>Pejabat yang bertanggung jawab</p>
+            <p>Penerima Barang</p>
+        </div>
+
+
+
+</div>
+
+
+    <!-- END NEW PAGE 1 -->
+
     <div class="sheet">
 
         <!-- Main Content Box (One Big Border) -->
