@@ -441,6 +441,28 @@ Route::middleware(['auth'])->group(function () {
         ->name('narasumber.daftar-honorarium');
 });
 
+// SPPD Routes
+Route::middleware(['auth'])->group(function () {
+    Route::get('kegiatan/{id}/sppd/create', [App\Http\Controllers\SPPDController::class, 'create'])
+        ->middleware('permission:create-sppd')
+        ->name('sppd.create');
+    Route::post('sppd', [App\Http\Controllers\SPPDController::class, 'store'])
+        ->middleware('permission:create-sppd')
+        ->name('sppd.store');
+    Route::get('sppd/{id}/edit', [App\Http\Controllers\SPPDController::class, 'edit'])
+        ->middleware('permission:edit-sppd')
+        ->name('sppd.edit');
+    Route::put('sppd/{id}', [App\Http\Controllers\SPPDController::class, 'update'])
+        ->middleware('permission:edit-sppd')
+        ->name('sppd.update');
+    Route::delete('sppd/{id}', [App\Http\Controllers\SPPDController::class, 'destroy'])
+        ->middleware('permission:delete-sppd')
+        ->name('sppd.destroy');
+    Route::get('sppd/{id}/preview', [App\Http\Controllers\SPPDController::class, 'preview'])
+        ->middleware('permission:view-sppd')
+        ->name('sppd.preview');
+});
+
 // Kwitansi Routes
 Route::middleware(['auth'])->group(function () {
     // Generate kwitansi dengan parameter (kegiatan_id dan jenis)

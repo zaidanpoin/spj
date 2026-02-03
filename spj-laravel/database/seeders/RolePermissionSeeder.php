@@ -136,6 +136,12 @@ class RolePermissionSeeder extends Seeder
                 'edit-honorarium',
                 'delete-honorarium',
             ],
+            'sppd' => [
+                'view-sppd',
+                'create-sppd',
+                'edit-sppd',
+                'delete-sppd',
+            ],
             'reports' => [
                 'view-reports',
                 'export-reports',
