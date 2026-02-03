@@ -335,7 +335,7 @@
 
                     <!-- Right: Meta Data -->
                     <div class="text-sm font-bold w-[60%]">
-                        <div class="mb-2 uppercase text-left">KUITANSI {{ $jenis }}</div>
+                        <div class="mb-2 uppercase  text-2xl text-left">KUITANSI {{ $jenis }}</div>
                         <table class="w-full">
                             <tr>
                                 <td class="w-32">Tahun Anggaran</td>
@@ -589,7 +589,74 @@
                                         <span class="text-gray-500 text-xs">{{ $i }}.</span>
                                     @endif
                                 </div>
-                                <div class="w-1/2 text-right">
+                                <div class="w-1/2 ">
+                                    @if($i % 2 == 0)
+                                        <span class="text-gray-500 text-xs">{{ $i }}.</span>
+                                    @endif
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                @endfor
+            </tbody>
+        </table>
+
+        <!-- Footer/Signature -->
+        <div class="mt-8 flex justify-end">
+            <div class="text-center" style="font-size: 10pt;">
+                <p>Jakarta, {{ now()->translatedFormat('d F Y') }}</p>
+                <p class="mt-1">Mengetahui,</p>
+                <div class="mt-16">
+                    <p class="font-bold underline">{{ $kegiatan->ppk->nama ?? '..............................' }}</p>
+                    <p class="text-sm">NIP. {{ $kegiatan->ppk->nip ?? '..............................' }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+     {{-- // page 4 :Daftar Penerima Seminar Kit  --}}
+         <div class="h-16 no-print"></div>
+    <div class="sheet" style="page-break-before: always;">
+        <!-- Header -->
+        <div class="text-center mb-6">
+            <h1 class="text-base font-bold uppercase mb-1">DAFTAR PENERIMA SEMINAR KIT</h1>
+            <p class="text-sm">{{ $kegiatan->nama_kegiatan }}</p>
+            <p class="text-xs text-gray-600 mt-1">
+                {{ $kegiatan->tanggal_mulai ? $kegiatan->tanggal_mulai->translatedFormat('d F Y') : '-' }}
+                @if($kegiatan->tanggal_selesai && $kegiatan->tanggal_selesai != $kegiatan->tanggal_mulai)
+                    - {{ $kegiatan->tanggal_selesai->translatedFormat('d F Y') }}
+                @endif
+            </p>
+        </div>
+
+        @php $totalPeserta = $kegiatan->jumlah_peserta ?? 20; @endphp
+
+        <!-- Daftar Hadir Table -->
+        <table class="w-full border-collapse" style="font-size: 10pt;">
+            <thead>
+                <tr>
+                    <th class="border border-black px-2 py-1.5 bg-gray-100 text-center" style="width: 40px;">No</th>
+                    <th class="border border-black px-2 py-1.5 bg-gray-100 text-center" style="width: 35%;">Nama Lengkap</th>
+                    <th class="border border-black px-2 py-1.5 bg-gray-100 text-center" style="width: 30%;">Unit Kerja</th>
+                    <th class="border border-black px-2 py-1.5 bg-gray-100 text-center" style="width: 35%;">Tanda Tangan</th>
+                </tr>
+            </thead>
+            <tbody>
+                @for($i = 1; $i <= $totalPeserta; $i++)
+                    <tr>
+                        <td class="border border-black px-2 py-3 text-center">{{ $i }}</td>
+                        <td class="border border-black px-2 py-3"></td>
+                        <td class="border border-black px-2 py-3"></td>
+                        <td class="border border-black px-2 py-3">
+                            <div class="flex justify-between items-start h-5">
+                                <div class="w-1/2">
+                                    @if($i % 2 == 1)
+                                        <span class="text-gray-500 text-xs">{{ $i }}.</span>
+                                    @endif
+                                </div>
+                                <div class="w-1/2 ">
                                     @if($i % 2 == 0)
                                         <span class="text-gray-500 text-xs">{{ $i }}.</span>
                                     @endif
