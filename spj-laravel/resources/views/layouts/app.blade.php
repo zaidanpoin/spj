@@ -328,6 +328,9 @@
                                 <a href="{{ route('master.sbm-honorarium.index') }}"
                                     class="block px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 hover:text-primary rounded-b-lg">SBM
                                     Honorarium</a>
+                                    <a href="{{ route('master.sbm-sppd.index') }}"
+                                    class="block px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 hover:text-primary rounded-b-lg">SBM
+                                    SPPD</a>
                             </div>
                         </div>
                     @endif

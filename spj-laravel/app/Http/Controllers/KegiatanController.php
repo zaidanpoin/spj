@@ -151,6 +151,11 @@ class KegiatanController extends Controller
             ->where('status', '!=', 'draft')
             ->get();
 
+        // Get SPPD (exclude drafts)
+        $sppds = \App\Models\SPPD::where('kegiatan_id', $id)
+            ->where('status', '!=', 'draft')
+            ->get();
+
         // Calculate totals
         $totalSnack = $snacks->sum(fn($item) => $item->jumlah * $item->harga);
         $totalMakanan = $makanans->sum(fn($item) => $item->jumlah * $item->harga);
@@ -164,6 +169,7 @@ class KegiatanController extends Controller
             'makanans',
             'barangs',
             'narasumbers',
+            'sppds',
             'totalSnack',
             'totalMakanan',
             'totalBarang',
