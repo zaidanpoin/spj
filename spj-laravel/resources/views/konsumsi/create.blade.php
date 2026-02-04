@@ -1036,6 +1036,7 @@
                                     <input type="text" id="modal-vendor-direktur" class="form-input"
                                         placeholder="Nama lengkap direktur" value="${data.nama_direktur || ''}">
                                 </div>
+
                                 <div>
                                     <label class="form-label">Jabatan <span class="text-red-500">*</span></label>
                                     <input type="text" id="modal-vendor-jabatan" class="form-input"

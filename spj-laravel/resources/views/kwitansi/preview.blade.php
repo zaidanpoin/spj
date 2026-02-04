@@ -950,6 +950,11 @@
 
                 <p style="text-align:justify">Pada hari ini, <strong>{{ now()->locale('id')->translatedFormat('l') }}</strong>, Tanggal <strong>{{ $tanggal_ba ?? now()->translatedFormat('d F Y') }}</strong>, kami yang bertanda tangan di bawah ini:</p>
 
+                @php
+                    // try to get vendor object from first item in this group
+                    $vendorObj = optional(collect($items)->first()->vendor);
+                @endphp
+
                 <table style="width:100%; margin-bottom:6mm">
                     <tr>
                         <td style="width:5%; vertical-align:top">I.</td>
@@ -987,12 +992,12 @@
                                 <tr>
                                     <td>Jabatan</td>
                                     <td>:</td>
-                                    <td>{{ $pihak_kedua['jabatan'] ?? 'Direktur' }}</td>
+                                    <td>{{ $vendorObj->jabatan  . ' ' . $vendorName ?? ($pihak_kedua['jabatan']  ?? 'Direktur') }}</td>
                                 </tr>
                                 <tr>
                                     <td>Alamat Kantor</td>
                                     <td>:</td>
-                                    <td>{{ $pihak_kedua['alamat'] ?? '' }}</td>
+                                    <td>{{ $vendorObj->alamat ?? ($pihak_kedua['alamat'] ?? '') }}</td>
                                 </tr>
                             </table>
                             <div style="margin-top:4px">Selanjutnya disebut <strong>PIHAK KEDUA</strong></div>
@@ -1001,9 +1006,9 @@
                 </table>
 
                 <p style="text-align:justify">Kedua belah pihak berdasarkan: <br>
-                {{ $dasar_ba ?? 'Surat Perintah Kerja (SPK) / Dokumen Kontrak yang berlaku' }}.</p>
+                {{"Surat Perintah Kerja (SPK) Pengadaan ".''. $kegiatan->nama_kegiatan?? 'Surat Perintah Kerja (SPK) / Dokumen Kontrak yang berlaku' }}.</p>
 
-                <h3 style="font-size:12pt; margin-top:6mm">Pasal 1</h3>
+                <h3 style="font-size:12pt; margin-top:6mm; text-align:center">Pasal 1</h3>
                 <p>PIHAK KEDUA menyerahkan kepada PIHAK KESATU dan PIHAK KESATU menyatakan menerima dari PIHAK KEDUA atas hasil pekerjaan yang telah selesai dilaksanakan sebagai berikut:</p>
 
                 <table style="width:100%; border-collapse:collapse; margin-bottom:6mm">
@@ -1011,13 +1016,13 @@
                         <td style="width:6%; vertical-align:top">1.</td>
                         <td style="width:24%">Pekerjaan</td>
                         <td style="width:2%">:</td>
-                        <td>{{ $pekerjaan_ba ?? 'Pengadaan Sewa Server / Pelaksanaan Sistem' }}</td>
+                        <td>{{  'Pengadaan ' . $kegiatan->nama_kegiatan }}</td>
                     </tr>
                     <tr>
                         <td style="vertical-align:top">2.</td>
                         <td>Lokasi</td>
                         <td>:</td>
-                        <td>{{ $lokasi_ba ?? 'Jl. Pattimura Nomor 20, Kebayoran Baru, Jakarta Selatan' }}</td>
+                        <td>{{ $kegiatan->detail_lokasi ?? 'Jl. Pattimura Nomor 20, Kebayoran Baru, Jakarta Selatan' }}</td>
                     </tr>
                     <tr>
                         <td style="vertical-align:top">3.</td>
@@ -1027,66 +1032,120 @@
                     </tr>
                 </table>
 
-                <!-- List items per vendor -->
-                <div style="margin-top:6mm">
-                    <table style="width:100%; border-collapse:collapse;">
-                        <thead>
-                            <tr>
-                                <th style="border:1px solid #000; padding:6px; text-align:left; width:6%">No</th>
-                                <th style="border:1px solid #000; padding:6px; text-align:left">Uraian Barang/Jasa</th>
-                                <th style="border:1px solid #000; padding:6px; text-align:right; width:12%">Jumlah</th>
-                                <th style="border:1px solid #000; padding:6px; text-align:right; width:18%">Nominal (Rp)</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @php $vendorTotal = 0; @endphp
-                            @foreach($items as $i => $it)
-                                @php
-                                    $qty = $it->jumlah ?? 1;
-                                    $price = $it->harga ?? 0;
-                                    $subtotal = $qty * $price;
-                                    $vendorTotal += $subtotal;
-                                @endphp
-                                <tr>
-                                    <td style="border:1px solid #000; padding:6px">{{ $i + 1 }}</td>
-                                    <td style="border:1px solid #000; padding:6px">{{ $it->nama_konsumsi ?? $it->nama }}</td>
-                                    <td style="border:1px solid #000; padding:6px; text-align:right">{{ number_format($qty,0,',','.') }}</td>
-                                    <td style="border:1px solid #000; padding:6px; text-align:right">{{ number_format($subtotal,0,',','.') }}</td>
-                                </tr>
-                            @endforeach
-                            <tr>
-                                <td colspan="3" style="border:1px solid #000; padding:6px; font-weight:700; text-align:right">Total</td>
-                                <td style="border:1px solid #000; padding:6px; text-align:right; font-weight:700">{{ number_format($vendorTotal,0,',','.') }}</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
 
-                <h3 style="font-size:12pt; margin-top:6mm">Pasal 2</h3>
+
+                <h3 style="font-size:12pt; margin-top:6mm; text-align:center">Pasal 2</h3>
                 <p>Penyerahan sebagaimana dimaksud dalam pasal 1 berupa barang-barang atau jasa sebagaimana terlampir/terdokumentasi.</p>
 
-                <h3 style="font-size:12pt; margin-top:6mm">Pasal 3</h3>
+                <h3 style="font-size:12pt; margin-top:6mm; text-align:center">Pasal 3</h3>
                 <p>Dengan adanya Serah Terima ini maka selanjutnya tanggung jawab atas hasil pekerjaan menjadi kewajiban PIHAK KESATU sesuai ketentuan kontrak.</p>
 
                 <div style="display:flex; justify-content:space-between; margin-top:16mm">
                     <div style="width:48%; text-align:center">
                         <div>PIHAK KESATU</div>
-                        <div style="height:60mm"></div>
+                        <div style="height:20mm"></div>
                         <div style="font-weight:700">{{ $pihak_kesatu['nama_ttd'] ?? ($pihak_kesatu['nama'] ?? 'Dini Bianti, SE') }}</div>
                         <div style="margin-top:2px">{{ $pihak_kesatu['nip'] ?? '198001172005022001' }}</div>
                     </div>
 
                     <div style="width:48%; text-align:center">
                         <div>PIHAK KEDUA</div>
-                        <div style="height:60mm"></div>
-                        <div style="font-weight:700">{{ $pihak_kedua['nama_ttd'] ?? $vendorName }}</div>
-                        <div style="margin-top:2px">{{ $pihak_kedua['jabatan'] ?? 'Direktur' }}</div>
+                        <div style="height:20mm"></div>
+                        <div style="font-weight:700">{{ $pihak_kedua['nama_ttd'] ?? ($vendorObj->nama_direktur ?? $vendorName) }}</div>
+                        <div style="margin-top:2px">{{ $vendorObj->jabatan ?? ($pihak_kedua['jabatan'] ?? 'Direktur') }}</div>
                     </div>
                 </div>
 
-                <div style="margin-top:8mm; font-size:10pt; color:#444">Dokumen ini dicetak pada: {{ now()->format('d F Y') }}</div>
+
             </div>
         </div>
+
+        <!-- NEW PAGE: Lampiran (separate) matching provided layout -->
+        <div class="sheet" style="page-break-before: always;">
+            <div style="font-family: 'Times New Roman', serif; font-size:12pt; color:#000;">
+                <!-- Header block -->
+                <table style="width:100%; margin-bottom:8px; font-size:10pt;">
+                    <tr>
+                        <td style="width:12%; vertical-align:top;">Lampiran</td>
+                        <td style="width:2%;">:</td>
+                        <td style="width:86%;">Berita Acara Serah Terima Barang/Pekerjaan</td>
+                    </tr>
+                    <tr>
+                        <td>Nomor</td>
+                        <td>:</td>
+                        <td>{{ $nomor_ba ?? '____/BA.Ms.PK/____' }}</td>
+                    </tr>
+                    <tr>
+                        <td>Tanggal</td>
+                        <td>:</td>
+                        <td>{{ $tanggal_ba ?? now()->translatedFormat('d F Y') }}</td>
+                    </tr>
+                    <tr>
+                        <td>Pekerjaan</td>
+                        <td>:</td>
+                        <td>{{"Pengadaan" ." " .$kegiatan->nama_kegiatan ?? '-' }}</td>
+                    </tr>
+                </table>
+
+                @php $rowCount = max(1, count($items)); @endphp
+
+                <!-- Lampiran table: items left column, Volume & Keterangan rowspan in middle/right -->
+                <table style="width:100%; border-collapse:collapse; font-size:10pt;">
+                    <thead>
+                        <tr>
+                            <th style="border:1px solid #000; padding:6px; width:6%; text-align:center;">NO</th>
+                            <th style="border:1px solid #000; padding:6px; width:59%; text-align:left;">URAIAN PEKERJAAN</th>
+                            <th style="border:1px solid #000; padding:6px; width:10%; text-align:center;">VOLUME</th>
+                            <th style="border:1px solid #000; padding:6px; width:25%; text-align:left;">KETERANGAN</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @forelse($items as $idx => $it)
+                            <tr>
+                                <td style="border:1px solid #000; padding:6px; text-align:center; vertical-align:top;">{{ $idx + 1 }}</td>
+                                <td style="border:1px solid #000; padding:6px; vertical-align:top;">{{ $it->nama_konsumsi ?? $it->nama ?? 'Item' }}</td>
+
+                                @if($idx === 0)
+                                     <td rowspan="{{ $rowCount }}" style="border:1px solid #000; padding:6px; text-align:center; vertical-align:middle;">
+                                                 <div style="transform:rotate(0deg);">1</div>
+                                        <div style="transform:rotate(0deg);">Pekerjaan</div>
+
+
+                                    </td>
+
+                                    <td rowspan="{{ $rowCount }}" style="border:1px solid #000; padding:12px; vertical-align:middle; text-align:left;">
+                                        Pekerjaan telah diterima dengan baik dengan jumlah yang sesuai
+                                    </td>
+                                @endif
+
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="4" style="border:1px solid #000; padding:8px; text-align:center;">Tidak ada rincian</td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+
+                <!-- Signature rows under lampiran -->
+                <div style="display:flex; justify-content:space-between; margin-top:18mm;">
+                    <div style="width:48%; text-align:center">
+                        <div>PIHAK KESATU</div>
+                        <div style="height:18mm"></div>
+                        <div style="font-weight:700">{{ $pihak_kesatu['nama_ttd'] ?? ($pihak_kesatu['nama'] ?? 'Dini Bianti, SE') }}</div>
+                        <div style="margin-top:2px">{{ $pihak_kesatu['nip'] ?? '198001172005022001' }}</div>
+                    </div>
+
+                    <div style="width:48%; text-align:center">
+                        <div>PIHAK KEDUA</div>
+                        <div style="height:18mm"></div>
+                        <div style="font-weight:700">{{ $pihak_kedua['nama_ttd'] ?? ($vendorObj->nama_direktur ?? $vendorName) }}</div>
+                        <div style="margin-top:2px">{{ $vendorObj->jabatan ?? ($pihak_kedua['jabatan'] ?? 'Direktur') }}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     @endforeach
 
 </body>
