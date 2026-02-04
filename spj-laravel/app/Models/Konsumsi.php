@@ -21,6 +21,7 @@ class Konsumsi extends Model
         'jumlah',
         'harga',
         'tanggal_pembelian',
+        'vendor_id',
     ];
 
     protected $casts = [
@@ -35,6 +36,11 @@ class Konsumsi extends Model
     public function waktuKonsumsi()
     {
         return $this->belongsTo(WaktuKonsumsi::class, 'waktu_konsumsi_id');
+    }
+
+    public function vendor()
+    {
+        return $this->belongsTo(Vendor::class, 'vendor_id');
     }
 
     // Accessor untuk subtotal (Porsi x Harga)

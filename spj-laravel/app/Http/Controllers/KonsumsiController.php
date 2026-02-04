@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Kegiatan;
 use App\Models\Konsumsi;
+use App\Models\Vendor;
 use App\Models\SatuanBiayaKonsumsiProvinsi;
 use Illuminate\Http\Request;
 
@@ -40,10 +41,14 @@ class KonsumsiController extends Controller
             'barang' => Konsumsi::where('kegiatan_id', $kegiatan_id)
                 ->where('kategori', 'barang')
                 ->where('status', 'draft')
+                ->with('vendor')
                 ->get(),
         ];
 
-        return view('konsumsi.create', compact('kegiatan', 'waktuKonsumsi', 'tarifSBM', 'draftData'));
+        // Load existing vendors for dropdown
+        $vendors = Vendor::orderBy('nama_vendor')->get();
+
+        return view('konsumsi.create', compact('kegiatan', 'waktuKonsumsi', 'tarifSBM', 'draftData', 'vendors'));
     }
 
     /**
@@ -87,6 +92,15 @@ class KonsumsiController extends Controller
             'barang.*.no_kwitansi' => 'nullable|string|max:255',
             'barang.*.jumlah' => 'nullable|integer|min:1',
             'barang.*.harga' => 'nullable|integer|min:0',
+            'barang.*.vendor_nama' => 'nullable|string|max:255',
+            'barang.*.vendor_id' => 'nullable|exists:vendors,id',
+            // Vendor detail fields
+            'vendor_data' => 'nullable|array',
+            'vendor_data.*.nama_vendor' => 'nullable|string|max:255',
+            'vendor_data.*.nama_direktur' => 'nullable|string|max:255',
+            'vendor_data.*.jabatan' => 'nullable|string|max:255',
+            'vendor_data.*.npwp' => 'nullable|string|max:30',
+            'vendor_data.*.alamat' => 'nullable|string',
         ]);
 
 
@@ -144,25 +158,109 @@ class KonsumsiController extends Controller
             }
         }
 
+        // First, process vendor data if provided
+        \Log::info("Vendor data received:", ['vendor_data' => $request->input('vendor_data', 'NOT SET')]);
+        $vendorMap = []; // Map vendor_nama to vendor_id
+        if ($request->has('vendor_data') && is_array($request->vendor_data)) {
+            foreach ($request->vendor_data as $vendorNama => $vendorInfo) {
+                if (!empty($vendorNama)) {
+                    $vendor = Vendor::updateOrCreate(
+                        ['nama_vendor' => $vendorNama],
+                        [
+                            'nama_direktur' => $vendorInfo['nama_direktur'] ?? null,
+                            'jabatan' => $vendorInfo['jabatan'] ?? null,
+                            'npwp' => $vendorInfo['npwp'] ?? null,
+                            'alamat' => $vendorInfo['alamat'] ?? null,
+                        ]
+                    );
+                    $vendorMap[$vendorNama] = $vendor->id;
+                    \Log::info("Vendor saved/updated: {$vendorNama}", $vendor->toArray());
+                }
+            }
+        }
+
+        // Calculate total per vendor for validation
+        $vendorTotals = [];
+        if ($request->has('barang') && is_array($request->barang)) {
+            foreach ($request->barang as $item) {
+                if (!empty($item['nama']) && trim($item['nama']) !== '') {
+                    $vendorNama = $item['vendor_nama'] ?? 'Tanpa Vendor';
+                    $subtotal = ($item['jumlah'] ?? 1) * ($item['harga'] ?? 0);
+                    if (!isset($vendorTotals[$vendorNama])) {
+                        $vendorTotals[$vendorNama] = 0;
+                    }
+                    $vendorTotals[$vendorNama] += $subtotal;
+                }
+            }
+        }
+
+        // Validate vendors with total >= 10 million must have complete data
+        $threshold = 10000000; // 10 juta
+        $incompleteVendors = [];
+        foreach ($vendorTotals as $vendorNama => $total) {
+            if ($total >= $threshold && $vendorNama !== 'Tanpa Vendor') {
+                // Check if vendor data is complete
+                $vendor = Vendor::where('nama_vendor', $vendorNama)->first();
+                if (!$vendor || !$vendor->isComplete()) {
+                    $incompleteVendors[] = $vendorNama . ' (Rp ' . number_format($total, 0, ',', '.') . ')';
+                }
+            }
+        }
+
+        // If saving as final and there are incomplete vendors, return error
+        if ($status === 'final' && !empty($incompleteVendors)) {
+            return back()->withInput()->with(
+                'error',
+                'Vendor dengan total belanja ≥ Rp 10.000.000 wajib melengkapi data (Direktur, Jabatan, NPWP, Alamat): ' .
+                implode(', ', $incompleteVendors)
+            );
+        }
+
         // Save Barang items
         if ($request->has('barang') && is_array($request->barang)) {
             foreach ($request->barang as $index => $item) {
                 \Log::info("Processing barang item {$index}:", $item);
                 if (!empty($item['nama']) && trim($item['nama']) !== '') {
                     try {
+                        $vendorNama = $item['vendor_nama'] ?? null;
+                        $vendorId = null;
+
+                        // Get or create vendor if name provided
+                        if (!empty($vendorNama)) {
+                            if (isset($vendorMap[$vendorNama])) {
+                                $vendorId = $vendorMap[$vendorNama];
+                            } else {
+                                // Check if vendor_data was submitted for this vendor
+                                $vendorInfo = $request->input("vendor_data.{$vendorNama}", []);
+                                $vendor = Vendor::updateOrCreate(
+                                    ['nama_vendor' => $vendorNama],
+                                    [
+                                        'nama_direktur' => $vendorInfo['nama_direktur'] ?? null,
+                                        'jabatan' => $vendorInfo['jabatan'] ?? null,
+                                        'npwp' => $vendorInfo['npwp'] ?? null,
+                                        'alamat' => $vendorInfo['alamat'] ?? null,
+                                    ]
+                                );
+                                $vendorId = $vendor->id;
+                                $vendorMap[$vendorNama] = $vendorId;
+                                \Log::info("Vendor created/updated in barang loop: {$vendorNama}", $vendor->toArray());
+                            }
+                        }
+
                         Konsumsi::create([
                             'kegiatan_id' => $request->kegiatan_id,
                             'kategori' => 'barang',
                             'status' => $status,
                             'nama_konsumsi' => $item['nama'],
                             'no_kwitansi' => $item['no_kwitansi'] ?? null,
+                            'vendor_id' => $vendorId,
                             'waktu_konsumsi_id' => null, // Barang tidak punya waktu konsumsi
                             'jumlah' => $item['jumlah'] ?? 1,
                             'harga' => $item['harga'] ?? 0,
                             'tanggal_pembelian' => now(),
                         ]);
                         $totalSaved++;
-                        \Log::info("Barang saved: {$item['nama']}");
+                        \Log::info("Barang saved: {$item['nama']} with vendor_id: {$vendorId}");
                     } catch (\Exception $e) {
                         \Log::error("Error saving barang: " . $e->getMessage());
                     }

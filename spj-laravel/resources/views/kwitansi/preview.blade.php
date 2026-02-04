@@ -184,6 +184,7 @@
             </table>
         </div>
 
+
         <!-- JUDUL -->
         <div class="text-center mb-8">
             <h1 class="font-bold text-[13pt] uppercase">
@@ -810,7 +811,7 @@
     </div>
 </div>
   <div class="h-16 no-print"></div>
-    <!-- PAGE 3: Tanda Terima -->
+        <!-- PAGE 3: Tanda Terima -->
     <div class="sheet" style="page-break-before: always;">
         <!-- Title -->
         <div class="text-center mb-6">
@@ -926,6 +927,167 @@
     </div>
          @endif
 
+    @php
+        // group konsumsi items by vendor name (fallback to vendor_nama or 'Tanpa Vendor')
+        $vendorGroups = collect($konsumsis ?? [])->groupBy(function($item) {
+            return optional($item->vendor)->nama_vendor ?? ($item->vendor_nama ?? 'Tanpa Vendor');
+        });
+
+        // remove groups without vendor (key 'Tanpa Vendor' or empty string)
+        $vendorGroups = $vendorGroups->reject(function($items, $vendorName) {
+            return trim((string) $vendorName) === '' || $vendorName === 'Tanpa Vendor';
+        });
+    @endphp
+
+    @foreach($vendorGroups as $vendorName => $items)
+        <div class="sheet" style="page-break-before: always;">
+            <div style="font-family: 'Times New Roman', serif; font-size:12pt; color:#000;">
+                <div style="text-align:center; margin-bottom:6mm"><strong>
+                    <h2 style="margin:0; font-size:16pt; letter-spacing:1px">BERITA ACARA PEMERIKSAAN DAN SERAH TERIMA BARANG/JASA HASIL PEKERJAAN</h2>
+                    </strong>
+                    <div style="margin-top:6px">Nomor: {{ $nomor_ba ?? '____/BA.Ms.PK/____' }}</div>
+                </div>
+
+                <p style="text-align:justify">Pada hari ini, <strong>{{ now()->locale('id')->translatedFormat('l') }}</strong>, Tanggal <strong>{{ $tanggal_ba ?? now()->translatedFormat('d F Y') }}</strong>, kami yang bertanda tangan di bawah ini:</p>
+
+                <table style="width:100%; margin-bottom:6mm">
+                    <tr>
+                        <td style="width:5%; vertical-align:top">I.</td>
+                        <td style="width:95%">
+                            <table style="width:100%">
+                                <tr>
+                                    <td style="width:20%">Nama</td>
+                                    <td style="width:2%">:</td>
+                                    <td>{{ $kegiatan->ppk->nama ?? 'Dini Bianti, SE' }}</td>
+                                </tr>
+                                <tr>
+                                    <td>Jabatan</td>
+                                    <td>:</td>
+                                    <td>{{ $pihak_kesatu['jabatan'] ?? 'Pejabat Pembuat Komitmen' }}</td>
+                                </tr>
+                                <tr>
+                                    <td>Alamat Kantor</td>
+                                    <td>:</td>
+                                    <td>{{ $pihak_kesatu['alamat'] ?? 'Sekretariat Badan Pengembangan Sumber Daya Manusia' }}</td>
+                                </tr>
+                            </table>
+                            <div style="margin-top:4px">Selanjutnya disebut <strong>PIHAK KESATU</strong></div>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td style="vertical-align:top">II.</td>
+                        <td>
+                            <table style="width:100%">
+                                <tr>
+                                    <td style="width:20%">Nama</td>
+                                    <td style="width:2%">:</td>
+                                    <td>{{ $vendorName }}</td>
+                                </tr>
+                                <tr>
+                                    <td>Jabatan</td>
+                                    <td>:</td>
+                                    <td>{{ $pihak_kedua['jabatan'] ?? 'Direktur' }}</td>
+                                </tr>
+                                <tr>
+                                    <td>Alamat Kantor</td>
+                                    <td>:</td>
+                                    <td>{{ $pihak_kedua['alamat'] ?? '' }}</td>
+                                </tr>
+                            </table>
+                            <div style="margin-top:4px">Selanjutnya disebut <strong>PIHAK KEDUA</strong></div>
+                        </td>
+                    </tr>
+                </table>
+
+                <p style="text-align:justify">Kedua belah pihak berdasarkan: <br>
+                {{ $dasar_ba ?? 'Surat Perintah Kerja (SPK) / Dokumen Kontrak yang berlaku' }}.</p>
+
+                <h3 style="font-size:12pt; margin-top:6mm">Pasal 1</h3>
+                <p>PIHAK KEDUA menyerahkan kepada PIHAK KESATU dan PIHAK KESATU menyatakan menerima dari PIHAK KEDUA atas hasil pekerjaan yang telah selesai dilaksanakan sebagai berikut:</p>
+
+                <table style="width:100%; border-collapse:collapse; margin-bottom:6mm">
+                    <tr>
+                        <td style="width:6%; vertical-align:top">1.</td>
+                        <td style="width:24%">Pekerjaan</td>
+                        <td style="width:2%">:</td>
+                        <td>{{ $pekerjaan_ba ?? 'Pengadaan Sewa Server / Pelaksanaan Sistem' }}</td>
+                    </tr>
+                    <tr>
+                        <td style="vertical-align:top">2.</td>
+                        <td>Lokasi</td>
+                        <td>:</td>
+                        <td>{{ $lokasi_ba ?? 'Jl. Pattimura Nomor 20, Kebayoran Baru, Jakarta Selatan' }}</td>
+                    </tr>
+                    <tr>
+                        <td style="vertical-align:top">3.</td>
+                        <td>Instansi/Unit Kerja</td>
+                        <td>:</td>
+                        <td>{{ $instansi_ba ?? 'Sekretariat Badan Pengembangan Sumber Daya Manusia' }}</td>
+                    </tr>
+                </table>
+
+                <!-- List items per vendor -->
+                <div style="margin-top:6mm">
+                    <table style="width:100%; border-collapse:collapse;">
+                        <thead>
+                            <tr>
+                                <th style="border:1px solid #000; padding:6px; text-align:left; width:6%">No</th>
+                                <th style="border:1px solid #000; padding:6px; text-align:left">Uraian Barang/Jasa</th>
+                                <th style="border:1px solid #000; padding:6px; text-align:right; width:12%">Jumlah</th>
+                                <th style="border:1px solid #000; padding:6px; text-align:right; width:18%">Nominal (Rp)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @php $vendorTotal = 0; @endphp
+                            @foreach($items as $i => $it)
+                                @php
+                                    $qty = $it->jumlah ?? 1;
+                                    $price = $it->harga ?? 0;
+                                    $subtotal = $qty * $price;
+                                    $vendorTotal += $subtotal;
+                                @endphp
+                                <tr>
+                                    <td style="border:1px solid #000; padding:6px">{{ $i + 1 }}</td>
+                                    <td style="border:1px solid #000; padding:6px">{{ $it->nama_konsumsi ?? $it->nama }}</td>
+                                    <td style="border:1px solid #000; padding:6px; text-align:right">{{ number_format($qty,0,',','.') }}</td>
+                                    <td style="border:1px solid #000; padding:6px; text-align:right">{{ number_format($subtotal,0,',','.') }}</td>
+                                </tr>
+                            @endforeach
+                            <tr>
+                                <td colspan="3" style="border:1px solid #000; padding:6px; font-weight:700; text-align:right">Total</td>
+                                <td style="border:1px solid #000; padding:6px; text-align:right; font-weight:700">{{ number_format($vendorTotal,0,',','.') }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <h3 style="font-size:12pt; margin-top:6mm">Pasal 2</h3>
+                <p>Penyerahan sebagaimana dimaksud dalam pasal 1 berupa barang-barang atau jasa sebagaimana terlampir/terdokumentasi.</p>
+
+                <h3 style="font-size:12pt; margin-top:6mm">Pasal 3</h3>
+                <p>Dengan adanya Serah Terima ini maka selanjutnya tanggung jawab atas hasil pekerjaan menjadi kewajiban PIHAK KESATU sesuai ketentuan kontrak.</p>
+
+                <div style="display:flex; justify-content:space-between; margin-top:16mm">
+                    <div style="width:48%; text-align:center">
+                        <div>PIHAK KESATU</div>
+                        <div style="height:60mm"></div>
+                        <div style="font-weight:700">{{ $pihak_kesatu['nama_ttd'] ?? ($pihak_kesatu['nama'] ?? 'Dini Bianti, SE') }}</div>
+                        <div style="margin-top:2px">{{ $pihak_kesatu['nip'] ?? '198001172005022001' }}</div>
+                    </div>
+
+                    <div style="width:48%; text-align:center">
+                        <div>PIHAK KEDUA</div>
+                        <div style="height:60mm"></div>
+                        <div style="font-weight:700">{{ $pihak_kedua['nama_ttd'] ?? $vendorName }}</div>
+                        <div style="margin-top:2px">{{ $pihak_kedua['jabatan'] ?? 'Direktur' }}</div>
+                    </div>
+                </div>
+
+                <div style="margin-top:8mm; font-size:10pt; color:#444">Dokumen ini dicetak pada: {{ now()->format('d F Y') }}</div>
+            </div>
+        </div>
+    @endforeach
 
 </body>
 

@@ -63,7 +63,7 @@
         <div class="bg-white rounded border border-gray-200">
             <div class="px-3 py-2 border-b border-gray-200 flex items-center justify-between">
                 <div class="flex items-center gap-2">
-                    <span class="text-sm font-semibold text-gray-900">Data Konsumsi</span>
+                    <span class="text-sm font-semibold text-gray-900">Data Belanja</span>
                     <span class="text-xs bg-gray-100 text-gray-600 px-1.5 py-0.5 rounded">
                         {{ $snacks->count() + $makanans->count() + $barangs->count() }} item
                     </span>
@@ -200,6 +200,7 @@
                                 <thead class="bg-gray-50">
                                     <tr>
                                         <th class="px-2 py-1.5 text-left font-medium text-gray-600">Nama</th>
+                                         <th class="px-2 py-1.5 text-left font-medium text-gray-600 w-24">Nama Vendor</th>
                                         <th class="px-2 py-1.5 text-left font-medium text-gray-600 w-24">No Kwitansi</th>
                                         <th class="px-2 py-1.5 text-left font-medium text-gray-600 w-28">Tgl Pembelian</th>
                                         <th class="px-2 py-1.5 text-center font-medium text-gray-600 w-12">Qty</th>
@@ -212,6 +213,7 @@
                                     @foreach($barangs as $item)
                                         <tr>
                                             <td class="px-2 py-1.5">{{ $item->nama_konsumsi }}</td>
+                                            <td class="px-2 py-1.5 text-xs text-gray-600">{{ $item->vendor->nama_vendor ?? '-' }}</td>
                                             <td class="px-2 py-1.5 text-xs text-gray-600">{{ $item->no_kwitansi ?? '-' }}</td>
                                             <td class="px-2 py-1.5 text-xs text-gray-600">{{ $item->tanggal_pembelian ? \Carbon\Carbon::parse($item->tanggal_pembelian)->format('d/m/Y') : '-' }}</td>
                                             <td class="px-2 py-1.5 text-center">{{ $item->jumlah }}</td>
