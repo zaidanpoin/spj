@@ -1060,6 +1060,8 @@
             </div>
         </div>
 
+
+
         <!-- NEW PAGE: Lampiran (separate) matching provided layout -->
         <div class="sheet" style="page-break-before: always;">
             <div style="font-family: 'Times New Roman', serif; font-size:12pt; color:#000;">
@@ -1143,6 +1145,185 @@
                         <div style="margin-top:2px">{{ $vendorObj->jabatan ?? ($pihak_kedua['jabatan'] ?? 'Direktur') }}</div>
                     </div>
                 </div>
+            </div>
+        </div>
+
+
+   <!-- NEW PAGE: Berita Acara Pembayaran (detailed payment document) -->
+        <div class="sheet" style="page-break-before: always;">
+            <div style="font-family: 'Times New Roman', serif; font-size:11pt; color:#000;">
+                <div style="text-align:center; margin-bottom:8mm">
+                    <h2 style="margin:0; font-size:16pt; font-weight:700; letter-spacing:1px">BERITA ACARA PEMBAYARAN</h2>
+                    <div style="margin-top:6px; font-size:11pt">Nomor: <span class="nomor-ba" data-default="{{ $nomor_ba ?? '____/BA.Ms.PK/____' }}">{{ $nomor_ba ?? '____/BA.Ms.PK/____' }}</span></div>
+                </div>
+
+                @php
+                    $vendorObj = optional(collect($items)->first()->vendor);
+                    $vendorTotal = 0;
+                    foreach($items as $it) {
+                        $vendorTotal += $it->total ?? $it->subtotal ?? $it->nilai ?? (($it->harga ?? 0) * ($it->volume ?? ($it->qty ?? 1)));
+                    }
+                    $spk_no = $kegiatan->spk_nomor ?? ($kegiatan->kontrak_nomor ?? '---');
+                    $spk_tanggal = $kegiatan->spk_tanggal ? $kegiatan->spk_tanggal->translatedFormat('d F Y') : ($kegiatan->kontrak_tanggal ? $kegiatan->kontrak_tanggal->translatedFormat('d F Y') : now()->translatedFormat('d F Y'));
+                @endphp
+
+                <p style="text-align:justify; margin-bottom:6mm">Pada hari ini, <strong>{{ now()->locale('id')->translatedFormat('l') }}</strong>, Tanggal <strong>{{ $tanggal_ba ?? now()->translatedFormat('d F Y') }}</strong>, kami yang bertanda tangan di bawah ini:</p>
+
+                <table style="width:100%; margin-bottom:6mm; font-size:10pt;">
+                    <tr>
+                        <td style="width:5%; vertical-align:top">I.</td>
+                        <td style="width:95%">
+                            <table style="width:100%">
+                                <tr>
+                                    <td style="width:22%">Nama</td>
+                                    <td style="width:2%">:</td>
+                                    <td>{{ $kegiatan->ppk->nama ?? 'Dimas Wisnu, S.Sos, MT' }}</td>
+                                </tr>
+                                <tr>
+                                    <td>Jabatan</td>
+                                    <td>:</td>
+                                    <td>{{ $pihak_kesatu['jabatan'] ?? 'Pejabat Pembuat Komitmen' }}</td>
+                                </tr>
+                                <tr>
+                                    <td>Alamat</td>
+                                    <td>:</td>
+                                    <td>{{ $pihak_kesatu['alamat'] ?? 'Sekretariat Badan Pengembangan Sumber Daya Manusia' }}</td>
+                                </tr>
+                            </table>
+                            <div style="margin-top:4px">Selanjutnya disebut <strong>PIHAK KESATU</strong></div>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td style="vertical-align:top">II.</td>
+                        <td>
+                            <table style="width:100%">
+                                <tr>
+                                    <td style="width:22%">Nama</td>
+                                    <td style="width:2%">:</td>
+                                    <td>{{ $vendorName }}</td>
+                                </tr>
+                                <tr>
+                                    <td>Jabatan</td>
+                                    <td>:</td>
+                                    <td>{{ $vendorObj->jabatan ?? 'Direktur' }}</td>
+                                </tr>
+                                <tr>
+                                    <td>NPWP</td>
+                                    <td>:</td>
+                                    <td>{{ $vendorObj->npwp ?? '---' }}</td>
+                                </tr>
+                                <tr>
+                                    <td>Alamat Kantor</td>
+                                    <td>:</td>
+                                    <td>{{ $vendorObj->alamat ?? '' }}</td>
+                                </tr>
+                            </table>
+                            <div style="margin-top:4px">Selanjutnya disebut <strong>PIHAK KEDUA</strong></div>
+                        </td>
+                    </tr>
+                </table>
+
+                <p style="text-align:justify; margin-bottom:6mm">Berdasarkan Surat Perintah Kerja (SPK) / Kontrak Nomor: <strong>{{ $spk_no }}</strong> Tanggal: <strong>{{ $spk_tanggal }}</strong>, untuk pekerjaan <strong>{{ $kegiatan->nama_kegiatan }}</strong>, telah disepakati rincian pembayaran sebagai berikut:</p>
+
+                <table style="width:100%; border-collapse:collapse; font-size:10pt; margin-bottom:8mm;">
+                    <tbody>
+                        <tr>
+                            <td style="width:6%; vertical-align:top">A.</td>
+                            <td style="width:64%; padding:2px 0">Nilai Kontrak/SPK</td>
+                            <td style="width:30%; text-align:right; padding:2px 0">Rp. {{ number_format($vendorTotal, 0, ',', '.') }}</td>
+                        </tr>
+                        <tr>
+                            <td style="vertical-align:top">B.</td>
+                            <td style="padding:2px 0">Pembayaran yang telah dilakukan</td>
+                            <td style="text-align:right; padding:2px 0">Rp. 0</td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td style="padding:6px 0 2px 20px">1. Nilai Pekerjaan/Barang BAP ini</td>
+                            <td style="text-align:right; padding:6px 0 2px 0">Rp. {{ number_format($vendorTotal, 0, ',', '.') }}</td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td style="padding:2px 0 2px 20px">2. Jumlah Pembayaran</td>
+                            <td style="text-align:right; padding:2px 0">Rp. {{ number_format($vendorTotal, 0, ',', '.') }}</td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td style="padding:2px 0 2px 20px">3. Uang Muka (jika ada)</td>
+                            <td style="text-align:right; padding:2px 0">Rp. -</td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td style="padding:2px 0 2px 20px">I. Uang Muka</td>
+                            <td style="text-align:right; padding:2px 0">Rp. -</td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td style="padding:2px 0 2px 20px">II. Jumlah Pembayaran</td>
+                            <td style="text-align:right; padding:2px 0">Rp. -</td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td style="padding:2px 0 2px 20px">III. Jumlah Pembayaran setelah diperhitungkan Uang Muka</td>
+                            <td style="text-align:right; padding:2px 0">Rp. -</td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td style="padding:6px 0 2px 20px">4. Pemotongan Pembayaran (PPh)</td>
+                            <td style="text-align:right; padding:6px 0 2px 0">Rp. -</td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td style="padding:2px 0 2px 20px">5. Jumlah yang harus dibayarkan Pekerjaan/Barang Berita Acara ini setelah dipotong PPh</td>
+                            <td style="text-align:right; padding:2px 0; font-weight:700">Rp. {{ number_format($vendorTotal, 0, ',', '.') }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div style="margin-bottom:8mm">
+                    <p style="margin:0 0 4px 0; font-weight:700; font-size:10pt">C. PIHAK KEDUA menunjuk pembayaran tersebut di atas ditransfer ke rekening sebagai berikut:</p>
+                    <table style="font-size:10pt; margin-left:20px">
+                        <tr>
+                            <td style="width:160px">Bank</td>
+                            <td style="width:10px">:</td>
+                            <td>{{ $vendorObj->bank ?? ($vendorObj->bank_name ?? 'Bank Mandiri') }}</td>
+                        </tr>
+                        <tr>
+                            <td>Nomor Rekening</td>
+                            <td>:</td>
+                            <td>{{ $vendorObj->rekening ?? ($vendorObj->bank_account ?? '---') }}</td>
+                        </tr>
+                        <tr>
+                            <td>Atas Nama</td>
+                            <td>:</td>
+                            <td>{{ $vendorObj->nama_direktur ?? $vendorName }}</td>
+                        </tr>
+                    </table>
+                </div>
+
+                <p style="text-align:justify; margin-bottom:12mm; font-size:10pt">Demikian Berita Acara ini dibuat untuk dapat dipergunakan sebagaimana mestinya.</p>
+
+                <table style="width:100%; font-size:10pt">
+                    <tr>
+                        <td style="width:50%; vertical-align:top"></td>
+                        <td style="width:50%; text-align:center; vertical-align:top">
+                            <div>{{ $pihak_kedua['kota'] ?? 'Jakarta' }}, {{ now()->translatedFormat('d F Y') }}</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="padding-top:8mm; text-align:center; vertical-align:top">
+                            <div><strong>PIHAK KESATU</strong></div>
+                            <div style="height:18mm"></div>
+                            <div style="font-weight:700">{{ $pihak_kesatu['nama_ttd'] ?? ($kegiatan->ppk->nama ?? 'Dimas Wisnu, S.Sos, MT') }}</div>
+                        </td>
+                        <td style="padding-top:8mm; text-align:center; vertical-align:top">
+                            <div><strong>PIHAK KEDUA</strong></div>
+                            <div style="height:18mm"></div>
+                            <div style="font-weight:700">{{ $pihak_kedua['nama_ttd'] ?? ($vendorObj->nama_direktur ?? $vendorName) }}</div>
+                        </td>
+                    </tr>
+                </table>
             </div>
         </div>
 
