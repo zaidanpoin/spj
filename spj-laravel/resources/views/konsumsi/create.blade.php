@@ -98,6 +98,16 @@
                 @csrf
                 <input type="hidden" name="kegiatan_id" value="{{ $kegiatan->id }}">
 
+                <!-- Pre-populate vendor data from draft as hidden inputs -->
+                @if(isset($vendorDataFromDraft) && count($vendorDataFromDraft) > 0)
+                    @foreach($vendorDataFromDraft as $vendorNama => $vendorInfo)
+                        <input type="hidden" name="vendor_data[{{ $vendorNama }}][nama_direktur]" value="{{ $vendorInfo['nama_direktur'] }}">
+                        <input type="hidden" name="vendor_data[{{ $vendorNama }}][jabatan]" value="{{ $vendorInfo['jabatan'] }}">
+                        <input type="hidden" name="vendor_data[{{ $vendorNama }}][npwp]" value="{{ $vendorInfo['npwp'] }}">
+                        <input type="hidden" name="vendor_data[{{ $vendorNama }}][alamat]" value="{{ $vendorInfo['alamat'] }}">
+                    @endforeach
+                @endif
+
                 <!-- Tab Content: Snack -->
                 <div id="content-snack" class="tab-content">
                     <div class="mb-4">
@@ -553,6 +563,9 @@
                 snack: {{ $tarifSBM['snack'] ?? 0 }}
                                             };
 
+            // Existing vendors data from server (keyed by vendor name)
+            const vendorsData = @json($vendorsData ?? []);
+
             // Tab Switching
             function switchTab(tab) {
                 // Update tab buttons
@@ -899,6 +912,39 @@
                     document.addEventListener('DOMContentLoaded', function () {
                         attachCalculationEvents();
                         attachVendorEvents();
+
+                        // Load any vendor_data hidden inputs (from draft) into vendorData
+                        const vendorHiddenInputs = document.querySelectorAll('input[name^="vendor_data"]');
+                        if (vendorHiddenInputs && vendorHiddenInputs.length > 0) {
+                            vendorHiddenInputs.forEach(inp => {
+                                const match = inp.name.match(/^vendor_data\[(.+?)\]\[(.+?)\]$/);
+                                if (!match) return;
+                                const vendorNama = match[1];
+                                const field = match[2];
+                                vendorData[vendorNama] = vendorData[vendorNama] || { isComplete: false };
+                                vendorData[vendorNama][field] = inp.value;
+                            });
+
+                            // Mark complete if all fields present
+                            Object.keys(vendorData).forEach(vn => {
+                                const v = vendorData[vn];
+                                if (v.nama_direktur && v.jabatan && v.npwp && v.alamat) v.isComplete = true;
+                            });
+                        }
+
+                        // Hydrate vendorData for any existing vendor inputs (from draft) using DB autofill as fallback
+                        document.querySelectorAll('.barang-vendor').forEach(input => {
+                            const val = (input.value || '').trim();
+                            if (val) {
+                                try {
+                                    // if vendorData not already populated from hidden inputs, try DB autofill
+                                    if (!vendorData[val] && vendorsData && vendorsData[val]) {
+                                        handleVendorChange({ target: input });
+                                    }
+                                } catch (e) { console.error(e); }
+                            }
+                        });
+
                         calculateTotals();
                         calculateVendorTotals();
 
@@ -1009,13 +1055,36 @@
                     // Attach vendor input events
                     function attachVendorEvents() {
                         document.querySelectorAll('.barang-vendor').forEach(input => {
-                            input.removeEventListener('change', calculateVendorTotals);
-                            input.addEventListener('change', calculateVendorTotals);
+                            input.removeEventListener('change', handleVendorChange);
+                            input.addEventListener('change', handleVendorChange);
                         });
                         document.querySelectorAll('.barang-qty, .barang-price').forEach(input => {
                             input.removeEventListener('input', calculateVendorTotals);
                             input.addEventListener('input', calculateVendorTotals);
                         });
+                    }
+
+                    // Handle vendor name change: autofill vendorData if vendor exists in DB
+                    function handleVendorChange(e) {
+                        const input = e.target;
+                        const vendorNama = (input.value || '').trim();
+
+                        if (!vendorNama) {
+                            // vendor cleared
+                            calculateVendorTotals();
+                            return;
+                        }
+
+                        // If vendor exists in vendorsData (from server), populate vendorData
+                        if (vendorsData && vendorsData[vendorNama]) {
+                            const data = vendorsData[vendorNama];
+                            vendorData[vendorNama] = Object.assign({}, data, { isComplete: true });
+                            // Ensure hidden inputs are updated so draft/save will include vendor details
+                            updateVendorHiddenInputs();
+                        }
+
+                        // Always recalculate vendor totals (and UI)
+                        calculateVendorTotals();
                     }
 
                     // Open vendor modal

@@ -48,7 +48,35 @@ class KonsumsiController extends Controller
         // Load existing vendors for dropdown
         $vendors = Vendor::orderBy('nama_vendor')->get();
 
-        return view('konsumsi.create', compact('kegiatan', 'waktuKonsumsi', 'tarifSBM', 'draftData', 'vendors'));
+        // Prepare simple vendor data map (keyed by nama_vendor) for JS autofill
+        $vendorsData = $vendors->mapWithKeys(function ($v) {
+            return [
+                $v->nama_vendor => [
+                    'nama_direktur' => $v->nama_direktur,
+                    'jabatan' => $v->jabatan,
+                    'npwp' => $v->npwp,
+                    'alamat' => $v->alamat,
+                ],
+            ];
+        })->toArray();
+
+        // Collect vendor data from draft barang items (if vendor relation present)
+        $vendorDataFromDraft = [];
+        foreach ($draftData['barang'] as $item) {
+            if ($item->vendor && $item->vendor->nama_vendor) {
+                $nama = $item->vendor->nama_vendor;
+                if (!isset($vendorDataFromDraft[$nama])) {
+                    $vendorDataFromDraft[$nama] = [
+                        'nama_direktur' => $item->vendor->nama_direktur,
+                        'jabatan' => $item->vendor->jabatan,
+                        'npwp' => $item->vendor->npwp,
+                        'alamat' => $item->vendor->alamat,
+                    ];
+                }
+            }
+        }
+
+        return view('konsumsi.create', compact('kegiatan', 'waktuKonsumsi', 'tarifSBM', 'draftData', 'vendors', 'vendorsData', 'vendorDataFromDraft'));
     }
 
     /**
