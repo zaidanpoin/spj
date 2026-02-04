@@ -8,6 +8,7 @@ use App\Http\Controllers\KwitansiController;
 use App\Http\Controllers\NarasumberController;
 use App\Http\Controllers\SBMKonsumsiController;
 use App\Http\Controllers\SBMHonorariumController;
+use App\Http\Controllers\SBMSppdController;
 use App\Http\Controllers\UnorController;
 use App\Http\Controllers\UnitKerjaController;
 use App\Http\Controllers\ActivityLogController;
@@ -229,6 +230,26 @@ Route::prefix('master')->middleware(['auth'])->group(function () {
     Route::delete('sbm-honorarium/{sbm_honorarium}', [SBMHonorariumController::class, 'destroy'])
         ->middleware('permission:delete-sbm-honorarium')
         ->name('master.sbm-honorarium.destroy');
+
+    // SBM SPPD CRUD
+    Route::get('sbm-sppd', [SBMSppdController::class, 'index'])
+        ->middleware('permission:view-sbm-sppd')
+        ->name('master.sbm-sppd.index');
+    Route::get('sbm-sppd/create', [SBMSppdController::class, 'create'])
+        ->middleware('permission:create-sbm-sppd')
+        ->name('master.sbm-sppd.create');
+    Route::post('sbm-sppd', [SBMSppdController::class, 'store'])
+        ->middleware('permission:create-sbm-sppd')
+        ->name('master.sbm-sppd.store');
+    Route::get('sbm-sppd/{sbm}/edit', [SBMSppdController::class, 'edit'])
+        ->middleware('permission:edit-sbm-sppd')
+        ->name('master.sbm-sppd.edit');
+    Route::put('sbm-sppd/{sbm}', [SBMSppdController::class, 'update'])
+        ->middleware('permission:edit-sbm-sppd')
+        ->name('master.sbm-sppd.update');
+    Route::delete('sbm-sppd/{sbm}', [SBMSppdController::class, 'destroy'])
+        ->middleware('permission:delete-sbm-sppd')
+        ->name('master.sbm-sppd.destroy');
 
     // Waktu Konsumsi CRUD
     Route::get('waktu-konsumsi', [App\Http\Controllers\Master\WaktuKonsumsiController::class, 'index'])

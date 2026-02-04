@@ -90,6 +90,12 @@ class RolePermissionSeeder extends Seeder
                 'edit-sbm-konsumsi',
                 'delete-sbm-konsumsi',
             ],
+            'sbm-sppd' => [
+                'view-sbm-sppd',
+                'create-sbm-sppd',
+                'edit-sbm-sppd',
+                'delete-sbm-sppd',
+            ],
             'activity-log' => [
                 'view-activity-log',
                 'delete-activity-log',
@@ -186,6 +192,11 @@ class RolePermissionSeeder extends Seeder
             'edit-konsumsi',
             'delete-konsumsi',
             'validasi-konsumsi',
+            // SBM SPPD (master)
+            'view-sbm-sppd',
+            'create-sbm-sppd',
+            'edit-sbm-sppd',
+            'delete-sbm-sppd',
             // Narasumber
             'view-narasumber',
             'create-narasumber',
@@ -230,6 +241,10 @@ class RolePermissionSeeder extends Seeder
             'view-master-data',
             // Reports
             'view-reports',
+            // SBM SPPD
+            'view-sbm-sppd',
+            'create-sbm-sppd',
+            'edit-sbm-sppd',
         ]);
 
         // Viewer - read-only access
@@ -241,6 +256,8 @@ class RolePermissionSeeder extends Seeder
             'view-kwitansi',
             'view-master-data',
             'view-reports',
+            // SBM SPPD (read-only)
+            'view-sbm-sppd',
         ]);
 
         $this->command->info('Roles and permissions seeded successfully!');
