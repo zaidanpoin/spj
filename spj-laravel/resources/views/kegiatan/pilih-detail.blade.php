@@ -25,7 +25,7 @@
         <!-- Action Cards: Compact & Professional -->
         <div class="bg-white rounded border border-gray-200 p-3">
             <h3 class="text-xs font-semibold text-gray-500 uppercase mb-2">Tambah Detail</h3>
-            <div class="grid grid-cols-2 gap-2">
+            <div class="grid grid-cols-3 gap-2">
                 <a href="{{ route('konsumsi.create', $kegiatan->id) }}"
                    class="flex items-center gap-2 px-3 py-2 bg-gray-50 border border-gray-200 rounded hover:border-primary hover:bg-gray-100 transition group">
                     <div class="w-8 h-8 bg-primary bg-opacity-10 rounded flex items-center justify-center text-primary text-sm font-semibold">
@@ -44,6 +44,16 @@
                     <div class="flex-1 text-left">
                         <div class="text-xs font-medium text-gray-900 group-hover:text-purple-600">Jasa Profesi</div>
                         <div class="text-xs text-gray-500">Narasumber, Moderator</div>
+                    </div>
+                </a>
+                <a href="{{ route('sppd.create', $kegiatan->id) }}"
+                   class="flex items-center gap-2 px-3 py-2 bg-gray-50 border border-gray-200 rounded hover:border-blue-400 hover:bg-blue-50 transition group">
+                    <div class="w-8 h-8 bg-blue-100 rounded flex items-center justify-center text-blue-600 text-sm font-semibold">
+                        PD
+                    </div>
+                    <div class="flex-1 text-left">
+                        <div class="text-xs font-medium text-gray-900 group-hover:text-blue-600">Perjalanan Dinas</div>
+                        <div class="text-xs text-gray-500">SPPD</div>
                     </div>
                 </a>
             </div>
@@ -328,6 +338,89 @@
             @else
                 <div class="p-6 text-center text-gray-400">
                     <div class="text-sm">Belum ada data jasa profesi</div>
+                </div>
+            @endif
+        </div>
+
+        <!-- Data SPPD (Perjalanan Dinas) -->
+        <div class="bg-white rounded border border-gray-200 mt-4">
+            <div class="px-3 py-2 border-b border-gray-200 flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                    <span class="text-sm font-semibold text-gray-900">Data Perjalanan Dinas (SPPD)</span>
+                    <span class="text-xs bg-gray-100 text-gray-600 px-1.5 py-0.5 rounded">
+                        {{ $sppds->count() }} item
+                    </span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <a href="{{ route('sppd.create', $kegiatan->id) }}"
+                        class="text-xs text-blue-600 hover:text-blue-800 font-medium">
+                        + Tambah
+                    </a>
+                </div>
+            </div>
+
+            @if($sppds->count() > 0)
+                <div class="p-3">
+                    <table class="w-full text-xs">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-2 py-1.5 text-left font-medium text-gray-600">Nama Pelaksana</th>
+                                <th class="px-2 py-1.5 text-left font-medium text-gray-600">NIP</th>
+                                <th class="px-2 py-1.5 text-left font-medium text-gray-600">Jabatan</th>
+                                <th class="px-2 py-1.5 text-left font-medium text-gray-600">Tujuan</th>
+                                <th class="px-2 py-1.5 text-center font-medium text-gray-600 w-24">Tanggal</th>
+                                <th class="px-2 py-1.5 text-center font-medium text-gray-600 w-16">Lama</th>
+                                <th class="px-2 py-1.5 text-center font-medium text-gray-600 w-24">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-50">
+                            @foreach($sppds as $sppd)
+                                <tr>
+                                    <td class="px-2 py-1.5 font-medium">{{ $sppd->nama }}</td>
+                                    <td class="px-2 py-1.5 text-gray-600">{{ $sppd->nip ?: '-' }}</td>
+                                    <td class="px-2 py-1.5 text-gray-600">{{ $sppd->jabatan ?: '-' }}</td>
+                                    <td class="px-2 py-1.5">{{ $sppd->tujuan ?: '-' }}</td>
+                                    <td class="px-2 py-1.5 text-center text-xs">
+                                        @if($sppd->tgl_brkt && $sppd->tgl_kbl)
+                                            {{ $sppd->tgl_brkt->format('d/m/Y') }} - {{ $sppd->tgl_kbl->format('d/m/Y') }}
+                                        @else
+                                            -
+                                        @endif
+                                    </td>
+                                    <td class="px-2 py-1.5 text-center">
+                                        @if($sppd->tgl_brkt && $sppd->tgl_kbl)
+                                            {{ $sppd->tgl_brkt->diffInDays($sppd->tgl_kbl) + 1 }} hari
+                                        @else
+                                            -
+                                        @endif
+                                    </td>
+                                    <td class="px-2 py-1.5 text-center">
+                                        <div class="flex items-center justify-center gap-2">
+                                            <a href="{{ route('sppd.preview', $sppd->id) }}"
+                                               class="text-blue-600 hover:text-blue-800 text-xs font-medium"
+                                               title="Preview">
+                                                👁️
+                                            </a>
+                                            <a href="{{ route('sppd.edit', $sppd->id) }}"
+                                               class="text-green-600 hover:text-green-800 text-xs font-medium"
+                                               title="Edit">
+                                                ✏️
+                                            </a>
+                                            <form action="{{ route('sppd.destroy', $sppd->id) }}" method="POST" class="inline" onsubmit="return confirm('Yakin ingin menghapus SPPD ini?');">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="text-red-600 hover:text-red-800 text-xs font-medium" title="Hapus">✕</button>
+                                            </form>
+                                        </div>
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+            @else
+                <div class="p-6 text-center text-gray-400">
+                    <div class="text-sm">Belum ada data perjalanan dinas</div>
                 </div>
             @endif
         </div>

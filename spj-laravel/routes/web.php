@@ -8,6 +8,7 @@ use App\Http\Controllers\KwitansiController;
 use App\Http\Controllers\NarasumberController;
 use App\Http\Controllers\SBMKonsumsiController;
 use App\Http\Controllers\SBMHonorariumController;
+use App\Http\Controllers\SBMSppdController;
 use App\Http\Controllers\UnorController;
 use App\Http\Controllers\UnitKerjaController;
 use App\Http\Controllers\ActivityLogController;
@@ -230,6 +231,26 @@ Route::prefix('master')->middleware(['auth'])->group(function () {
         ->middleware('permission:delete-sbm-honorarium')
         ->name('master.sbm-honorarium.destroy');
 
+    // SBM SPPD CRUD
+    Route::get('sbm-sppd', [SBMSppdController::class, 'index'])
+        ->middleware('permission:view-sbm-sppd')
+        ->name('master.sbm-sppd.index');
+    Route::get('sbm-sppd/create', [SBMSppdController::class, 'create'])
+        ->middleware('permission:create-sbm-sppd')
+        ->name('master.sbm-sppd.create');
+    Route::post('sbm-sppd', [SBMSppdController::class, 'store'])
+        ->middleware('permission:create-sbm-sppd')
+        ->name('master.sbm-sppd.store');
+    Route::get('sbm-sppd/{sbm}/edit', [SBMSppdController::class, 'edit'])
+        ->middleware('permission:edit-sbm-sppd')
+        ->name('master.sbm-sppd.edit');
+    Route::put('sbm-sppd/{sbm}', [SBMSppdController::class, 'update'])
+        ->middleware('permission:edit-sbm-sppd')
+        ->name('master.sbm-sppd.update');
+    Route::delete('sbm-sppd/{sbm}', [SBMSppdController::class, 'destroy'])
+        ->middleware('permission:delete-sbm-sppd')
+        ->name('master.sbm-sppd.destroy');
+
     // Waktu Konsumsi CRUD
     Route::get('waktu-konsumsi', [App\Http\Controllers\Master\WaktuKonsumsiController::class, 'index'])
         ->middleware('permission:view-waktu-konsumsi')
@@ -439,6 +460,28 @@ Route::middleware(['auth'])->group(function () {
     Route::get('kegiatan/{id}/daftar-honorarium', [NarasumberController::class, 'daftarHonorarium'])
         ->middleware('permission:view-narasumber')
         ->name('narasumber.daftar-honorarium');
+});
+
+// SPPD Routes
+Route::middleware(['auth'])->group(function () {
+    Route::get('kegiatan/{id}/sppd/create', [App\Http\Controllers\SPPDController::class, 'create'])
+        ->middleware('permission:create-sppd')
+        ->name('sppd.create');
+    Route::post('sppd', [App\Http\Controllers\SPPDController::class, 'store'])
+        ->middleware('permission:create-sppd')
+        ->name('sppd.store');
+    Route::get('sppd/{id}/edit', [App\Http\Controllers\SPPDController::class, 'edit'])
+        ->middleware('permission:edit-sppd')
+        ->name('sppd.edit');
+    Route::put('sppd/{id}', [App\Http\Controllers\SPPDController::class, 'update'])
+        ->middleware('permission:edit-sppd')
+        ->name('sppd.update');
+    Route::delete('sppd/{id}', [App\Http\Controllers\SPPDController::class, 'destroy'])
+        ->middleware('permission:delete-sppd')
+        ->name('sppd.destroy');
+    Route::get('sppd/{id}/preview', [App\Http\Controllers\SPPDController::class, 'preview'])
+        ->middleware('permission:view-sppd')
+        ->name('sppd.preview');
 });
 
 // Kwitansi Routes
