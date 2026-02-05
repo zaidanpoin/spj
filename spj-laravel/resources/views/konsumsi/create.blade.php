@@ -565,6 +565,8 @@
 
             // Existing vendors data from server (keyed by vendor name)
             const vendorsData = @json($vendorsData ?? []);
+            // Banks list from config
+            const banksList = @json(config('banks')) || [];
 
             // Tab Switching
             function switchTab(tab) {
@@ -1117,12 +1119,37 @@
                                         placeholder="00.000.000.0-000.000" value="${data.npwp || ''}">
                                 </div>
                                 <div>
+                                    <label class="form-label">Bank <span class="text-red-500">*</span></label>
+                                    <input list="banks-datalist" id="modal-vendor-bank" class="form-input" placeholder="Ketik untuk mencari bank">
+                                    <datalist id="banks-datalist"></datalist>
+                                </div>
+                                <div>
+                                    <label class="form-label">Nomor Rekening <span class="text-red-500">*</span></label>
+                                    <input type="text" id="modal-vendor-rekening" class="form-input"
+                                        placeholder="Nomor Rekening" value="${data.rekening || ''}">
+                                </div>
+                                <div>
                                     <label class="form-label">Alamat <span class="text-red-500">*</span></label>
                                     <textarea id="modal-vendor-alamat" class="form-input" rows="2"
                                         placeholder="Alamat lengkap vendor">${data.alamat || ''}</textarea>
                                 </div>
                             </div>
                         `;
+
+                        // Populate bank select dynamically from config
+                        try {
+                            const bankInput = document.getElementById('modal-vendor-bank');
+                            const datalist = document.getElementById('banks-datalist');
+                            if (datalist && Array.isArray(banksList)) {
+                                let opts = '';
+                                banksList.forEach(b => {
+                                    const name = b.nama || b.name || b;
+                                    opts += `<option value="${name}"></option>`;
+                                });
+                                datalist.innerHTML = opts;
+                                if (bankInput && data.bank) bankInput.value = data.bank;
+                            }
+                        } catch (e) { console.error('Error populating banks:', e); }
 
                         modal.classList.remove('hidden');
                     }
@@ -1138,12 +1165,14 @@
                 const direktur = document.getElementById('modal-vendor-direktur').value.trim();
                 const jabatan = document.getElementById('modal-vendor-jabatan').value.trim();
                 const npwp = document.getElementById('modal-vendor-npwp').value.trim();
+                const bank = document.getElementById('modal-vendor-bank').value.trim();
+                const rekening = document.getElementById('modal-vendor-rekening').value.trim();
                 const alamat = document.getElementById('modal-vendor-alamat').value.trim();
 
                 console.log('Saving vendor:', vendorNama);
-                console.log('Data:', { direktur, jabatan, npwp, alamat });
+                console.log('Data:', { direktur, jabatan, npwp, bank, rekening, alamat });
 
-                if (!direktur || !jabatan || !npwp || !alamat) {
+                if (!direktur || !jabatan || !npwp || !bank || !rekening || !alamat) {
                     alert('⚠️ Semua field wajib diisi!');
                     return;
                 }
@@ -1153,6 +1182,8 @@
                     nama_direktur: direktur,
                     jabatan: jabatan,
                     npwp: npwp,
+                    bank: bank,
+                    rekening: rekening,
                     alamat: alamat,
                     isComplete: true
                 };
@@ -1195,8 +1226,8 @@
 
                 for (const [vendorNama, data] of Object.entries(vendorData)) {
                     console.log('Processing vendor:', vendorNama, 'isComplete:', data.isComplete);
-                    if (data.isComplete) {
-                        const fields = ['nama_direktur', 'jabatan', 'npwp', 'alamat'];
+                        if (data.isComplete) {
+                        const fields = ['nama_direktur', 'jabatan', 'npwp', 'bank', 'rekening', 'alamat'];
                         fields.forEach(field => {
                             const input = document.createElement('input');
                             input.type = 'hidden';
