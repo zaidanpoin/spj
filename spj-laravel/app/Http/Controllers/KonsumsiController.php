@@ -208,7 +208,8 @@ class KonsumsiController extends Controller
                     ];
                     // remove keys with null so we don't overwrite existing DB values with null
                     $attrs = array_filter($attrs, function ($v) {
-                        return !is_null($v); });
+                        return !is_null($v);
+                    });
                     $vendor = Vendor::updateOrCreate(
                         ['nama_vendor' => $vendorNama],
                         $attrs
@@ -281,7 +282,8 @@ class KonsumsiController extends Controller
                                     'rekening' => $vendorInfo['rekening'] ?? null,
                                 ];
                                 $attrs = array_filter($attrs, function ($v) {
-                                    return !is_null($v); });
+                                    return !is_null($v);
+                                });
                                 $vendor = Vendor::updateOrCreate(
                                     ['nama_vendor' => $vendorNama],
                                     $attrs

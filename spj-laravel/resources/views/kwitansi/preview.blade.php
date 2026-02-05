@@ -1167,6 +1167,37 @@
             $total_bayar = $vendorTotal;
             $ppn = $total_bayar * 0.11;
             $total_termasuk_ppn = $total_bayar + $ppn;
+            // local terbilang implementation (avoid relying on missing container binding)
+            $terbilangFn = null;
+            $terbilangFn = function($angka) use (&$terbilangFn) {
+                $angka = abs((int) $angka);
+                $huruf = ["", "satu", "dua", "tiga", "empat", "lima", "enam", "tujuh", "delapan", "sembilan", "sepuluh", "sebelas"];
+                $temp = "";
+
+                if ($angka < 12) {
+                    $temp = " " . $huruf[$angka];
+                } else if ($angka < 20) {
+                    $temp = $terbilangFn($angka - 10) . " belas";
+                } else if ($angka < 100) {
+                    $temp = $terbilangFn((int)($angka / 10)) . " puluh" . $terbilangFn($angka % 10);
+                } else if ($angka < 200) {
+                    $temp = " seratus" . $terbilangFn($angka - 100);
+                } else if ($angka < 1000) {
+                    $temp = $terbilangFn((int)($angka / 100)) . " ratus" . $terbilangFn($angka % 100);
+                } else if ($angka < 2000) {
+                    $temp = " seribu" . $terbilangFn($angka - 1000);
+                } else if ($angka < 1000000) {
+                    $temp = $terbilangFn((int)($angka / 1000)) . " ribu" . $terbilangFn($angka % 1000);
+                } else if ($angka < 1000000000) {
+                    $temp = $terbilangFn((int)($angka / 1000000)) . " juta" . $terbilangFn($angka % 1000000);
+                } else if ($angka < 1000000000000) {
+                    $temp = $terbilangFn((int)($angka / 1000000000)) . " milyar" . $terbilangFn($angka % 1000000000);
+                }
+
+                return $temp;
+            };
+
+            $terbilang = trim(ucwords($terbilangFn($total_termasuk_ppn))) . ' Rupiah';
         @endphp
 
         <p style="text-align: justify; margin-bottom: 2mm;">
@@ -1250,7 +1281,7 @@
                 <td style="width: 4%; vertical-align: top; font-weight: 700;">B.</td>
                 <td colspan="3" style="text-align: justify;">
                     Sesuai SPK tersebut diatas, maka <strong>PIHAK KEDUA</strong> berhak menerima pembayaran sebesar <strong>Rp. {{ number_format($total_bayar, 0, ',', '.') }},-</strong>
-                    ({{ $total_terbilang ?? 'Sembilan Puluh Tujuh Juta Dua Ratus Lima Puluh Ribu Rupiah' }}) dari <strong>PIHAK PERTAMA</strong> dengan rincian:
+                    ({{ $terbilang ?? 'Sembilan Puluh Tujuh Juta Dua Ratus Lima Puluh Ribu Rupiah' }}) dari <strong>PIHAK PERTAMA</strong> dengan rincian:
                 </td>
             </tr>
 

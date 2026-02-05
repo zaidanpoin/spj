@@ -161,7 +161,33 @@ class KegiatanController extends Controller
         $totalMakanan = $makanans->sum(fn($item) => $item->jumlah * $item->harga);
         $totalBarang = $barangs->sum(fn($item) => $item->jumlah * $item->harga);
         $totalHonorarium = $narasumbers->sum('honorarium_netto');
+
+        // Group barang items by vendor name (fallback to 'Tanpa Vendor')
+        $vendorGroups = $barangs->groupBy(function ($item) {
+            return optional($item->vendor)->nama_vendor ?? 'Tanpa Vendor';
+        });
+
+        // Per-vendor totals (sum of jumlah * harga)
+        $vendorTotals = $vendorGroups->map(function ($items) {
+            return $items->sum(fn($it) => $it->jumlah * $it->harga);
+        });
+
+        // Apply 11% tax for vendor groups (skip 'Tanpa Vendor')
+        $vendorTaxes = $vendorTotals->mapWithKeys(function ($total, $vendorName) {
+            if (trim((string) $vendorName) === '' || $vendorName === 'Tanpa Vendor') {
+                return [$vendorName => 0];
+            }
+            return [$vendorName => (int) round($total * 0.11)];
+        });
+
+        $vendorTotalsWithTax = $vendorTotals->map(function ($total, $vendorName) use ($vendorTaxes) {
+            return $total + ($vendorTaxes[$vendorName] ?? 0);
+        });
+
+        $vendorTaxTotal = $vendorTaxes->sum();
+
         $grandTotal = $totalSnack + $totalMakanan + $totalBarang + $totalHonorarium;
+        $grandTotalWithVendorTax = $grandTotal + $vendorTaxTotal;
 
         return view('kegiatan.pilih-detail', compact(
             'kegiatan',
@@ -174,7 +200,13 @@ class KegiatanController extends Controller
             'totalMakanan',
             'totalBarang',
             'totalHonorarium',
-            'grandTotal'
+            'grandTotal',
+            'vendorGroups',
+            'vendorTotals',
+            'vendorTaxes',
+            'vendorTotalsWithTax',
+            'vendorTaxTotal',
+            'grandTotalWithVendorTax'
         ));
     }
     /**
