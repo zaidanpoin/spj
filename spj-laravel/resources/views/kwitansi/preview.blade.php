@@ -704,7 +704,7 @@
                 <th rowspan="2" style="width: 100px;">Jabatan dalam Kegiatan</th>
                 <th colspan="2">Jumlah dan Tarif</th>
                 <th rowspan="2" style="width: 100px;">Jumlah Honorarium</th>
-                <th rowspan="2" style="width: 90px;">Pot. Pajak PPh/21 15%</th>
+                <th rowspan="2" style="width: 90px;">Pot. Pajak</th>
                 <th rowspan="2" style="width: 110px;">Diterima sebesar Rp</th>
                 <th rowspan="3" style="width: 120px;">Tanda Tangan</th>
             </tr>
