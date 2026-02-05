@@ -1040,7 +1040,7 @@
                 <h3 style="font-size:12pt; margin-top:6mm; text-align:center">Pasal 3</h3>
                 <p>Dengan adanya Serah Terima ini maka selanjutnya tanggung jawab atas hasil pekerjaan menjadi kewajiban PIHAK KESATU sesuai ketentuan kontrak.</p>
 
-                <div style="display:flex; justify-content:space-between; margin-top:16mm">
+                <div style="display:flex; justify-content:space-between; margin-top:2mm">
                     <div style="width:48%; text-align:center">
                         <div>PIHAK KESATU</div>
                         <div style="height:20mm"></div>
@@ -1150,20 +1150,20 @@
 
 
    <!-- NEW PAGE: Berita Acara Pembayaran (detailed payment document) -->
-      <div class="sheet" style="page-break-before: always; padding: 10mm; font-family: 'Arial', sans-serif; color: #000;">
-    <div style="font-size: 11pt;">
-        <div style="text-align: center; margin-bottom: 5mm">
-            <h2 style="margin: 0; font-size: 16pt; font-weight: 700; text-decoration: underline; letter-spacing: 1px">BERITA ACARA PEMBAYARAN</h2>
-            <div style="margin-top: 4px; font-size: 11pt; font-weight: 700;">NOMOR : {{ $nomor_ba ?? '823.1/BA.Mr.PK/2025' }}</div>
+     <div class="sheet" style="page-break-after: always; padding: 5mm 10mm; font-family: 'Arial', sans-serif; color: #000; line-height: 1.2;">
+    <div style="font-size: 10pt;">
+        <div style="text-align: center; margin-bottom: 3mm">
+            <h2 style="margin: 0; font-size: 14pt; font-weight: 700; text-decoration: underline; letter-spacing: 1px">BERITA ACARA PEMBAYARAN</h2>
+            <div style="margin-top: 2px; font-size: 10pt; font-weight: 700;">NOMOR : {{ $nomor_ba ?? '823.1/BA.Mr.PK/2025' }}</div>
         </div>
 
         @php
-            // Logika konversi angka ke terbilang (Opsional: Jika ada helper terbilang di Laravel)
-            // Contoh: Terbilang::make(97250000)
             $total_bayar = $vendorTotal ?? 97250000;
+            $ppn = $total_bayar * 0.11;
+            $total_termasuk_ppn = $total_bayar + $ppn;
         @endphp
 
-        <p style="text-align: justify; margin-bottom: 4mm; line-height: 1.4;">
+        <p style="text-align: justify; margin-bottom: 2mm;">
             Pada hari ini <strong>{{ now()->locale('id')->translatedFormat('l') }}</strong>
             tanggal <strong>{{ $tanggal_terbilang ?? 'Tiga Puluh Satu' }}</strong>
             bulan <strong>{{ now()->locale('id')->translatedFormat('F') }}</strong>
@@ -1171,20 +1171,20 @@
             kami yang bertanda tangan di bawah ini:
         </p>
 
-        <table style="width: 100%; margin-bottom: 4mm; font-size: 10pt; border-collapse: collapse;">
+        <table style="width: 100%; margin-bottom: 2mm; font-size: 9pt; border-collapse: collapse;">
             <tr>
-                <td style="width: 5%; vertical-align: top; font-weight: 700;">I.</td>
+                <td style="width: 4%; vertical-align: top; font-weight: 700;">I.</td>
                 <td style="width: 15%; vertical-align: top; font-weight: 700;">Nama</td>
                 <td style="width: 2%; vertical-align: top;">:</td>
-                <td style="font-weight: 700;">{{ $kegiatan->ppk->nama ?? 'Dini Rianti' }}</td>
+                <td style="font-weight: 700;">{{ $kegiatan->ppk->nama ?? 'Dini Rianti, S.E.' }}</td>
             </tr>
             <tr>
                 <td></td>
                 <td style="vertical-align: top; font-weight: 700;">Jabatan</td>
                 <td style="vertical-align: top;">:</td>
                 <td>
-                    Pejabat Pembuat Komitmen Sekretariat Badan Pengembangan SDM, Kementerian PUPR <br>
-                    Berdasarkan Surat Keputusan Kepala Satuan Kerja/Kuasa Pengguna Anggaran No. 3199/KPTS/M/2024, Tanggal 27 Desember 2024
+                    Pejabat Pembuat Komitmen {{ ucwords(strtolower($kegiatan->ppk->satker)) ?? 'Sekretariat Badan Pengembangan SDM' }}, Kementerian PUPR <br>
+                    Berdasarkan SK Kepala Satker No. 3199/KPTS/M/2024, Tanggal 27 Desember 2024
                 </td>
             </tr>
             <tr>
@@ -1193,140 +1193,127 @@
                 <td style="vertical-align: top;">:</td>
                 <td>Jl. Pattimura Nomor 20, Kebayoran Baru - Jakarta Selatan.</td>
             </tr>
-            <tr>
-                <td colspan="4" style="padding: 2px 0 6px 0;">Selanjutnya disebut sebagai <strong>PIHAK KESATU</strong></td>
-            </tr>
+            <tr><td colspan="4" style="padding: 1px 0 3px 0;">Selanjutnya disebut sebagai <strong>PIHAK KESATU</strong></td></tr>
 
             <tr>
                 <td style="vertical-align: top; font-weight: 700;">II.</td>
                 <td style="vertical-align: top; font-weight: 700;">Nama</td>
                 <td style="vertical-align: top;">:</td>
-                <td style="font-weight: 700;">{{ $vendorName ?? 'R. Rachmad Andre Tirtantara' }}</td>
+                <td style="font-weight: 700;">{{ $vendorName ?? 'PT EPSON INDONESIA' }}</td>
             </tr>
             <tr>
                 <td></td>
                 <td style="vertical-align: top; font-weight: 700;">Jabatan</td>
                 <td style="vertical-align: top;">:</td>
-                <td>
-                    Direktur PT Salwi Sibor Teknologi <br>
-                    Yang didirikan berdasarkan Akta Notaris : Adimar Purwa Raharja Nomor : 1 Tanggal: 24 Desember 2024
-                </td>
+                <td>Direktur {{ $vendorName ?? 'PT EPSON INDONESIA' }}</td>
             </tr>
             <tr>
                 <td></td>
                 <td style="vertical-align: top; font-weight: 700;">NPWP</td>
                 <td style="vertical-align: top;">:</td>
-                <td>{{ $vendorObj->npwp ?? '287329254013000' }}</td>
+                <td>{{ $vendorObj->npwp ?? '01231249124912941' }}</td>
             </tr>
             <tr>
                 <td></td>
                 <td style="vertical-align: top; font-weight: 700;">Alamat</td>
                 <td style="vertical-align: top;">:</td>
-                <td>{{ $vendorObj->alamat ?? 'Jalan Kalibakar Selatan 112, Kota Surabaya, Provinsi Jawa Timur' }}</td>
+                <td>{{ $vendorObj->alamat ?? 'Cibis Business Park, Cibis, Jl. TB Simatupang No.2 Tower 9 Lantai 3, Jakarta 12560' }}</td>
             </tr>
-            <tr>
-                <td colspan="4" style="padding-top: 2px;">Selanjutnya disebut sebagai <strong>PIHAK KEDUA</strong></td>
-            </tr>
+            <tr><td colspan="4" style="padding-top: 1px;">Selanjutnya disebut sebagai <strong>PIHAK KEDUA</strong></td></tr>
         </table>
 
-        <table style="width: 100%; font-size: 10pt; margin-bottom: 4mm;">
+        <table style="width: 100%; font-size: 9pt; margin-bottom: 2mm;">
             <tr>
-                <td style="width: 5%; vertical-align: top; font-weight: 700;">A.</td>
+                <td style="width: 4%; vertical-align: top; font-weight: 700;">A.</td>
                 <td colspan="2" style="font-weight: 700;">Berdasarkan :</td>
             </tr>
             <tr>
                 <td></td>
                 <td style="width: 3%; vertical-align: top;">1.</td>
-                <td>Surat Perintah Kerja Nomor : {{ $spk_no ?? '689/SPK-Mr-PK/20' }} Tanggal : {{ $spk_tanggal ?? '10 Oktober 2025' }}</td>
+                <td>SPK Nomor : {{ $spk_no ?? '689/SPK-Mr-PK/20' }} Tanggal : {{ $spk_tanggal ?? '10 Oktober 2025' }}</td>
             </tr>
             <tr>
                 <td></td>
                 <td style="width: 3%; vertical-align: top;">2.</td>
-                <td>Berita Acara Pemeriksaan/Serah Terima Barang Nomor : {{ $bast_no ?? '819/BA.Mr.PK/2025' }} Tanggal : {{ $bast_tanggal ?? '30 Oktober 2025' }}</td>
+                <td>BA Pemeriksaan/Serah Terima Barang Nomor : {{ $bast_no ?? '819/BA.Mr.PK/2025' }} Tanggal : {{ $bast_tanggal ?? '30 Oktober 2025' }}</td>
             </tr>
         </table>
 
-        <table style="width: 100%; font-size: 10pt; margin-bottom: 4mm; border-collapse: collapse;">
+        <table style="width: 100%; font-size: 9pt; margin-bottom: 2mm; border-collapse: collapse;">
             <tr>
-                <td style="width: 5%; vertical-align: top; font-weight: 700;">B.</td>
+                <td style="width: 4%; vertical-align: top; font-weight: 700;">B.</td>
                 <td colspan="3" style="text-align: justify;">
-                    Sesuai dengan Surat Perintah Kerja tersebut diatas, maka <strong>PIHAK KEDUA</strong> berhak menerima pembayaran sebesar <strong>Rp. {{ number_format($total_bayar, 0, ',', '.') }},-</strong>
-                    ({{ $total_terbilang ?? 'Sembilan Puluh Tujuh Juta Dua Ratus Lima Puluh Ribu Rupiah' }}) dari <strong>PIHAK PERTAMA</strong> dengan perincian sebagai berikut:
+                    Sesuai SPK tersebut diatas, maka <strong>PIHAK KEDUA</strong> berhak menerima pembayaran sebesar <strong>Rp. {{ number_format($total_bayar, 0, ',', '.') }},-</strong>
+                    ({{ $total_terbilang ?? 'Sembilan Puluh Tujuh Juta Dua Ratus Lima Puluh Ribu Rupiah' }}) dari <strong>PIHAK PERTAMA</strong> dengan rincian:
                 </td>
             </tr>
 
-            <tr><td></td><td style="width: 65%; padding-left: 15px;">1. Nilai Pekerjaan Phisik s/d BAP ini</td><td style="width: 5%;">Rp.</td><td style="text-align: right;">{{ number_format($total_bayar, 0, ',', '.') }}</td></tr>
-            <tr><td></td><td style="padding-left: 15px;">2. Nilai Pekerjaan Phisik s/d BAP yang lalu</td><td>Rp.</td><td style="text-align: right;">-</td></tr>
-            <tr style="font-weight: 700;"><td></td><td style="padding-left: 15px;">3. Jumlah Pembayaran Phisik BAP ini</td><td>Rp.</td><td style="text-align: right;">{{ number_format($total_bayar, 0, ',', '.') }}</td></tr>
+            <tr><td></td><td style="width: 66%; padding-left: 10px;">1. Nilai Pekerjaan Phisik s/d BAP ini</td><td style="width: 5%;">Rp.</td><td style="text-align: right;">{{ number_format($total_bayar, 0, ',', '.') }}</td></tr>
+            <tr><td></td><td style="padding-left: 10px;">2. Nilai Pekerjaan Phisik s/d BAP yang lalu</td><td>Rp.</td><td style="text-align: right;">-</td></tr>
+            <tr style="font-weight: 700;"><td></td><td style="padding-left: 10px;">3. Jumlah Pembayaran Phisik BAP ini</td><td>Rp.</td><td style="text-align: right;">{{ number_format($total_bayar, 0, ',', '.') }}</td></tr>
 
-            <tr><td></td><td style="padding-left: 15px;">4. Jumlah yang dimintakan</td><td></td><td></td></tr>
-            <tr><td></td><td style="padding-left: 30px;">Potongan Pembayaran:</td><td></td><td></td></tr>
-            <tr><td></td><td style="padding-left: 45px;">I. Uang Jaminan</td><td>Rp.</td><td style="text-align: right;">-</td></tr>
-            <tr><td></td><td style="padding-left: 45px;">II. Pengembalian Uang Muka</td><td>Rp.</td><td style="text-align: right;">-</td></tr>
-            <tr><td></td><td style="padding-left: 45px;">III. Jumlah Potongan-potongan</td><td>Rp.</td><td style="text-align: right; border-top: 1px solid #000;">-</td></tr>
+            <tr><td></td><td style="padding-left: 10px;">4. Potongan Pembayaran (Uang Jaminan/Muka)</td><td>Rp.</td><td style="text-align: right; border-bottom: 1px solid #000;">-</td></tr>
 
             <tr style="font-weight: 700;">
                 <td></td>
-                <td style="padding-left: 15px;">5. Jumlah Pembayaran Phisik BAP ini</td>
+                <td style="padding-left: 10px;">5. Jumlah Pembayaran Phisik BAP ini</td>
                 <td>Rp.</td>
                 <td style="text-align: right;">{{ number_format($total_bayar, 0, ',', '.') }}</td>
             </tr>
             <tr>
                 <td></td>
-                <td style="padding-left: 45px;">PPN (11%)</td>
+                <td style="padding-left: 20px;">PPN (11%)</td>
                 <td>Rp.</td>
-                <td style="text-align: right; border-bottom: 1px solid #000;">{{ number_format($total_bayar * 0.11, 0, ',', '.') }}</td>
+                <td style="text-align: right; border-bottom: 1px solid #000;">{{ number_format($ppn, 0, ',', '.') }}</td>
             </tr>
             <tr style="font-weight: 700;">
                 <td></td>
-                <td style="padding-left: 15px;">Jumlah Pembayaran BAP ini (termasuk PPN)</td>
+                <td style="padding-left: 10px;">Jumlah Pembayaran BAP ini (termasuk PPN)</td>
                 <td>Rp.</td>
-                <td style="text-align: right;">{{ number_format($total_bayar * 1.11, 0, ',', '.') }}</td>
+                <td style="text-align: right;">{{ number_format($total_termasuk_ppn, 0, ',', '.') }}</td>
             </tr>
 
-            <tr><td></td><td colspan="3" style="font-weight: 700; padding-top: 5px;">Rekapitulasi Pembayaran Kontrak:</td></tr>
-            <tr><td></td><td style="padding-left: 15px;">a. Nilai Kontrak</td><td>Rp.</td><td style="text-align: right;">{{ number_format($total_bayar * 1.11, 0, ',', '.') }}</td></tr>
-            <tr><td></td><td style="padding-left: 15px;">b. Pembayaran s/d BAP yang lalu</td><td>Rp.</td><td style="text-align: right;">-</td></tr>
-            <tr><td></td><td style="padding-left: 15px;">c. Pembayaran BAP ini</td><td>Rp.</td><td style="text-align: right;">{{ number_format($total_bayar * 1.11, 0, ',', '.') }}</td></tr>
-            <tr><td></td><td style="padding-left: 15px;">d. Pembayaran s/d BAP ini</td><td>Rp.</td><td style="text-align: right; border-top: 1px solid #000;">{{ number_format($total_bayar * 1.11, 0, ',', '.') }}</td></tr>
-            <tr><td></td><td style="padding-left: 15px;">e. Sisa Kontrak/SPK s/d BAP ini</td><td>Rp.</td><td style="text-align: right;">-</td></tr>
+            <tr><td></td><td colspan="3" style="font-weight: 700; padding-top: 2px;">Rekapitulasi Pembayaran Kontrak:</td></tr>
+            <tr><td></td><td style="padding-left: 10px;">a. Nilai Kontrak</td><td>Rp.</td><td style="text-align: right;">{{ number_format($total_termasuk_ppn, 0, ',', '.') }}</td></tr>
+            <tr><td></td><td style="padding-left: 10px;">b. Pembayaran s/d BAP yang lalu</td><td>Rp.</td><td style="text-align: right;">-</td></tr>
+            <tr><td></td><td style="padding-left: 10px;">c. Pembayaran BAP ini / s/d BAP ini</td><td>Rp.</td><td style="text-align: right; border-top: 1px solid #000;">{{ number_format($total_termasuk_ppn, 0, ',', '.') }}</td></tr>
+            <tr><td></td><td style="padding-left: 10px;">d. Sisa Kontrak/SPK s/d BAP ini</td><td>Rp.</td><td style="text-align: right;">-</td></tr>
         </table>
 
-        <div style="margin-bottom: 6mm;">
-            <p style="margin: 0 0 4px 0; font-weight: 700; font-size: 10pt;">C. PIHAK KEDUA sepakat atas jumlah pembayaran tersebut di atas dibayarkan melalui KPPN Jakarta IV secara langsung ditransfer kepada:</p>
-            <table style="font-size: 10pt; margin-left: 20px;">
-                <tr><td style="width: 150px;">BANK</td><td>:</td><td style="font-weight: 700;">{{ $vendorObj->bank ?? 'Bank Mandiri' }}</td></tr>
-                <tr><td>Nomor Rekening</td><td>:</td><td style="font-weight: 700;">{{ $vendorObj->rekening ?? '9120317003104' }}</td></tr>
-                <tr><td>Atas Nama</td><td>:</td><td style="font-weight: 700;">{{ $vendorName ?? 'PT Salwi Sibor Teknologi' }}</td></tr>
+        <div style="margin-bottom: 3mm;">
+            <p style="margin: 0 0 2px 0; font-weight: 700; font-size: 9pt;">C. PIHAK KEDUA sepakat pembayaran ditransfer kepada:</p>
+            <table style="font-size: 9pt; margin-left: 15px;">
+                <tr><td style="width: 120px;">BANK</td><td>:</td><td style="font-weight: 700;">{{ $vendorObj->bank ?? 'BANK BCA' }}</td></tr>
+                <tr><td>Nomor Rekening</td><td>:</td><td style="font-weight: 700;">{{ $vendorObj->rekening ?? '85123123123' }}</td></tr>
+                <tr><td>Atas Nama</td><td>:</td><td style="font-weight: 700;">{{ $vendorName ?? 'PT EPSON INDONESIA' }}</td></tr>
             </table>
         </div>
 
-        <p style="text-align: justify; margin-bottom: 10mm; font-size: 10pt;">Demikian Berita Acara ini dibuat untuk dapat dipergunakan sebagaimana mestinya.</p>
+        <p style="text-align: justify; margin-bottom: 4mm; font-size: 9pt;">Demikian Berita Acara ini dibuat untuk dapat dipergunakan sebagaimana mestinya.</p>
 
-        <table style="width: 100%; font-size: 10pt; text-align: center;">
+        <table style="width: 100%; font-size: 9pt; text-align: center; border-collapse: collapse;">
             <tr>
                 <td style="width: 50%;"><strong>PIHAK KEDUA</strong></td>
                 <td style="width: 50%;"><strong>PIHAK KESATU</strong></td>
             </tr>
             <tr>
-                <td><strong>{{ $vendorName ?? 'PT Salwi Sibor Teknologi' }}</strong></td>
+                <td><strong>{{ $vendorName ?? 'PT EPSON INDONESIA' }}</strong></td>
                 <td>
                     <strong>Pejabat Pembuat Komitmen</strong><br>
-                    <strong>Sekretariat Badan Pengembangan</strong><br>
-                    <strong>SDM, Kementerian PUPR</strong>
+                    <strong>Sekretariat Badan Pengembangan SDM</strong>
                 </td>
             </tr>
             <tr>
-                <td style="height: 22mm;"></td>
-                <td style="height: 22mm;"></td>
+                <td style="height: 12mm;"></td>
+                <td style="height: 12mm;"></td>
             </tr>
             <tr>
                 <td>
-                    <span style="text-decoration: underline; font-weight: 700;">{{ $vendorObj->nama_direktur ?? 'R. Rachmad Andre Tirtantara' }}</span><br>
+                    <span style="text-decoration: underline; font-weight: 700;">{{ $vendorObj->nama_direktur ?? 'Gerrald Halaka' }}</span><br>
                     Direktur
                 </td>
                 <td>
-                    <span style="text-decoration: underline; font-weight: 700;">{{ $kegiatan->ppk->nama ?? 'Dini Rianti, SE' }}</span><br>
+                    <span style="text-decoration: underline; font-weight: 700;">{{ $kegiatan->ppk->nama ?? 'Dini Rianti, S.E.' }}</span><br>
                     NIP. {{ $kegiatan->ppk->nip ?? '198010172005022001' }}
                 </td>
             </tr>
