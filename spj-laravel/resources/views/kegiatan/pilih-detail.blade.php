@@ -200,7 +200,7 @@
                                 <thead class="bg-gray-50">
                                     <tr>
                                         <th class="px-2 py-1.5 text-left font-medium text-gray-600">Nama</th>
-                                         <th class="px-2 py-1.5 text-left font-medium text-gray-600 w-24">Nama Vendor</th>
+                                         <th class="px-2 py-1.5 text-left font-medium text-gray-600 w-24">Nama Vendor / Toko</th>
                                         <th class="px-2 py-1.5 text-left font-medium text-gray-600 w-24">No Kwitansi</th>
                                         <th class="px-2 py-1.5 text-left font-medium text-gray-600 w-28">Tgl Pembelian</th>
                                         <th class="px-2 py-1.5 text-center font-medium text-gray-600 w-12">Qty</th>

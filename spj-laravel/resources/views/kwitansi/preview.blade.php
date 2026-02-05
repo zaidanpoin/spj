@@ -940,6 +940,7 @@
     @endphp
 
     @foreach($vendorGroups as $vendorName => $items)
+
         <div class="sheet" style="page-break-before: always;">
             <div style="font-family: 'Times New Roman', serif; font-size:12pt; color:#000;">
                 <div style="text-align:center; margin-bottom:6mm"><strong>
@@ -1158,7 +1159,12 @@
         </div>
 
         @php
-            $total_bayar = $vendorTotal ?? 97250000;
+            // calculate total for this vendor group (jumlah * harga per item)
+            $vendorTotal = collect($items)->sum(function($it) {
+                return (float) (($it->jumlah ?? 0) * ($it->harga ?? 0));
+            });
+
+            $total_bayar = $vendorTotal;
             $ppn = $total_bayar * 0.11;
             $total_termasuk_ppn = $total_bayar + $ppn;
         @endphp
