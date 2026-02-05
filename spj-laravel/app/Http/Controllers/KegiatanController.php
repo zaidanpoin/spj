@@ -172,12 +172,19 @@ class KegiatanController extends Controller
             return $items->sum(fn($it) => $it->jumlah * $it->harga);
         });
 
-        // Apply 11% tax for vendor groups (skip 'Tanpa Vendor')
-        $vendorTaxes = $vendorTotals->mapWithKeys(function ($total, $vendorName) {
+        // Apply PPN tax for vendor groups (skip 'Tanpa Vendor')
+        // Use vendor's ppn value from database (default 11%)
+        $vendorTaxes = $vendorGroups->mapWithKeys(function ($items, $vendorName) use ($vendorTotals) {
             if (trim((string) $vendorName) === '' || $vendorName === 'Tanpa Vendor') {
                 return [$vendorName => 0];
             }
-            return [$vendorName => (int) round($total * 0.11)];
+
+            // Get vendor's PPN percentage from the first item (all items in group have same vendor)
+            $vendor = $items->first()->vendor;
+            $ppnPercent = $vendor ? ($vendor->ppn ?? 11) : 11;
+            $total = $vendorTotals[$vendorName];
+
+            return [$vendorName => (int) round($total * ($ppnPercent / 100))];
         });
 
         $vendorTotalsWithTax = $vendorTotals->map(function ($total, $vendorName) use ($vendorTaxes) {

@@ -400,4 +400,25 @@ class KonsumsiController extends Controller
         return redirect()->route('kegiatan.pilih-detail', $kegiatan_id)
             ->with('success', 'Item konsumsi berhasil dihapus!');
     }
+
+    /**
+     * Update vendor bank and PPN information.
+     */
+    public function updateVendorBank(Request $request, $vendorId)
+    {
+        $validated = $request->validate([
+            'bank' => 'required|string|max:255',
+            'rekening' => 'required|string|max:100',
+            'ppn' => 'required|numeric|min:0|max:100'
+        ]);
+
+        $vendor = Vendor::findOrFail($vendorId);
+        $vendor->update($validated);
+
+        return response()->json([
+            'success' => true,
+            'vendor' => $vendor,
+            'message' => 'Data vendor berhasil diperbarui'
+        ]);
+    }
 }

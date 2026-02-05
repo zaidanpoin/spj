@@ -1126,6 +1126,15 @@
                                     <datalist id="banks-datalist"></datalist>
                                 </div>
                                 <div>
+                                    <label class="form-label">PPN (%)</label>
+                                    <select id="modal-vendor-ppn" class="form-input">
+                                        <option value="">(biarkan kosong)</option>
+                                        <option value="0">0% - Non-PKP</option>
+                                        <option value="11">11% - PKP</option>
+                                        <option value="12">12% - PKP</option>
+                                    </select>
+                                </div>
+                                <div>
                                     <label class="form-label">Nomor Rekening <span class="text-red-500">*</span></label>
                                     <input type="text" id="modal-vendor-rekening" class="form-input"
                                         placeholder="Nomor Rekening" value="${data.rekening || ''}">
@@ -1150,6 +1159,11 @@
                                 });
                                 datalist.innerHTML = opts;
                                 if (bankInput && data.bank) bankInput.value = data.bank;
+                                    // populate ppn if available
+                                    const ppnSelect = document.getElementById('modal-vendor-ppn');
+                                    if (ppnSelect) {
+                                        ppnSelect.value = (data.ppn !== undefined && data.ppn !== null) ? data.ppn : '';
+                                    }
                             }
                         } catch (e) { console.error('Error populating banks:', e); }
 
@@ -1170,6 +1184,7 @@
                 const bank = document.getElementById('modal-vendor-bank').value.trim();
                 const rekening = document.getElementById('modal-vendor-rekening').value.trim();
                 const alamat = document.getElementById('modal-vendor-alamat').value.trim();
+                const ppn = document.getElementById('modal-vendor-ppn') ? document.getElementById('modal-vendor-ppn').value.trim() : '';
 
                 console.log('Saving vendor:', vendorNama);
                 console.log('Data:', { direktur, jabatan, npwp, bank, rekening, alamat });
@@ -1187,6 +1202,7 @@
                     bank: bank,
                     rekening: rekening,
                     alamat: alamat,
+                    ppn: ppn === '' ? null : ppn,
                     isComplete: true
                 };
 
@@ -1229,12 +1245,12 @@
                 for (const [vendorNama, data] of Object.entries(vendorData)) {
                     console.log('Processing vendor:', vendorNama, 'isComplete:', data.isComplete);
                         if (data.isComplete) {
-                        const fields = ['nama_direktur', 'jabatan', 'npwp', 'bank', 'rekening', 'alamat'];
+                        const fields = ['nama_direktur', 'jabatan', 'npwp', 'bank', 'rekening', 'alamat', 'ppn'];
                         fields.forEach(field => {
                             const input = document.createElement('input');
                             input.type = 'hidden';
                             input.name = `vendor_data[${vendorNama}][${field}]`;
-                            input.value = data[field];
+                            input.value = data[field] ?? '';
                             form.appendChild(input);
                             console.log('Added hidden input:', input.name, '=', input.value);
                         });

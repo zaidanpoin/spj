@@ -17,6 +17,7 @@ class Vendor extends Model
         'alamat',
         'bank',
         'rekening',
+        'ppn',
     ];
 
     /**
