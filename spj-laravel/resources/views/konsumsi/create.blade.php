@@ -105,6 +105,8 @@
                         <input type="hidden" name="vendor_data[{{ $vendorNama }}][jabatan]" value="{{ $vendorInfo['jabatan'] }}">
                         <input type="hidden" name="vendor_data[{{ $vendorNama }}][npwp]" value="{{ $vendorInfo['npwp'] }}">
                         <input type="hidden" name="vendor_data[{{ $vendorNama }}][alamat]" value="{{ $vendorInfo['alamat'] }}">
+                        <input type="hidden" name="vendor_data[{{ $vendorNama }}][bank]" value="{{ $vendorInfo['bank'] ?? '' }}">
+                        <input type="hidden" name="vendor_data[{{ $vendorNama }}][rekening]" value="{{ $vendorInfo['rekening'] ?? '' }}">
                     @endforeach
                 @endif
 
@@ -534,11 +536,11 @@
 
                     <div class="flex gap-2">
                         <button type="submit" name="save_as_draft" value="0" class="btn-primary"
-                            onclick="return validateForm()">
+                            onclick="updateVendorHiddenInputs(); return validateForm();">
                             💾 Simpan & Validasi
                         </button>
                         <button type="submit" name="save_as_draft" value="1" class="btn-secondary"
-                            onclick="return confirmDraft()">
+                            onclick="updateVendorHiddenInputs(); return confirmDraft();">
                             📝 Simpan sebagai Draft
                         </button>
                         <a href="{{ route('kegiatan.pilih-detail', $kegiatan->id) }}" class="btn-secondary">
@@ -927,10 +929,10 @@
                                 vendorData[vendorNama][field] = inp.value;
                             });
 
-                            // Mark complete if all fields present
+                            // Mark complete if all required fields present (including bank + rekening)
                             Object.keys(vendorData).forEach(vn => {
                                 const v = vendorData[vn];
-                                if (v.nama_direktur && v.jabatan && v.npwp && v.alamat) v.isComplete = true;
+                                if (v.nama_direktur && v.jabatan && v.npwp && v.alamat && v.bank && v.rekening) v.isComplete = true;
                             });
                         }
 
