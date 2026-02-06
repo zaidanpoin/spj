@@ -1,4 +1,4 @@
-@extends('layouts.app')
+    @extends('layouts.app')
 
 @section('title', 'Edit Kegiatan')
 @section('page-title', 'Edit Kegiatan')
@@ -8,8 +8,22 @@
     <div class="max-w-4xl mx-auto">
         <div class="bg-white rounded-lg border border-gray-200">
             <div class="px-4 sm:px-6 py-4 border-b border-gray-200">
-                <h3 class="font-semibold text-gray-900">Edit Informasi Kegiatan</h3>
-                <p class="text-sm text-gray-500 mt-0.5">Perbarui data yang diperlukan</p>
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h3 class="font-semibold text-gray-900">Edit Informasi Kegiatan</h3>
+                        <p class="text-sm text-gray-500 mt-0.5">Perbarui data yang diperlukan</p>
+                    </div>
+                    @if($kegiatan->vendors->count() > 0)
+                        <div class="flex items-center gap-2 text-sm">
+                            <span class="px-3 py-1 bg-green-100 text-green-800 rounded-full font-medium">
+                                <svg class="w-4 h-4 inline-block mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
+                                </svg>
+                                {{ $kegiatan->vendors->count() }} Vendor
+                            </span>
+                        </div>
+                    @endif
+                </div>
             </div>
 
             <form action="{{ route('kegiatan.update', $kegiatan->id) }}" method="POST" enctype="multipart/form-data" class="p-4 sm:p-6 space-y-4">
@@ -121,12 +135,12 @@
 
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">
-                            Akun (MAK) <span class="text-red-500">*</span>
+                            Paket <span class="text-red-500">*</span>
                         </label>
                         <input type="hidden" name="mak_id" id="mak_id" value="{{ old('mak_id', $kegiatan->mak_id) }}" required>
                         <button type="button" id="makSelectorBtn"
                             class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary text-left bg-white hover:bg-gray-50 @error('mak_id') border-red-500 @enderror">
-                            <span id="makSelectedText" class="text-gray-500">Pilih MAK</span>
+                            <span id="makSelectedText" class="text-gray-500">Pilih Paket</span>
                         </button>
                         @error('mak_id')
                             <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
@@ -227,6 +241,13 @@
                         class="px-6 py-2 bg-primary text-white rounded-lg hover:bg-primary-dark transition font-medium text-center">
                         Update Data
                     </button>
+                    <a href="{{ route('kegiatan.vendor.index', $kegiatan->id) }}"
+                        class="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition text-center font-medium">
+                        <svg class="w-4 h-4 inline-block mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
+                        </svg>
+                        Kelola Vendor & Nomor Surat
+                    </a>
                     <a href="{{ route('kegiatan.index') }}"
                         class="px-6 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition text-center">
                         Batal
@@ -299,7 +320,7 @@
         <div class="relative top-20 mx-auto p-5 border w-11/12 max-w-4xl shadow-lg rounded-lg bg-white">
             <div class="border-b border-gray-200 pb-3 mb-4">
                 <div class="flex justify-between items-center">
-                    <h3 class="text-lg font-semibold text-gray-900">DAFTAR MAK</h3>
+                    <h3 class="text-lg font-semibold text-gray-900">DAFTAR PAKET</h3>
                     <button type="button" id="closeMakModal" class="text-gray-400 hover:text-gray-500">
                         <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
@@ -320,9 +341,8 @@
                 <table class="min-w-full divide-y divide-gray-200 border border-gray-200">
                     <thead class="bg-teal-600 text-white">
                         <tr>
-                            <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider border-r border-teal-500">NO</th>
                             <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider border-r border-teal-500">KODE</th>
-                            <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider border-r border-teal-500">NAMA</th>
+                            <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider border-r border-teal-500">PAKET</th>
                             <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider">TAHUN</th>
                         </tr>
                     </thead>
@@ -504,21 +524,20 @@
         tbody.innerHTML = '';
 
         if (pageData.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="4" class="px-4 py-8 text-center text-gray-500">Tidak ada data</td></tr>';
+            tbody.innerHTML = '<tr><td colspan="3" class="px-4 py-8 text-center text-gray-500">Tidak ada data</td></tr>';
         } else {
             pageData.forEach((mak, index) => {
                 const row = document.createElement('tr');
                 row.className = 'hover:bg-gray-50 cursor-pointer';
                 row.innerHTML = `
-                    <td class="px-4 py-3 text-sm border-r border-gray-200">${startIndex + index + 1}.</td>
                     <td class="px-4 py-3 text-sm border-r border-gray-200">${mak.kode}</td>
-                    <td class="px-4 py-3 text-sm border-r border-gray-200">${mak.nama}</td>
+                    <td class="px-4 py-3 text-sm border-r border-gray-200">${(mak.nama || '').split(' - ')[0]}</td>
                     <td class="px-4 py-3 text-sm">${mak.tahun || '-'}</td>
                 `;
                 row.addEventListener('click', function() {
                     selectedMakId = mak.id;
                     document.getElementById('mak_id').value = mak.id;
-                    document.getElementById('makSelectedText').textContent = `${mak.kode} - ${mak.nama}`;
+                    document.getElementById('makSelectedText').textContent = `${mak.kode} - ${(mak.nama || '').split(' - ')[0]}`;
                     document.getElementById('makSelectedText').classList.remove('text-gray-500');
                     document.getElementById('makSelectedText').classList.add('text-gray-900');
                     closeMakModal();
@@ -562,7 +581,7 @@
     if (selectedMakId) {
         const selectedMak = makData.find(m => m.id === selectedMakId);
         if (selectedMak) {
-            document.getElementById('makSelectedText').textContent = `${selectedMak.kode} - ${selectedMak.nama}`;
+            document.getElementById('makSelectedText').textContent = `${selectedMak.kode} - ${(selectedMak.nama || '').split(' - ')[0]}`;
             document.getElementById('makSelectedText').classList.remove('text-gray-500');
             document.getElementById('makSelectedText').classList.add('text-gray-900');
         }

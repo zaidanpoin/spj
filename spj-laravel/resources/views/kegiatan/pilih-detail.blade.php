@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('title', 'Detail Kegiatan')
-@section('page-title', $kegiatan->nama_kegiatan)
+@section('page-title', $kegiatan->uraian_kegiatan ?? 'Detail Kegiatan')
 @section('page-subtitle', ($kegiatan->unor->nama_unor ?? '-') . ' | ' . ($kegiatan->tanggal_mulai ? $kegiatan->tanggal_mulai->format('d M Y') : '-'))
 
 @section('content')
@@ -63,7 +63,7 @@
         <div class="bg-white rounded border border-gray-200">
             <div class="px-3 py-2 border-b border-gray-200 flex items-center justify-between">
                 <div class="flex items-center gap-2">
-                    <span class="text-sm font-semibold text-gray-900">Data Belanja</span>
+                    <span class="text-sm font-semibold text-gray-900">Data Belanja Bahan - 521211</span>
                     <span class="text-xs bg-gray-100 text-gray-600 px-1.5 py-0.5 rounded">
                         {{ $snacks->count() + $makanans->count() + $barangs->count() }} item
                     </span>
@@ -75,6 +75,7 @@
                         @if($hasKonsumsi == 0) onclick="event.preventDefault(); alert('Belum ada data konsumsi');" @endif>
                         📄 Kuitansi UP
                     </a>
+
                     <a href="{{ $hasKonsumsi > 0 ? route('kwitansi.generate', ['kegiatan_id' => $kegiatan->id, 'jenis' => 'LS', 'type' => 'konsumsi']) : '#' }}"
                         class="px-2 py-1 text-xs font-medium rounded transition {{ $hasKonsumsi > 0 ? 'bg-gray-700 text-white hover:bg-gray-800' : 'bg-gray-100 text-gray-400 cursor-not-allowed' }}"
                         @if($hasKonsumsi == 0) onclick="event.preventDefault(); alert('Belum ada data konsumsi');" @endif>
@@ -282,7 +283,7 @@
         <div class="bg-white rounded border border-gray-200 mt-4">
             <div class="px-3 py-2 border-b border-gray-200 flex items-center justify-between">
                 <div class="flex items-center gap-2">
-                    <span class="text-sm font-semibold text-gray-900">Data Jasa Profesi</span>
+                    <span class="text-sm font-semibold text-gray-900">Data Jasa Profesi - 522151</span>
                     <span class="text-xs bg-gray-100 text-gray-600 px-1.5 py-0.5 rounded">
                         {{ $narasumbers->count() }} item
                     </span>

@@ -66,6 +66,12 @@ class RolePermissionSeeder extends Seeder
                 'approve-kwitansi',
                 'download-kwitansi',
             ],
+            'vendor' => [
+                'view-vendor',
+                'create-vendor',
+                'edit-vendor',
+                'delete-vendor',
+            ],
             'master-data' => [
                 'view-master-data',
                 'create-master-data',
@@ -217,6 +223,13 @@ class RolePermissionSeeder extends Seeder
             // Reports
             'view-reports',
             'export-reports',
+
+            //vendor
+            'view-vendor',
+            'create-vendor',
+            'edit-vendor',
+            'delete-vendor',
+
         ]);
 
         // Staff - can create and view, limited editing

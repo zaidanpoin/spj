@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\KegiatanController;
+use App\Http\Controllers\KegiatanVendorController;
 use App\Http\Controllers\KonsumsiController;
 use App\Http\Controllers\BarangController;
 use App\Http\Controllers\HonorariumController;
@@ -298,6 +299,26 @@ Route::prefix('master')->middleware(['auth'])->group(function () {
     Route::get('ppk', [App\Http\Controllers\Master\PPKController::class, 'index'])
         ->middleware('permission:view-ppk')
         ->name('master.ppk.index');
+
+    // Vendor Master CRUD
+    Route::get('vendor', [App\Http\Controllers\VendorController::class, 'index'])
+        ->middleware('permission:view-vendor')
+        ->name('vendor.index');
+    Route::get('vendor/create', [App\Http\Controllers\VendorController::class, 'create'])
+        ->middleware('permission:create-vendor')
+        ->name('vendor.create');
+    Route::post('vendor', [App\Http\Controllers\VendorController::class, 'store'])
+        ->middleware('permission:create-vendor')
+        ->name('vendor.store');
+    Route::get('vendor/{vendor}/edit', [App\Http\Controllers\VendorController::class, 'edit'])
+        ->middleware('permission:edit-vendor')
+        ->name('vendor.edit');
+    Route::put('vendor/{vendor}', [App\Http\Controllers\VendorController::class, 'update'])
+        ->middleware('permission:edit-vendor')
+        ->name('vendor.update');
+    Route::delete('vendor/{vendor}', [App\Http\Controllers\VendorController::class, 'destroy'])
+        ->middleware('permission:delete-vendor')
+        ->name('vendor.destroy');
     Route::get('ppk/create', [App\Http\Controllers\Master\PPKController::class, 'create'])
         ->middleware('permission:create-ppk')
         ->name('master.ppk.create');
@@ -417,6 +438,20 @@ Route::middleware(['auth'])->group(function () {
     Route::get('daftar-kegiatan/{id}/pilih-detail', [KegiatanController::class, 'pilihDetail'])
         ->middleware('permission:view-kegiatan')
         ->name('kegiatan.pilih-detail');
+
+    // Kegiatan Vendor Routes (Manajemen vendor per kegiatan)
+    Route::get('kegiatan/{kegiatan}/vendor', [KegiatanVendorController::class, 'index'])
+        ->middleware('permission:edit-kegiatan')
+        ->name('kegiatan.vendor.index');
+    Route::post('kegiatan/{kegiatan}/vendor', [KegiatanVendorController::class, 'store'])
+        ->middleware('permission:edit-kegiatan')
+        ->name('kegiatan.vendor.store');
+    Route::put('kegiatan/{kegiatan}/vendor/{vendor}', [KegiatanVendorController::class, 'update'])
+        ->middleware('permission:edit-kegiatan')
+        ->name('kegiatan.vendor.update');
+    Route::delete('kegiatan/{kegiatan}/vendor/{vendor}', [KegiatanVendorController::class, 'destroy'])
+        ->middleware('permission:edit-kegiatan')
+        ->name('kegiatan.vendor.destroy');
 });
 
 // Konsumsi Routes

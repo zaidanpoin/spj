@@ -356,7 +356,7 @@
                             <tr>
                                 <td>Akun</td>
                                 <td>:</td>
-                                <td>524113</td>
+                                <td>{{ $kwitansiApa =='konsumsi'? "521211" : "522151" }}</td>
                             </tr>
                         </table>
                     </div>
