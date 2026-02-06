@@ -35,6 +35,7 @@ class UnorController extends Controller
         $validated = $request->validate([
             'kode_unor' => 'required|unique:unors,kode_unor|max:50',
             'nama_unor' => 'required|max:255',
+            'alamat' => 'nullable|string|max:1000',
         ]);
 
         Unor::create($validated);
@@ -53,6 +54,7 @@ class UnorController extends Controller
         $validated = $request->validate([
             'kode_unor' => 'required|max:50|unique:unors,kode_unor,' . $unor->id,
             'nama_unor' => 'required|max:255',
+            'alamat' => 'nullable|string|max:1000',
         ]);
 
         $unor->update($validated);

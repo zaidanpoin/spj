@@ -14,6 +14,7 @@ class Unor extends Model
     protected $fillable = [
         'kode_unor',
         'nama_unor',
+        'alamat',
     ];
 
     public function unitKerjas()

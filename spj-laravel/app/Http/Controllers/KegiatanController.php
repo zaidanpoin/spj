@@ -67,6 +67,14 @@ class KegiatanController extends Controller
      */
     public function store(Request $request)
     {
+        $messages = [
+            'tanggal_mulai.required' => 'Silakan isi Tanggal Mulai kegiatan.',
+            'tanggal_mulai.date' => 'Format Tanggal Mulai tidak valid.',
+            'tanggal_selesai.required' => 'Silakan isi Tanggal Selesai kegiatan.',
+            'tanggal_selesai.date' => 'Format Tanggal Selesai tidak valid.',
+            'tanggal_selesai.after_or_equal' => 'Tanggal Selesai harus sama atau setelah Tanggal Mulai.',
+        ];
+
         $validated = $request->validate([
             'nama_kegiatan' => 'required|string|max:255',
             'uraian_kegiatan' => 'nullable|string',
@@ -75,12 +83,14 @@ class KegiatanController extends Controller
             'ppk_id' => 'required|exists:ppk,id',
             'bendahara_id' => 'nullable|exists:bendaharas,id',
             'tanggal_mulai' => 'required|date',
-            'tanggal_selesai' => 'required|date',
+            'tanggal_selesai' => 'required|date|after_or_equal:tanggal_mulai',
+            'nomor_bukti_konsumsi' => 'nullable|string|max:255',
+            'nomor_bukti_profesi' => 'nullable|string|max:255',
             'jumlah_peserta' => 'required|integer|min:1',
             'provinsi_id' => 'required|exists:satuan_biaya_konsumsi_provinsi,id',
             'detail_lokasi' => 'required|string|max:255',
             'file_laporan' => 'nullable|file|mimes:pdf,doc,docx|max:10240',
-        ]);
+        ], $messages);
 
         if ($request->hasFile('file_laporan')) {
             $validated['file_laporan'] = $request->file('file_laporan')
@@ -253,6 +263,14 @@ class KegiatanController extends Controller
             abort(403, 'Anda tidak memiliki akses untuk mengupdate kegiatan ini.');
         }
 
+        $messages = [
+            'tanggal_mulai.required' => 'Silakan isi Tanggal Mulai kegiatan.',
+            'tanggal_mulai.date' => 'Format Tanggal Mulai tidak valid.',
+            'tanggal_selesai.required' => 'Silakan isi Tanggal Selesai kegiatan.',
+            'tanggal_selesai.date' => 'Format Tanggal Selesai tidak valid.',
+            'tanggal_selesai.after_or_equal' => 'Tanggal Selesai harus sama atau setelah Tanggal Mulai.',
+        ];
+
         $validated = $request->validate([
             'nama_kegiatan' => 'required|string|max:255',
             'uraian_kegiatan' => 'nullable|string',
@@ -261,12 +279,14 @@ class KegiatanController extends Controller
             'ppk_id' => 'required|exists:ppk,id',
             'bendahara_id' => 'nullable|exists:bendaharas,id',
             'tanggal_mulai' => 'required|date',
-            'tanggal_selesai' => 'required|date',
+            'tanggal_selesai' => 'required|date|after_or_equal:tanggal_mulai',
+            'nomor_bukti_konsumsi' => 'nullable|string|max:255',
+            'nomor_bukti_profesi' => 'nullable|string|max:255',
             'jumlah_peserta' => 'required|integer|min:1',
             'provinsi_id' => 'required|exists:satuan_biaya_konsumsi_provinsi,id',
             'detail_lokasi' => 'required|string|max:255',
             'file_laporan' => 'nullable|file|mimes:pdf,doc,docx|max:10240',
-        ]);
+        ], $messages);
 
         if ($request->hasFile('file_laporan')) {
             $validated['file_laporan'] = $request->file('file_laporan')

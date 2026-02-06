@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kuitansi {{ $jenis }} - {{ $kegiatan->nama_kegiatan }}</title>
+    <title>Kuitansi {{ $jenis }} - {{ $kegiatan->uraian_kegiatan }}</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         body {
@@ -149,7 +149,7 @@
 
     <!-- NEW PAGE 1: Kuitansi (refined to match sample) -->
    <!-- PAGE 1 : KUITANSI SESUAI CONTOH -->
-<div class="sheet">
+{{-- <div class="sheet">
 
 
 
@@ -310,7 +310,7 @@
 
 
 
-</div>
+</div> --}}
 
 
     <!-- END NEW PAGE 1 -->
@@ -346,7 +346,7 @@
                             <tr>
                                 <td>No. Bukti</td>
                                 <td>:</td>
-                                <td></td>
+                                <td>{{ $kwitansiApa == 'konsumsi' ? $kegiatan->nomor_bukti_konsumsi  : $kegiatan->nomor_bukti_profesi }}</td>
                             </tr>
                             <tr>
                                 <td>MAK</td>
@@ -395,7 +395,7 @@
                         <td class="py-1">Untuk Pembayaran</td>
                         <td class="py-1">:</td>
                         <td class="py-1 text-justify leading-snug">
-                            {{ $kegiatan->uraian_kegiatan ?? ('Himpunan perjalanan dinas dalam rangka ' . $kegiatan->nama_kegiatan) }}
+                            {{ $kegiatan->uraian_kegiatan ?? ('Himpunan perjalanan dinas dalam rangka ' . $kegiatan->uraian_kegiatan) }}
                         </td>
                     </tr>
                 </table>
@@ -476,7 +476,7 @@
         <!-- Title -->
         <div class="text-center mb-6">
             <h1 class="text-base font-bold uppercase mb-1">PEMBAYARAN UP</h1>
-            <p class="text-sm">{{ $kegiatan->nama_kegiatan }}</p>
+            <p class="text-sm">{{ $kegiatan->uraian_kegiatan }}</p>
         </div>
 
         <!-- Data Table -->
@@ -556,7 +556,7 @@
         <!-- Header -->
         <div class="text-center mb-6">
             <h1 class="text-base font-bold uppercase mb-1">DAFTAR HADIR</h1>
-            <p class="text-sm">{{ $kegiatan->nama_kegiatan }}</p>
+            <p class="text-sm">{{ $kegiatan->uraian_kegiatan }}</p>
             <p class="text-xs text-gray-600 mt-1">
                 {{ $kegiatan->tanggal_mulai ? $kegiatan->tanggal_mulai->translatedFormat('d F Y') : '-' }}
                 @if($kegiatan->tanggal_selesai && $kegiatan->tanggal_selesai != $kegiatan->tanggal_mulai)
@@ -623,7 +623,7 @@
         <!-- Header -->
         <div class="text-center mb-6">
             <h1 class="text-base font-bold uppercase mb-1">DAFTAR PENERIMA SEMINAR KIT</h1>
-            <p class="text-sm">{{ $kegiatan->nama_kegiatan }}</p>
+            <p class="text-sm">{{ $kegiatan->uraian_kegiatan }}</p>
             <p class="text-xs text-gray-600 mt-1">
                 {{ $kegiatan->tanggal_mulai ? $kegiatan->tanggal_mulai->translatedFormat('d F Y') : '-' }}
                 @if($kegiatan->tanggal_selesai && $kegiatan->tanggal_selesai != $kegiatan->tanggal_mulai)
@@ -945,7 +945,7 @@
             <div style="font-family: 'Times New Roman', serif; font-size:11pt; color:#000;">
 
                 <!-- Letterhead -->
-                <div style="border-bottom:3px solid #000; padding-bottom:3mm; margin-bottom:4mm;">
+                 <div style="border-bottom:3px solid #000; padding-bottom:3mm; margin-bottom:4mm;">
                     <table style="width:100%;">
                         <tr>
                             <td style="width:80px; vertical-align:middle;">
@@ -954,8 +954,8 @@
                             <td style="text-align:center; font-family: 'Arial', 'Helvetica', sans-serif; vertical-align:middle;">
                                 <div style="font-weight:700; font-size:20pt; line-height:1.2;">KEMENTERIAN PEKERJAAN UMUM</div>
                                 <div style="font-weight:700; text-transform: uppercase; font-size:13pt; line-height:1.2; margin-top:1px;">{{$kegiatan->unor->nama_unor}}</div>
-                                <div style="font-weight:700; text-transform: uppercase; font-size:10pt; line-height:1.2; margin-top:1px;">SATUAN KERJA {{$kegiatan->unitkerja->nama_unit}}</div>
-                                <div style="font-size:9pt; margin-top:2px;">JI. Pattimura No. 20, Kebayoran Baru Jakarta Selatan, 12110, Tlp./Fax (021) 27515702</div>
+                                <div style="font-weight:700; text-transform: uppercase; font-size:9pt; line-height:1.2; margin-top:1px;">SATUAN KERJA {{$kegiatan->unitkerja->nama_unit}}</div>
+                                <div style="font-size:9pt; margin-top:2px;">{{ $kegiatan->unor->alamat }}</div>
                                 {{-- <div style="font-size:9pt;">Telepon: (021) 7394848 | Website: www.pu.go.id</div> --}}
                             </td>
                             <td style="width:70px;"></td>
@@ -1027,7 +1027,7 @@
                 </table>
 
                 <p style="text-align:justify; font-size:10pt; margin-bottom:3mm;">Kedua belah pihak berdasarkan: <br>
-                {{"Surat Perintah Kerja (SPK) Pengadaan ".''. $kegiatan->nama_kegiatan?? 'Surat Perintah Kerja (SPK) / Dokumen Kontrak yang berlaku' }}.</p>
+                {{"Surat Perintah Kerja (SPK) Pengadaan ".''. $kegiatan->uraian_kegiatan?? 'Surat Perintah Kerja (SPK) / Dokumen Kontrak yang berlaku' }}.</p>
 
                 <h3 style="font-size:11pt; margin:3mm 0 2mm 0; text-align:center">Pasal 1</h3>
                 <p style="font-size:10pt; margin-bottom:2mm;">PIHAK KEDUA menyerahkan kepada PIHAK KESATU dan PIHAK KESATU menyatakan menerima dari PIHAK KEDUA atas hasil pekerjaan yang telah selesai dilaksanakan sebagai berikut:</p>
@@ -1037,7 +1037,7 @@
                         <td style="width:5%; vertical-align:top">1.</td>
                         <td style="width:22%">Pekerjaan</td>
                         <td style="width:2%">:</td>
-                        <td>{{  'Pengadaan ' . $kegiatan->nama_kegiatan }}</td>
+                        <td>{{  'Pengadaan ' . $kegiatan->uraian_kegiatan }}</td>
                     </tr>
                     <tr>
                         <td style="vertical-align:top">2.</td>
@@ -1098,7 +1098,7 @@
                                 <div style="font-weight:700; font-size:20pt; line-height:1.2;">KEMENTERIAN PEKERJAAN UMUM</div>
                                 <div style="font-weight:700; text-transform: uppercase; font-size:13pt; line-height:1.2; margin-top:1px;">{{$kegiatan->unor->nama_unor}}</div>
                                 <div style="font-weight:700; text-transform: uppercase; font-size:9pt; line-height:1.2; margin-top:1px;">SATUAN KERJA {{$kegiatan->unitkerja->nama_unit}}</div>
-                                <div style="font-size:9pt; margin-top:2px;">JI. Pattimura No. 20, Kebayoran Baru Jakarta Selatan, 12110, Tlp./Fax (021) 27515702</div>
+                                <div style="font-size:9pt; margin-top:2px;">{{ $kegiatan->unor->alamat }}</div>
                                 {{-- <div style="font-size:9pt;">Telepon: (021) 7394848 | Website: www.pu.go.id</div> --}}
                             </td>
                             <td style="width:70px;"></td>
@@ -1126,7 +1126,7 @@
                     <tr>
                         <td>Pekerjaan</td>
                         <td>:</td>
-                        <td>{{"Pengadaan" ." " .$kegiatan->nama_kegiatan ?? '-' }}</td>
+                        <td>{{"Pengadaan" ." " .$kegiatan->uraian_kegiatan ?? '-' }}</td>
                     </tr>
                 </table>
 
@@ -1195,7 +1195,7 @@
     <div style="font-size: 9pt;">
 
         <!-- Letterhead -->
-         <div style="border-bottom:3px solid #000; padding-bottom:3mm; margin-bottom:4mm;">
+           <div style="border-bottom:3px solid #000; padding-bottom:3mm; margin-bottom:4mm;">
                     <table style="width:100%;">
                         <tr>
                             <td style="width:80px; vertical-align:middle;">
@@ -1204,8 +1204,8 @@
                             <td style="text-align:center; font-family: 'Arial', 'Helvetica', sans-serif; vertical-align:middle;">
                                 <div style="font-weight:700; font-size:20pt; line-height:1.2;">KEMENTERIAN PEKERJAAN UMUM</div>
                                 <div style="font-weight:700; text-transform: uppercase; font-size:13pt; line-height:1.2; margin-top:1px;">{{$kegiatan->unor->nama_unor}}</div>
-                                <div style="font-weight:700; text-transform: uppercase; font-size:10pt; line-height:1.2; margin-top:1px;">{{$kegiatan->unitkerja->nama_unit}}</div>
-                                <div style="font-size:9pt; margin-top:2px;">JI. Pattimura No. 20, Kebayoran Baru Jakarta Selatan, 12110, Tlp./Fax (021) 27515702</div>
+                                <div style="font-weight:700; text-transform: uppercase; font-size:9pt; line-height:1.2; margin-top:1px;">SATUAN KERJA {{$kegiatan->unitkerja->nama_unit}}</div>
+                                <div style="font-size:9pt; margin-top:2px;">{{ $kegiatan->unor->alamat }}</div>
                                 {{-- <div style="font-size:9pt;">Telepon: (021) 7394848 | Website: www.pu.go.id</div> --}}
                             </td>
                             <td style="width:70px;"></td>
