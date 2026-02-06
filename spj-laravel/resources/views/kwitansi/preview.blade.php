@@ -954,7 +954,7 @@
                             <td style="text-align:center; font-family: 'Arial', 'Helvetica', sans-serif; vertical-align:middle;">
                                 <div style="font-weight:700; font-size:20pt; line-height:1.2;">KEMENTERIAN PEKERJAAN UMUM</div>
                                 <div style="font-weight:700; text-transform: uppercase; font-size:13pt; line-height:1.2; margin-top:1px;">{{$kegiatan->unor->nama_unor}}</div>
-                                <div style="font-weight:700; text-transform: uppercase; font-size:10pt; line-height:1.2; margin-top:1px;">{{$kegiatan->unitkerja->nama_unit}}</div>
+                                <div style="font-weight:700; text-transform: uppercase; font-size:10pt; line-height:1.2; margin-top:1px;">SATUAN KERJA {{$kegiatan->unitkerja->nama_unit}}</div>
                                 <div style="font-size:9pt; margin-top:2px;">JI. Pattimura No. 20, Kebayoran Baru Jakarta Selatan, 12110, Tlp./Fax (021) 27515702</div>
                                 {{-- <div style="font-size:9pt;">Telepon: (021) 7394848 | Website: www.pu.go.id</div> --}}
                             </td>
@@ -1097,7 +1097,7 @@
                             <td style="text-align:center; font-family: 'Arial', 'Helvetica', sans-serif; vertical-align:middle;">
                                 <div style="font-weight:700; font-size:20pt; line-height:1.2;">KEMENTERIAN PEKERJAAN UMUM</div>
                                 <div style="font-weight:700; text-transform: uppercase; font-size:13pt; line-height:1.2; margin-top:1px;">{{$kegiatan->unor->nama_unor}}</div>
-                                <div style="font-weight:700; text-transform: uppercase; font-size:10pt; line-height:1.2; margin-top:1px;">{{$kegiatan->unitkerja->nama_unit}}</div>
+                                <div style="font-weight:700; text-transform: uppercase; font-size:9pt; line-height:1.2; margin-top:1px;">SATUAN KERJA {{$kegiatan->unitkerja->nama_unit}}</div>
                                 <div style="font-size:9pt; margin-top:2px;">JI. Pattimura No. 20, Kebayoran Baru Jakarta Selatan, 12110, Tlp./Fax (021) 27515702</div>
                                 {{-- <div style="font-size:9pt;">Telepon: (021) 7394848 | Website: www.pu.go.id</div> --}}
                             </td>
