@@ -29,6 +29,8 @@ class Kegiatan extends Model
         'provinsi_id',
         'detail_lokasi',
         'file_laporan',
+        'nomor_bukti_konsumsi',
+        'nomor_bukti_profesi',
     ];
 
     protected $casts = [

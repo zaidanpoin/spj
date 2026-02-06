@@ -193,6 +193,29 @@
                     <p class="text-gray-500 text-xs mt-1">Format: PDF, DOC, DOCX (Maks: 10MB)</p>
                 </div>
 
+                <!-- Nomor Bukti (optional) -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Nomor Bukti - Konsumsi</label>
+                        <input type="text" name="nomor_bukti_konsumsi" value="{{ old('nomor_bukti_konsumsi') }}"
+                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary @error('nomor_bukti_konsumsi') border-red-500 @enderror"
+                            placeholder="Nomor bukti (opsional)">
+                        @error('nomor_bukti_konsumsi')
+                            <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Nomor Bukti - Profesi</label>
+                        <input type="text" name="nomor_bukti_profesi" value="{{ old('nomor_bukti_profesi') }}"
+                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary @error('nomor_bukti_profesi') border-red-500 @enderror"
+                            placeholder="Nomor bukti (opsional)">
+                        @error('nomor_bukti_profesi')
+                            <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                        @enderror
+                    </div>
+                </div>
+
                 <!-- Actions -->
                 <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 pt-4 border-t border-gray-200">
                     <button type="submit"

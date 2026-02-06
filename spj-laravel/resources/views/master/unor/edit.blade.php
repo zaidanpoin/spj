@@ -37,6 +37,16 @@
                     @enderror
                 </div>
 
+                <div>
+                    <label class="form-label">
+                        Alamat
+                    </label>
+                    <textarea name="alamat" rows="3" class="form-input @error('alamat') border-red-500 @enderror" placeholder="Alamat lengkap (opsional)">{{ old('alamat', $unor->alamat) }}</textarea>
+                    @error('alamat')
+                        <p class="form-error">{{ $message }}</p>
+                    @enderror
+                </div>
+
                 <div class="flex gap-2 pt-3 border-t border-gray-200">
                     <button type="submit" class="btn-primary">
                         Update
