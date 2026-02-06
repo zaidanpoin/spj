@@ -301,6 +301,8 @@
                                 <a href="{{ route('master.unit-kerja.index') }}"
                                     class="block px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 hover:text-primary">Unit
                                     Kerja</a>
+                                <a href="{{ route('vendor.index') }}"
+                                    class="block px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 hover:text-primary">Vendor</a>
                                 <div class="border-t border-gray-100"></div>
                                 <a href="{{ route('master.waktu-konsumsi.index') }}"
                                     class="block px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 hover:text-primary">Waktu
@@ -378,6 +380,8 @@
                         <a href="{{ route('master.unit-kerja.index') }}"
                             class="block px-4 py-2.5 text-sm {{ request()->routeIs('master.unit-kerja.*') ? 'text-primary bg-primary/5' : 'text-gray-700 hover:bg-gray-50' }}">Unit
                             Kerja</a>
+                        <a href="{{ route('vendor.index') }}"
+                            class="block px-4 py-2.5 text-sm {{ request()->routeIs('vendor.*') ? 'text-primary bg-primary/5' : 'text-gray-700 hover:bg-gray-50' }}">Vendor</a>
                         <a href="{{ route('master.waktu-konsumsi.index') }}"
                             class="block px-4 py-2.5 text-sm {{ request()->routeIs('master.waktu-konsumsi.*') ? 'text-primary bg-primary/5' : 'text-gray-700 hover:bg-gray-50' }}">Waktu
                             Konsumsi</a>

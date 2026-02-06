@@ -453,12 +453,15 @@
                                         </button>
                                     @endif
                                     <div class="grid grid-cols-12 gap-3 items-end">
-                                        <div class="col-span-2">
-                                            <label class="form-label">Vendor/Toko</label>
-                                            <input type="text" name="barang[{{ $index }}][vendor_nama]"
-                                                class="form-input barang-vendor" data-index="{{ $index }}" placeholder="Nama Vendor"
-                                                value="{{ $item->vendor->nama_vendor ?? '' }}" list="vendor-list">
-                                        </div>
+                                                            <div class="col-span-2">
+                                                                <label class="form-label">Vendor/Toko</label>
+                                                                <select name="barang[{{ $index }}][vendor_nama]" class="form-input barang-vendor" data-index="{{ $index }}">
+                                                                    <option value="">-- Pilih Vendor --</option>
+                                                                    @foreach($vendors ?? [] as $v)
+                                                                        <option value="{{ $v->nama_vendor }}" {{ ($item->vendor->nama_vendor ?? '') == $v->nama_vendor ? 'selected' : '' }}>{{ $v->nama_vendor }}</option>
+                                                                    @endforeach
+                                                                </select>
+                                                            </div>
                                         <div class="col-span-2">
                                             <label class="form-label">Nama Barang</label>
                                             <input type="text" name="barang[{{ $index }}][nama]" class="form-input"
@@ -493,11 +496,15 @@
                             <!-- Default Barang Item Template -->
                             <div class="barang-item border border-gray-200 rounded-lg p-4 bg-gray-50">
                                 <div class="grid grid-cols-12 gap-3 items-end">
-                                    <div class="col-span-2">
-                                        <label class="form-label">Vendor/Toko</label>
-                                        <input type="text" name="barang[0][vendor_nama]" class="form-input barang-vendor"
-                                            data-index="0" placeholder="Nama Vendor" list="vendor-list">
-                                    </div>
+                                            <div class="col-span-2">
+                                                <label class="form-label">Vendor/Toko</label>
+                                                <select name="barang[0][vendor_nama]" class="form-input barang-vendor" data-index="0">
+                                                    <option value="">-- Pilih Vendor --</option>
+                                                    @foreach($vendors ?? [] as $v)
+                                                        <option value="{{ $v->nama_vendor }}">{{ $v->nama_vendor }}</option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
                                     <div class="col-span-2">
                                         <label class="form-label">Nama Barang</label>
                                         <input type="text" name="barang[0][nama]" class="form-input"
@@ -531,11 +538,7 @@
                     </div>
 
                     <!-- Vendor Datalist for Autocomplete -->
-                    <datalist id="vendor-list">
-                        @foreach($vendors ?? [] as $vendor)
-                            <option value="{{ $vendor->nama_vendor }}">
-                        @endforeach
-                    </datalist>
+                    <!-- vendor datalist removed; using select dropdowns instead -->
 
                     <!-- Vendor Summary Section -->
                     <div id="vendor-summary" class="mt-4 p-4 bg-gray-50 rounded-lg border border-gray-200 hidden">
@@ -634,6 +637,9 @@
             const vendorsData = @json($vendorsData ?? []);
             // Kegiatan vendors data (vendors registered for this kegiatan with nomor surat)
             const kegiatanVendorsData = @json($kegiatanVendorsData ?? []);
+            // Vendors list for building select options
+            const vendorsList = @json($vendors->pluck('nama_vendor') ?? []);
+            const vendorOptionsHtml = (Array.isArray(vendorsList) ? vendorsList.map(v => `<option value="${v}">${v}</option>`).join('') : '');
             // Merge kegiatan vendors into vendorsData (priority to kegiatan vendors)
             Object.assign(vendorsData, kegiatanVendorsData);
             // Banks list from config
@@ -784,10 +790,10 @@
                                 <div class="grid grid-cols-12 gap-3 items-end">
                                     <div class="col-span-2">
                                         <label class="form-label">Vendor/Toko</label>
-                                        <input type="text" name="barang[${barangIndex}][vendor_nama]"
-                                               class="form-input barang-vendor"
-                                               data-index="${barangIndex}"
-                                               placeholder="Nama Vendor" list="vendor-list">
+                                        <select name="barang[${barangIndex}][vendor_nama]" class="form-input barang-vendor" data-index="${barangIndex}">
+                                            <option value="">-- Pilih Vendor --</option>
+                                            ${vendorOptionsHtml}
+                                        </select>
                                     </div>
                                     <div class="col-span-2">
                                         <label class="form-label">Nama Barang</label>
@@ -937,6 +943,10 @@
                             return false;
                         }
 
+                        // Additional check: jika ada vendor dengan total >= threshold tapi vendor belum terdaftar,
+                        // minta user untuk memilih vendor dari daftar atau membuat vendor baru terlebih dahulu.
+                        if (!checkVendorsBeforeSubmit()) return false;
+
                         return true;
                     }
 
@@ -970,7 +980,56 @@
                             return false;
                         }
 
+                        if (!checkVendorsBeforeSubmit()) return false;
+
                         return confirm('💾 Data akan disimpan sebagai DRAFT dan dapat diedit kembali. Lanjutkan?');
+                    }
+
+                    // Returns false if any vendor total >= threshold but vendor is not registered (needs selection or creation)
+                    function checkVendorsBeforeSubmit() {
+                        const vendorTotals = {};
+
+                        document.querySelectorAll('.barang-item').forEach(item => {
+                            const vendorInput = item.querySelector('.barang-vendor');
+                            const namaInput = item.querySelector('input[name$="[nama]"]');
+                            const qtyInput = item.querySelector('.barang-qty');
+                            const priceInput = item.querySelector('.barang-price');
+
+                            if (vendorInput && namaInput) {
+                                const vendor = (vendorInput.value || '').trim();
+                                const nama = (namaInput.value || '').trim();
+                                if (!vendor || !nama) return;
+
+                                const qty = parseInt(qtyInput?.value) || 0;
+                                const price = parseInt(priceInput?.value) || 0;
+                                const subtotal = qty * price;
+
+                                if (!vendorTotals[vendor]) vendorTotals[vendor] = 0;
+                                vendorTotals[vendor] += subtotal;
+                            }
+                        });
+
+                        const violating = [];
+                        for (const [vendor, total] of Object.entries(vendorTotals)) {
+                            if (total >= VENDOR_THRESHOLD) {
+                                const existsInVendorsList = Array.isArray(vendorsList) && vendorsList.includes(vendor);
+                                const existsInKegiatan = kegiatanVendorsData && kegiatanVendorsData[vendor];
+                                const existsInVendorsData = vendorsData && vendorsData[vendor];
+
+                                if (!existsInVendorsList && !existsInKegiatan && !existsInVendorsData) {
+                                    violating.push({ vendor, total });
+                                }
+                            }
+                        }
+
+                        if (violating.length > 0) {
+                            const names = violating.map(v => `${v.vendor} (Rp ${v.total.toLocaleString('id-ID')})`).join(', ');
+                            const createUrl = `${window.location.origin}/master/vendor/create`;
+                            alert(`Vendor berikut memiliki total >= Rp ${VENDOR_THRESHOLD.toLocaleString('id-ID')}: ${names}.\n\nSilakan pilih vendor yang sudah terdaftar atau buat vendor baru terlebih dahulu.\nBuat baru: ${createUrl}`);
+                            return false;
+                        }
+
+                        return true;
                     }
 
                     // Attach events
