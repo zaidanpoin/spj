@@ -75,6 +75,7 @@
                         @if($hasKonsumsi == 0) onclick="event.preventDefault(); alert('Belum ada data konsumsi');" @endif>
                         📄 Kuitansi UP
                     </a>
+
                     <a href="{{ $hasKonsumsi > 0 ? route('kwitansi.generate', ['kegiatan_id' => $kegiatan->id, 'jenis' => 'LS', 'type' => 'konsumsi']) : '#' }}"
                         class="px-2 py-1 text-xs font-medium rounded transition {{ $hasKonsumsi > 0 ? 'bg-gray-700 text-white hover:bg-gray-800' : 'bg-gray-100 text-gray-400 cursor-not-allowed' }}"
                         @if($hasKonsumsi == 0) onclick="event.preventDefault(); alert('Belum ada data konsumsi');" @endif>

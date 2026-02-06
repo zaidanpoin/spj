@@ -15,7 +15,7 @@ class KonsumsiController extends Controller
      */
     public function create($kegiatan_id)
     {
-        $kegiatan = Kegiatan::with(['unor', 'provinsi'])->findOrFail($kegiatan_id);
+        $kegiatan = Kegiatan::with(['unor', 'provinsi', 'vendors'])->findOrFail($kegiatan_id);
         $waktuKonsumsi = \App\Models\WaktuKonsumsi::all();
 
         // Get SBM tarif from kegiatan's provinsi
@@ -48,6 +48,9 @@ class KonsumsiController extends Controller
         // Load existing vendors for dropdown
         $vendors = Vendor::orderBy('nama_vendor')->get();
 
+        // Get vendors that are already registered for this kegiatan (via kegiatan_vendor pivot)
+        $kegiatanVendors = $kegiatan->vendors;
+
         // Prepare simple vendor data map (keyed by nama_vendor) for JS autofill
         $vendorsData = $vendors->mapWithKeys(function ($v) {
             return [
@@ -58,6 +61,23 @@ class KonsumsiController extends Controller
                     'alamat' => $v->alamat,
                     'bank' => $v->bank ?? null,
                     'rekening' => $v->rekening ?? null,
+                ],
+            ];
+        })->toArray();
+
+        // Prepare kegiatan vendor data with pivot info (nomor surat)
+        $kegiatanVendorsData = $kegiatanVendors->mapWithKeys(function ($v) {
+            return [
+                $v->nama_vendor => [
+                    'nama_direktur' => $v->nama_direktur,
+                    'jabatan' => $v->jabatan,
+                    'npwp' => $v->npwp,
+                    'alamat' => $v->alamat,
+                    'bank' => $v->bank ?? null,
+                    'rekening' => $v->rekening ?? null,
+                    'nomor_berita_acara' => $v->pivot->nomor_berita_acara ?? null,
+                    'nomor_bast' => $v->pivot->nomor_bast ?? null,
+                    'nomor_berita_pembayaran' => $v->pivot->nomor_berita_pembayaran ?? null,
                 ],
             ];
         })->toArray();
@@ -80,7 +100,7 @@ class KonsumsiController extends Controller
             }
         }
 
-        return view('konsumsi.create', compact('kegiatan', 'waktuKonsumsi', 'tarifSBM', 'draftData', 'vendors', 'vendorsData', 'vendorDataFromDraft'));
+        return view('konsumsi.create', compact('kegiatan', 'waktuKonsumsi', 'tarifSBM', 'draftData', 'vendors', 'vendorsData', 'vendorDataFromDraft', 'kegiatanVendors', 'kegiatanVendorsData'));
     }
 
     /**

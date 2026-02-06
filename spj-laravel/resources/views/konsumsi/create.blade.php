@@ -352,6 +352,71 @@
                         <p class="text-sm text-gray-500">Tambahkan item barang (ATK, Perlengkapan, dll)</p>
                     </div>
 
+                    <!-- Info Vendor Kegiatan -->
+                    @if($kegiatanVendors->count() > 0)
+                        <div class="bg-blue-50 border-l-4 border-blue-500 p-4 mb-4">
+                            <div class="flex items-start">
+                                <div class="flex-shrink-0">
+                                    <svg class="h-5 w-5 text-blue-500" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path>
+                                    </svg>
+                                </div>
+                                <div class="ml-3 flex-1">
+                                    <p class="text-sm font-medium text-blue-800 mb-2">
+                                        📋 Vendor Terdaftar untuk Kegiatan Ini
+                                    </p>
+                                    <div class="space-y-2">
+                                        @foreach($kegiatanVendors as $vendor)
+                                            <div class="bg-white rounded-lg p-3 border border-blue-200">
+                                                <div class="flex items-start justify-between">
+                                                    <div class="flex-1">
+                                                        <div class="font-semibold text-blue-900">{{ $vendor->nama_vendor }}</div>
+                                                        <div class="text-xs text-blue-700 mt-1 space-y-0.5">
+                                                            @if($vendor->pivot->nomor_berita_acara)
+                                                                <div>• No. Berita Acara: <span class="font-medium">{{ $vendor->pivot->nomor_berita_acara }}</span></div>
+                                                            @endif
+                                                            @if($vendor->pivot->nomor_bast)
+                                                                <div>• No. BAST: <span class="font-medium">{{ $vendor->pivot->nomor_bast }}</span></div>
+                                                            @endif
+                                                            @if($vendor->pivot->nomor_berita_pembayaran)
+                                                                <div>• No. Berita Pembayaran: <span class="font-medium">{{ $vendor->pivot->nomor_berita_pembayaran }}</span></div>
+                                                            @endif
+                                                        </div>
+                                                    </div>
+                                                    <button type="button" onclick="selectKegiatanVendor('{{ $vendor->nama_vendor }}')"
+                                                            class="ml-3 px-3 py-1 bg-blue-600 text-white text-xs rounded hover:bg-blue-700">
+                                                        Pakai Vendor Ini
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        @endforeach
+                                    </div>
+                                    <p class="mt-2 text-xs text-blue-600">
+                                        💡 Klik "Pakai Vendor Ini" untuk menggunakan vendor yang sudah terdaftar, data vendor akan otomatis terisi
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    {{-- @else
+                        <div class="bg-orange-50 border-l-4 border-orange-500 p-4 mb-4">
+                            <div class="flex items-start">
+                                <div class="flex-shrink-0">
+                                    <svg class="h-5 w-5 text-orange-500" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
+                                    </svg>
+                                </div>
+                                <div class="ml-3">
+                                    <p class="text-sm font-medium text-orange-800">
+                                        ⚠️ Belum ada vendor yang terdaftar untuk kegiatan ini
+                                    </p>
+                                    <p class="mt-1 text-xs text-orange-700">
+                                        Silakan tambahkan vendor di halaman <a href="{{ route('kegiatan.vendor.index', $kegiatan->id) }}" class="underline font-semibold" target="_blank">Kelola Vendor Kegiatan</a> terlebih dahulu, atau langsung input vendor baru di bawah.
+                                    </p>
+                                </div>
+                            </div>
+                        </div> --}}
+                    @endif
+
                     <!-- Vendor Warning Banner (shown dynamically when needed) -->
                     <div id="vendor-warning-banner" class="hidden bg-orange-50 border-l-4 border-orange-500 p-4 mb-4">
                         <div class="flex items-start">
@@ -567,6 +632,10 @@
 
             // Existing vendors data from server (keyed by vendor name)
             const vendorsData = @json($vendorsData ?? []);
+            // Kegiatan vendors data (vendors registered for this kegiatan with nomor surat)
+            const kegiatanVendorsData = @json($kegiatanVendorsData ?? []);
+            // Merge kegiatan vendors into vendorsData (priority to kegiatan vendors)
+            Object.assign(vendorsData, kegiatanVendorsData);
             // Banks list from config
             const banksList = @json(config('banks')) || [];
 
@@ -968,6 +1037,31 @@
                     let vendorData = {};
                     const VENDOR_THRESHOLD = 10000000; // 10 juta
 
+                    // Function to select a kegiatan vendor and add to first empty barang item
+                    function selectKegiatanVendor(vendorNama) {
+                        // Find first barang item
+                        const firstBarangVendor = document.querySelector('.barang-vendor');
+                        if (firstBarangVendor) {
+                            firstBarangVendor.value = vendorNama;
+                            // Trigger change event to auto-populate vendor data
+                            firstBarangVendor.dispatchEvent(new Event('change'));
+
+                            // Switch to barang tab if not already there
+                            if (document.getElementById('content-barang').classList.contains('hidden')) {
+                                switchTab('barang');
+                            }
+
+                            // Scroll to barang container
+                            document.getElementById('barang-container').scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+                            // Highlight the input briefly
+                            firstBarangVendor.classList.add('ring-2', 'ring-blue-500');
+                            setTimeout(() => {
+                                firstBarangVendor.classList.remove('ring-2', 'ring-blue-500');
+                            }, 2000);
+                        }
+                    }
+
                     // Calculate vendor totals
                     function calculateVendorTotals() {
                         const vendorTotals = {};
@@ -1014,12 +1108,14 @@
                         for (const [vendor, total] of Object.entries(vendorTotals)) {
                             const isOverThreshold = total >= VENDOR_THRESHOLD;
                             const hasCompleteData = vendorData[vendor] && vendorData[vendor].isComplete;
+                            const isKegiatanVendor = kegiatanVendorsData && kegiatanVendorsData[vendor];
 
                             const div = document.createElement('div');
                             div.className = `flex justify-between items-center p-2 rounded ${isOverThreshold ? (hasCompleteData ? 'bg-green-100' : 'bg-orange-100') : 'bg-gray-100'}`;
                             div.innerHTML = `
                                 <div class="flex items-center gap-2">
                                     <span class="font-medium">${vendor}</span>
+                                    ${isKegiatanVendor ? '<span class="text-xs bg-blue-600 text-white px-2 py-0.5 rounded">Vendor Kegiatan</span>' : ''}
                                     ${isOverThreshold && !hasCompleteData ? '<span class="text-xs text-orange-600">⚠️ Perlu data lengkap</span>' : ''}
                                     ${isOverThreshold && hasCompleteData ? '<span class="text-xs text-green-600">✓ Data lengkap</span>' : ''}
                                 </div>
@@ -1098,7 +1194,21 @@
 
                         const data = vendorData[vendorName] || {};
 
+                        // Check if this vendor is a kegiatan vendor (has nomor surat data)
+                        const isKegiatanVendor = data.nomor_berita_acara || data.nomor_bast || data.nomor_berita_pembayaran;
+                        const nomorSuratInfo = isKegiatanVendor ? `
+                            <div class="bg-blue-50 border border-blue-200 rounded-lg p-3 mb-3">
+                                <p class="text-xs font-semibold text-blue-800 mb-2">📋 Vendor Terdaftar di Kegiatan</p>
+                                <div class="text-xs text-blue-700 space-y-1">
+                                    ${data.nomor_berita_acara ? `<div>• No. Berita Acara: <span class="font-medium">${data.nomor_berita_acara}</span></div>` : ''}
+                                    ${data.nomor_bast ? `<div>• No. BAST: <span class="font-medium">${data.nomor_bast}</span></div>` : ''}
+                                    ${data.nomor_berita_pembayaran ? `<div>• No. Berita Pembayaran: <span class="font-medium">${data.nomor_berita_pembayaran}</span></div>` : ''}
+                                </div>
+                            </div>
+                        ` : '';
+
                         content.innerHTML = `
+                            ${nomorSuratInfo}
                             <div class="space-y-3">
                                 <div>
                                     <label class="form-label">Nama Vendor</label>

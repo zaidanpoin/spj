@@ -1,4 +1,4 @@
-@extends('layouts.app')
+    @extends('layouts.app')
 
 @section('title', 'Edit Kegiatan')
 @section('page-title', 'Edit Kegiatan')
@@ -8,8 +8,22 @@
     <div class="max-w-4xl mx-auto">
         <div class="bg-white rounded-lg border border-gray-200">
             <div class="px-4 sm:px-6 py-4 border-b border-gray-200">
-                <h3 class="font-semibold text-gray-900">Edit Informasi Kegiatan</h3>
-                <p class="text-sm text-gray-500 mt-0.5">Perbarui data yang diperlukan</p>
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h3 class="font-semibold text-gray-900">Edit Informasi Kegiatan</h3>
+                        <p class="text-sm text-gray-500 mt-0.5">Perbarui data yang diperlukan</p>
+                    </div>
+                    @if($kegiatan->vendors->count() > 0)
+                        <div class="flex items-center gap-2 text-sm">
+                            <span class="px-3 py-1 bg-green-100 text-green-800 rounded-full font-medium">
+                                <svg class="w-4 h-4 inline-block mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
+                                </svg>
+                                {{ $kegiatan->vendors->count() }} Vendor
+                            </span>
+                        </div>
+                    @endif
+                </div>
             </div>
 
             <form action="{{ route('kegiatan.update', $kegiatan->id) }}" method="POST" enctype="multipart/form-data" class="p-4 sm:p-6 space-y-4">
@@ -227,6 +241,13 @@
                         class="px-6 py-2 bg-primary text-white rounded-lg hover:bg-primary-dark transition font-medium text-center">
                         Update Data
                     </button>
+                    <a href="{{ route('kegiatan.vendor.index', $kegiatan->id) }}"
+                        class="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition text-center font-medium">
+                        <svg class="w-4 h-4 inline-block mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
+                        </svg>
+                        Kelola Vendor & Nomor Surat
+                    </a>
                     <a href="{{ route('kegiatan.index') }}"
                         class="px-6 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition text-center">
                         Batal

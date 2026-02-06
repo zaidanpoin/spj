@@ -78,6 +78,29 @@ class Kegiatan extends Model
         return $this->hasMany(KwitansiBelanja::class, 'kegiatan_id');
     }
 
+    /**
+     * Relationship: Many-to-many with Vendor through kegiatan_vendor pivot table
+     * Pivot table menyimpan nomor-nomor surat yang berbeda per kombinasi kegiatan-vendor
+     * dan data detail vendor yang berbeda per kegiatan
+     */
+    public function vendors()
+    {
+        return $this->belongsToMany(Vendor::class, 'kegiatan_vendor')
+            ->withPivot(
+                'nomor_berita_acara',
+                'nomor_bast',
+                'nomor_berita_pembayaran',
+                'nama_direktur',
+                'jabatan',
+                'npwp',
+                'alamat',
+                'bank',
+                'rekening',
+                'ppn'
+            )
+            ->withTimestamps();
+    }
+
     public function creator()
     {
         return $this->belongsTo(\App\Models\User::class, 'created_by');

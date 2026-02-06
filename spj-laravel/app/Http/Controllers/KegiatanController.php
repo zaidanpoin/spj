@@ -231,7 +231,7 @@ class KegiatanController extends Controller
      */
     public function edit(string $id)
     {
-        $kegiatan = Kegiatan::findOrFail($id);
+        $kegiatan = Kegiatan::with('vendors')->findOrFail($id);
 
         // Check authorization: user can only edit their own unit kerja's data (except super admin)
         $user = auth()->user();

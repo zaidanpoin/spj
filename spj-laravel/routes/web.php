@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\KegiatanController;
+use App\Http\Controllers\KegiatanVendorController;
 use App\Http\Controllers\KonsumsiController;
 use App\Http\Controllers\BarangController;
 use App\Http\Controllers\HonorariumController;
@@ -417,6 +418,20 @@ Route::middleware(['auth'])->group(function () {
     Route::get('daftar-kegiatan/{id}/pilih-detail', [KegiatanController::class, 'pilihDetail'])
         ->middleware('permission:view-kegiatan')
         ->name('kegiatan.pilih-detail');
+
+    // Kegiatan Vendor Routes (Manajemen vendor per kegiatan)
+    Route::get('kegiatan/{kegiatan}/vendor', [KegiatanVendorController::class, 'index'])
+        ->middleware('permission:edit-kegiatan')
+        ->name('kegiatan.vendor.index');
+    Route::post('kegiatan/{kegiatan}/vendor', [KegiatanVendorController::class, 'store'])
+        ->middleware('permission:edit-kegiatan')
+        ->name('kegiatan.vendor.store');
+    Route::put('kegiatan/{kegiatan}/vendor/{vendor}', [KegiatanVendorController::class, 'update'])
+        ->middleware('permission:edit-kegiatan')
+        ->name('kegiatan.vendor.update');
+    Route::delete('kegiatan/{kegiatan}/vendor/{vendor}', [KegiatanVendorController::class, 'destroy'])
+        ->middleware('permission:edit-kegiatan')
+        ->name('kegiatan.vendor.destroy');
 });
 
 // Konsumsi Routes
