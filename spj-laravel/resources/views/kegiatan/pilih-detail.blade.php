@@ -192,52 +192,83 @@
                         </div>
                     @endif
 
-                    <!-- Barang -->
-                    @if($barangs->count() > 0)
-                        <div class="p-3">
-                            <div class="text-xs font-semibold text-gray-500 uppercase mb-1.5">Barang ({{ $barangs->count() }})</div>
-                            <table class="w-full text-xs">
-                                <thead class="bg-gray-50">
-                                    <tr>
-                                        <th class="px-2 py-1.5 text-left font-medium text-gray-600">Nama</th>
-                                         <th class="px-2 py-1.5 text-left font-medium text-gray-600 w-24">Nama Vendor</th>
-                                        <th class="px-2 py-1.5 text-left font-medium text-gray-600 w-24">No Kwitansi</th>
-                                        <th class="px-2 py-1.5 text-left font-medium text-gray-600 w-28">Tgl Pembelian</th>
-                                        <th class="px-2 py-1.5 text-center font-medium text-gray-600 w-12">Qty</th>
-                                        <th class="px-2 py-1.5 text-right font-medium text-gray-600 w-20">Harga</th>
-                                        <th class="px-2 py-1.5 text-right font-medium text-gray-600 w-24">Subtotal</th>
-                                        <th class="px-2 py-1.5 text-center font-medium text-gray-600 w-16">Aksi</th>
-                                    </tr>
-                                </thead>
-                                <tbody class="divide-y divide-gray-50">
-                                    @foreach($barangs as $item)
+                    <!-- Barang grouped by Vendor -->
+                    @if(isset($vendorGroups) && $vendorGroups->count() > 0)
+                        @foreach($vendorGroups as $vendorName => $items)
+                            @php
+                                $vendor = $items->first()->vendor;
+                                $vendorId = $vendor ? $vendor->id : null;
+                                $vendorBank = $vendor ? $vendor->bank : '';
+                                $vendorRekening = $vendor ? $vendor->rekening : '';
+                                $vendorPpn = $vendor ? ($vendor->ppn ?? 11) : 11;
+                            @endphp
+                            <div class="p-3">
+                                <div class="flex items-center justify-between mb-2">
+                                    <div class="flex items-center gap-2">
+                                        <div class="text-xs font-semibold text-gray-500 uppercase">Vendor: {{ $vendorName }}</div>
+                                        @if($vendorId)
+                                            <button onclick="openVendorEditModal({{ $vendorId }}, '{{ $vendorName }}', '{{ $vendorBank }}', '{{ $vendorRekening }}', {{ $vendorPpn }})"
+                                                    class="text-xs px-2 py-0.5 bg-blue-600 text-white rounded hover:bg-blue-700">
+                                                Edit Vendor
+                                            </button>
+                                        @endif
+                                    </div>
+                                    <div class="text-xs text-gray-600">Items: {{ $items->count() }}</div>
+                                </div>
+
+                                <table class="w-full text-xs">
+                                    <thead class="bg-gray-50">
                                         <tr>
-                                            <td class="px-2 py-1.5">{{ $item->nama_konsumsi }}</td>
-                                            <td class="px-2 py-1.5 text-xs text-gray-600">{{ $item->vendor->nama_vendor ?? '-' }}</td>
-                                            <td class="px-2 py-1.5 text-xs text-gray-600">{{ $item->no_kwitansi ?? '-' }}</td>
-                                            <td class="px-2 py-1.5 text-xs text-gray-600">{{ $item->tanggal_pembelian ? \Carbon\Carbon::parse($item->tanggal_pembelian)->format('d/m/Y') : '-' }}</td>
-                                            <td class="px-2 py-1.5 text-center">{{ $item->jumlah }}</td>
-                                            <td class="px-2 py-1.5 text-right">Rp {{ number_format($item->harga, 0, ',', '.') }}</td>
-                                            <td class="px-2 py-1.5 text-right font-medium">Rp {{ number_format($item->subtotal, 0, ',', '.') }}</td>
-                                            <td class="px-2 py-1.5 text-center">
-                                                <form action="{{ route('konsumsi.destroy', $item->id) }}" method="POST" class="inline" onsubmit="return confirm('Yakin ingin menghapus item ini?');">
-                                                    @csrf
-                                                    @method('DELETE')
-                                                    <button type="submit" class="text-red-600 hover:text-red-800 text-xs font-medium">✕</button>
-                                                </form>
-                                            </td>
+                                            <th class="px-2 py-1.5 text-left font-medium text-gray-600">Nama</th>
+                                            <th class="px-2 py-1.5 text-left font-medium text-gray-600 w-24">No Kwitansi</th>
+                                            <th class="px-2 py-1.5 text-left font-medium text-gray-600 w-28">Tgl Pembelian</th>
+                                            <th class="px-2 py-1.5 text-center font-medium text-gray-600 w-12">Qty</th>
+                                            <th class="px-2 py-1.5 text-right font-medium text-gray-600 w-20">Harga</th>
+                                            <th class="px-2 py-1.5 text-right font-medium text-gray-600 w-24">Subtotal</th>
+                                            <th class="px-2 py-1.5 text-center font-medium text-gray-600 w-16">Aksi</th>
                                         </tr>
-                                    @endforeach
-                                </tbody>
-                                <tfoot class="bg-gray-50 border-t border-gray-200">
-                                    <tr>
-                                        <td colspan="5" class="px-2 py-1.5 text-right font-semibold">Total:</td>
-                                        <td class="px-2 py-1.5 text-right font-bold text-primary">Rp {{ number_format($totalBarang, 0, ',', '.') }}</td>
-                                        <td></td>
-                                    </tr>
-                                </tfoot>
-                            </table>
-                        </div>
+                                    </thead>
+                                    <tbody class="divide-y divide-gray-50">
+                                        @foreach($items as $item)
+                                            <tr>
+                                                <td class="px-2 py-1.5">{{ $item->nama_konsumsi }}</td>
+                                                <td class="px-2 py-1.5 text-xs text-gray-600">{{ $item->no_kwitansi ?? '-' }}</td>
+                                                <td class="px-2 py-1.5 text-xs text-gray-600">{{ $item->tanggal_pembelian ? \Carbon\Carbon::parse($item->tanggal_pembelian)->format('d/m/Y') : '-' }}</td>
+                                                <td class="px-2 py-1.5 text-center">{{ $item->jumlah }}</td>
+                                                <td class="px-2 py-1.5 text-right">Rp {{ number_format($item->harga, 0, ',', '.') }}</td>
+                                                <td class="px-2 py-1.5 text-right font-medium">Rp {{ number_format($item->subtotal, 0, ',', '.') }}</td>
+                                                <td class="px-2 py-1.5 text-center">
+                                                    <form action="{{ route('konsumsi.destroy', $item->id) }}" method="POST" class="inline" onsubmit="return confirm('Yakin ingin menghapus item ini?');">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                        <button type="submit" class="text-red-600 hover:text-red-800 text-xs font-medium">✕</button>
+                                                    </form>
+                                                </td>
+                                            </tr>
+                                        @endforeach
+                                    </tbody>
+                                    <tfoot class="bg-gray-50 border-t border-gray-200">
+                                        <tr>
+                                            <td colspan="5" class="px-2 py-1.5 text-right font-semibold">Subtotal:</td>
+                                            <td class="px-2 py-1.5 text-right font-bold text-primary">Rp {{ number_format($vendorTotals[$vendorName] ?? 0, 0, ',', '.') }}</td>
+                                            <td></td>
+                                        </tr>
+
+                                        <tr>
+                                            <td colspan="5" class="px-2 py-1.5 text-right font-semibold">PPN {{ number_format($vendorPpn, 0) }}%:</td>
+                                            <td class="px-2 py-1.5 text-right text-red-600">Rp {{ number_format($vendorTaxes[$vendorName] ?? 0, 0, ',', '.') }}</td>
+                                            <td></td>
+                                        </tr>
+
+                                        <tr>
+                                            <td colspan="5" class="px-2 py-1.5 text-right font-semibold">Total (inc. PPN):</td>
+                                            <td class="px-2 py-1.5 text-right font-bold text-primary">Rp {{ number_format($vendorTotalsWithTax[$vendorName] ?? ($vendorTotals[$vendorName] ?? 0), 0, ',', '.') }}</td>
+                                            <td></td>
+                                        </tr>
+                                    </tfoot>
+                                </table>
+                            </div>
+                        @endforeach
                     @endif
                 </div>
             @else
@@ -428,9 +459,129 @@
         </div>
 
                 <!-- Grand Total: Minimal Design -->
-                <div class="px-3 py-2 bg-gray-50 border-t-2 border-gray-300 flex justify-between items-center">
-                    <span class="text-sm font-semibold text-gray-900">Grand Total:</span>
-                    <span class="text-lg font-bold text-primary">Rp {{ number_format($grandTotal, 0, ',', '.') }}</span>
+                <div class="px-3 py-3 bg-gray-50 border-t-2 border-gray-300 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
+                    <div class="flex flex-col">
+                        <span class="text-sm font-semibold text-gray-900">Grand Total (excl. vendor PPN):</span>
+                        <span class="text-lg font-bold text-primary">Rp {{ number_format($grandTotal ?? 0, 0, ',', '.') }}</span>
+                        @if(isset($vendorTaxTotal) && $vendorTaxTotal > 0)
+                            <span class="text-sm text-gray-700 mt-1">Total Vendor PPN: <span class="text-red-600 font-medium">Rp {{ number_format($vendorTaxTotal, 0, ',', '.') }}</span></span>
+                        @endif
+                    </div>
+
+                    <div class="text-right">
+                        <span class="text-sm font-semibold text-gray-900">Grand Total (inc. vendor PPN):</span>
+                        <div class="text-lg font-bold text-primary">Rp {{ number_format($grandTotalWithVendorTax ?? $grandTotal ?? 0, 0, ',', '.') }}</div>
+                    </div>
                 </div>
     </div>
+
+    <!-- Modal Edit Vendor -->
+    <div id="vendorEditModal" class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
+        <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-lg font-semibold text-gray-900">Edit Data Vendor</h3>
+                <button onclick="closeVendorEditModal()" class="text-gray-400 hover:text-gray-600">✕</button>
+            </div>
+
+            <form id="vendorEditForm" onsubmit="submitVendorEdit(event)">
+                <input type="hidden" id="vendorId" name="vendor_id">
+
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Nama Vendor</label>
+                    <input type="text" id="vendorName" readonly class="w-full px-3 py-2 border border-gray-300 rounded bg-gray-50" />
+                </div>
+
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Bank</label>
+                    <input type="text" id="vendorBank" name="bank" required
+                           class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                           list="bankList" />
+                    <datalist id="bankList">
+                        <option value="BRI">
+                        <option value="BNI">
+                        <option value="Mandiri">
+                        <option value="BCA">
+                        <option value="BTN">
+                        <option value="BSI">
+                    </datalist>
+                </div>
+
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">No. Rekening</label>
+                    <input type="text" id="vendorRekening" name="rekening" required
+                           class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                </div>
+
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">PPN (%)</label>
+                    <select id="vendorPpn" name="ppn" required
+                            class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <option value="0">0% - Non-PKP</option>
+                        <option value="11" selected>11% - PKP (Default)</option>
+                        <option value="12">12% - PKP (New Rate)</option>
+                    </select>
+                    <p class="text-xs text-gray-500 mt-1">Pilih persentase PPN sesuai status vendor</p>
+                </div>
+
+                <div class="flex justify-end gap-2">
+                    <button type="button" onclick="closeVendorEditModal()"
+                            class="px-4 py-2 text-sm text-gray-700 bg-gray-200 rounded hover:bg-gray-300">
+                        Batal
+                    </button>
+                    <button type="submit"
+                            class="px-4 py-2 text-sm text-white bg-blue-600 rounded hover:bg-blue-700">
+                        Simpan
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function openVendorEditModal(vendorId, vendorName, bank, rekening, ppn) {
+            document.getElementById('vendorId').value = vendorId;
+            document.getElementById('vendorName').value = vendorName;
+            document.getElementById('vendorBank').value = bank || '';
+            document.getElementById('vendorRekening').value = rekening || '';
+            document.getElementById('vendorPpn').value = ppn || 11;
+            document.getElementById('vendorEditModal').classList.remove('hidden');
+        }
+
+        function closeVendorEditModal() {
+            document.getElementById('vendorEditModal').classList.add('hidden');
+        }
+
+        async function submitVendorEdit(event) {
+            event.preventDefault();
+
+            const vendorId = document.getElementById('vendorId').value;
+            const bank = document.getElementById('vendorBank').value;
+            const rekening = document.getElementById('vendorRekening').value;
+            const ppn = document.getElementById('vendorPpn').value;
+
+            try {
+                const response = await fetch(`/vendor/${vendorId}/update-bank`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                    },
+                    body: JSON.stringify({ bank, rekening, ppn })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    alert('Data vendor berhasil diperbarui!');
+                    closeVendorEditModal();
+                    location.reload();
+                } else {
+                    alert('Gagal memperbarui data vendor: ' + (data.message || 'Unknown error'));
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Terjadi kesalahan saat memperbarui data vendor');
+            }
+        }
+    </script>
 @endsection

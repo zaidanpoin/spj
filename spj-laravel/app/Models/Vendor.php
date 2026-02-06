@@ -15,6 +15,9 @@ class Vendor extends Model
         'jabatan',
         'npwp',
         'alamat',
+        'bank',
+        'rekening',
+        'ppn',
     ];
 
     /**
@@ -33,6 +36,8 @@ class Vendor extends Model
         return !empty($this->nama_direktur) &&
             !empty($this->jabatan) &&
             !empty($this->npwp) &&
-            !empty($this->alamat);
+            !empty($this->alamat) &&
+            !empty($this->bank) &&
+            !empty($this->rekening);
     }
 }

@@ -439,6 +439,11 @@ Route::middleware(['auth'])->group(function () {
     Route::put('konsumsi/{id}/koreksi', [KonsumsiController::class, 'updateKoreksi'])
         ->middleware('permission:edit-konsumsi')
         ->name('konsumsi.update-koreksi');
+
+    // Vendor update route
+    Route::post('vendor/{vendor}/update-bank', [KonsumsiController::class, 'updateVendorBank'])
+        ->middleware('permission:edit-konsumsi')
+        ->name('vendor.update-bank');
 });
 
 // Narasumber Routes

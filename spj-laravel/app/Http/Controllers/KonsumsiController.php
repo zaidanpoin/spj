@@ -56,6 +56,8 @@ class KonsumsiController extends Controller
                     'jabatan' => $v->jabatan,
                     'npwp' => $v->npwp,
                     'alamat' => $v->alamat,
+                    'bank' => $v->bank ?? null,
+                    'rekening' => $v->rekening ?? null,
                 ],
             ];
         })->toArray();
@@ -71,6 +73,8 @@ class KonsumsiController extends Controller
                         'jabatan' => $item->vendor->jabatan,
                         'npwp' => $item->vendor->npwp,
                         'alamat' => $item->vendor->alamat,
+                        'bank' => $item->vendor->bank ?? null,
+                        'rekening' => $item->vendor->rekening ?? null,
                     ];
                 }
             }
@@ -129,6 +133,8 @@ class KonsumsiController extends Controller
             'vendor_data.*.jabatan' => 'nullable|string|max:255',
             'vendor_data.*.npwp' => 'nullable|string|max:30',
             'vendor_data.*.alamat' => 'nullable|string',
+            'vendor_data.*.bank' => 'nullable|string|max:255',
+            'vendor_data.*.rekening' => 'nullable|string|max:255',
         ]);
 
 
@@ -192,14 +198,21 @@ class KonsumsiController extends Controller
         if ($request->has('vendor_data') && is_array($request->vendor_data)) {
             foreach ($request->vendor_data as $vendorNama => $vendorInfo) {
                 if (!empty($vendorNama)) {
+                    $attrs = [
+                        'nama_direktur' => $vendorInfo['nama_direktur'] ?? null,
+                        'jabatan' => $vendorInfo['jabatan'] ?? null,
+                        'npwp' => $vendorInfo['npwp'] ?? null,
+                        'alamat' => $vendorInfo['alamat'] ?? null,
+                        'bank' => $vendorInfo['bank'] ?? null,
+                        'rekening' => $vendorInfo['rekening'] ?? null,
+                    ];
+                    // remove keys with null so we don't overwrite existing DB values with null
+                    $attrs = array_filter($attrs, function ($v) {
+                        return !is_null($v);
+                    });
                     $vendor = Vendor::updateOrCreate(
                         ['nama_vendor' => $vendorNama],
-                        [
-                            'nama_direktur' => $vendorInfo['nama_direktur'] ?? null,
-                            'jabatan' => $vendorInfo['jabatan'] ?? null,
-                            'npwp' => $vendorInfo['npwp'] ?? null,
-                            'alamat' => $vendorInfo['alamat'] ?? null,
-                        ]
+                        $attrs
                     );
                     $vendorMap[$vendorNama] = $vendor->id;
                     \Log::info("Vendor saved/updated: {$vendorNama}", $vendor->toArray());
@@ -260,14 +273,20 @@ class KonsumsiController extends Controller
                             } else {
                                 // Check if vendor_data was submitted for this vendor
                                 $vendorInfo = $request->input("vendor_data.{$vendorNama}", []);
+                                $attrs = [
+                                    'nama_direktur' => $vendorInfo['nama_direktur'] ?? null,
+                                    'jabatan' => $vendorInfo['jabatan'] ?? null,
+                                    'npwp' => $vendorInfo['npwp'] ?? null,
+                                    'alamat' => $vendorInfo['alamat'] ?? null,
+                                    'bank' => $vendorInfo['bank'] ?? null,
+                                    'rekening' => $vendorInfo['rekening'] ?? null,
+                                ];
+                                $attrs = array_filter($attrs, function ($v) {
+                                    return !is_null($v);
+                                });
                                 $vendor = Vendor::updateOrCreate(
                                     ['nama_vendor' => $vendorNama],
-                                    [
-                                        'nama_direktur' => $vendorInfo['nama_direktur'] ?? null,
-                                        'jabatan' => $vendorInfo['jabatan'] ?? null,
-                                        'npwp' => $vendorInfo['npwp'] ?? null,
-                                        'alamat' => $vendorInfo['alamat'] ?? null,
-                                    ]
+                                    $attrs
                                 );
                                 $vendorId = $vendor->id;
                                 $vendorMap[$vendorNama] = $vendorId;
@@ -380,5 +399,26 @@ class KonsumsiController extends Controller
 
         return redirect()->route('kegiatan.pilih-detail', $kegiatan_id)
             ->with('success', 'Item konsumsi berhasil dihapus!');
+    }
+
+    /**
+     * Update vendor bank and PPN information.
+     */
+    public function updateVendorBank(Request $request, $vendorId)
+    {
+        $validated = $request->validate([
+            'bank' => 'required|string|max:255',
+            'rekening' => 'required|string|max:100',
+            'ppn' => 'required|numeric|min:0|max:100'
+        ]);
+
+        $vendor = Vendor::findOrFail($vendorId);
+        $vendor->update($validated);
+
+        return response()->json([
+            'success' => true,
+            'vendor' => $vendor,
+            'message' => 'Data vendor berhasil diperbarui'
+        ]);
     }
 }

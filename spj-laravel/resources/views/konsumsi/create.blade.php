@@ -105,6 +105,8 @@
                         <input type="hidden" name="vendor_data[{{ $vendorNama }}][jabatan]" value="{{ $vendorInfo['jabatan'] }}">
                         <input type="hidden" name="vendor_data[{{ $vendorNama }}][npwp]" value="{{ $vendorInfo['npwp'] }}">
                         <input type="hidden" name="vendor_data[{{ $vendorNama }}][alamat]" value="{{ $vendorInfo['alamat'] }}">
+                        <input type="hidden" name="vendor_data[{{ $vendorNama }}][bank]" value="{{ $vendorInfo['bank'] ?? '' }}">
+                        <input type="hidden" name="vendor_data[{{ $vendorNama }}][rekening]" value="{{ $vendorInfo['rekening'] ?? '' }}">
                     @endforeach
                 @endif
 
@@ -534,11 +536,11 @@
 
                     <div class="flex gap-2">
                         <button type="submit" name="save_as_draft" value="0" class="btn-primary"
-                            onclick="return validateForm()">
+                            onclick="updateVendorHiddenInputs(); return validateForm();">
                             💾 Simpan & Validasi
                         </button>
                         <button type="submit" name="save_as_draft" value="1" class="btn-secondary"
-                            onclick="return confirmDraft()">
+                            onclick="updateVendorHiddenInputs(); return confirmDraft();">
                             📝 Simpan sebagai Draft
                         </button>
                         <a href="{{ route('kegiatan.pilih-detail', $kegiatan->id) }}" class="btn-secondary">
@@ -565,6 +567,8 @@
 
             // Existing vendors data from server (keyed by vendor name)
             const vendorsData = @json($vendorsData ?? []);
+            // Banks list from config
+            const banksList = @json(config('banks')) || [];
 
             // Tab Switching
             function switchTab(tab) {
@@ -925,10 +929,10 @@
                                 vendorData[vendorNama][field] = inp.value;
                             });
 
-                            // Mark complete if all fields present
+                            // Mark complete if all required fields present (including bank + rekening)
                             Object.keys(vendorData).forEach(vn => {
                                 const v = vendorData[vn];
-                                if (v.nama_direktur && v.jabatan && v.npwp && v.alamat) v.isComplete = true;
+                                if (v.nama_direktur && v.jabatan && v.npwp && v.alamat && v.bank && v.rekening) v.isComplete = true;
                             });
                         }
 
@@ -1117,12 +1121,51 @@
                                         placeholder="00.000.000.0-000.000" value="${data.npwp || ''}">
                                 </div>
                                 <div>
+                                    <label class="form-label">Bank <span class="text-red-500">*</span></label>
+                                    <input list="banks-datalist" id="modal-vendor-bank" class="form-input" placeholder="Ketik untuk mencari bank">
+                                    <datalist id="banks-datalist"></datalist>
+                                </div>
+                                <div>
+                                    <label class="form-label">PPN (%)</label>
+                                    <select id="modal-vendor-ppn" class="form-input">
+                                        <option value="">(biarkan kosong)</option>
+                                        <option value="0">0% - Non-PKP</option>
+                                        <option value="11">11% - PKP</option>
+                                        <option value="12">12% - PKP</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="form-label">Nomor Rekening <span class="text-red-500">*</span></label>
+                                    <input type="text" id="modal-vendor-rekening" class="form-input"
+                                        placeholder="Nomor Rekening" value="${data.rekening || ''}">
+                                </div>
+                                <div>
                                     <label class="form-label">Alamat <span class="text-red-500">*</span></label>
                                     <textarea id="modal-vendor-alamat" class="form-input" rows="2"
                                         placeholder="Alamat lengkap vendor">${data.alamat || ''}</textarea>
                                 </div>
                             </div>
                         `;
+
+                        // Populate bank select dynamically from config
+                        try {
+                            const bankInput = document.getElementById('modal-vendor-bank');
+                            const datalist = document.getElementById('banks-datalist');
+                            if (datalist && Array.isArray(banksList)) {
+                                let opts = '';
+                                banksList.forEach(b => {
+                                    const name = b.nama || b.name || b;
+                                    opts += `<option value="${name}"></option>`;
+                                });
+                                datalist.innerHTML = opts;
+                                if (bankInput && data.bank) bankInput.value = data.bank;
+                                    // populate ppn if available
+                                    const ppnSelect = document.getElementById('modal-vendor-ppn');
+                                    if (ppnSelect) {
+                                        ppnSelect.value = (data.ppn !== undefined && data.ppn !== null) ? data.ppn : '';
+                                    }
+                            }
+                        } catch (e) { console.error('Error populating banks:', e); }
 
                         modal.classList.remove('hidden');
                     }
@@ -1138,12 +1181,15 @@
                 const direktur = document.getElementById('modal-vendor-direktur').value.trim();
                 const jabatan = document.getElementById('modal-vendor-jabatan').value.trim();
                 const npwp = document.getElementById('modal-vendor-npwp').value.trim();
+                const bank = document.getElementById('modal-vendor-bank').value.trim();
+                const rekening = document.getElementById('modal-vendor-rekening').value.trim();
                 const alamat = document.getElementById('modal-vendor-alamat').value.trim();
+                const ppn = document.getElementById('modal-vendor-ppn') ? document.getElementById('modal-vendor-ppn').value.trim() : '';
 
                 console.log('Saving vendor:', vendorNama);
-                console.log('Data:', { direktur, jabatan, npwp, alamat });
+                console.log('Data:', { direktur, jabatan, npwp, bank, rekening, alamat });
 
-                if (!direktur || !jabatan || !npwp || !alamat) {
+                if (!direktur || !jabatan || !npwp || !bank || !rekening || !alamat) {
                     alert('⚠️ Semua field wajib diisi!');
                     return;
                 }
@@ -1153,7 +1199,10 @@
                     nama_direktur: direktur,
                     jabatan: jabatan,
                     npwp: npwp,
+                    bank: bank,
+                    rekening: rekening,
                     alamat: alamat,
+                    ppn: ppn === '' ? null : ppn,
                     isComplete: true
                 };
 
@@ -1195,13 +1244,13 @@
 
                 for (const [vendorNama, data] of Object.entries(vendorData)) {
                     console.log('Processing vendor:', vendorNama, 'isComplete:', data.isComplete);
-                    if (data.isComplete) {
-                        const fields = ['nama_direktur', 'jabatan', 'npwp', 'alamat'];
+                        if (data.isComplete) {
+                        const fields = ['nama_direktur', 'jabatan', 'npwp', 'bank', 'rekening', 'alamat', 'ppn'];
                         fields.forEach(field => {
                             const input = document.createElement('input');
                             input.type = 'hidden';
                             input.name = `vendor_data[${vendorNama}][${field}]`;
-                            input.value = data[field];
+                            input.value = data[field] ?? '';
                             form.appendChild(input);
                             console.log('Added hidden input:', input.name, '=', input.value);
                         });
